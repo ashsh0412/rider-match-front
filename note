@@ -1,0 +1,18 @@
+[] rider
+- current location
+- save home location
+- choose how many ppl would like to take
+- set departing time and arriving time
+
+[] user
+- current location
+- save home location
+- set departing time and arriving time
+- enter where would like to be picked up
+
+option : showing near users wanting rider or showing recommended users
+calculate distance and estimated time
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY">
+</script>
