@@ -149,7 +149,7 @@ h1 {
   border-radius: 0 8px 8px 0;
 }
 
-.see-prices-btn {
+.start {
   background-color: #000;
   color: #fff;
   padding: 14px 24px;
@@ -162,13 +162,13 @@ h1 {
   transition: all 0.3s ease;
 }
 
-.see-prices-btn:hover {
+.start:hover {
   background-color: #333;
   transform: translateY(-2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.see-prices-btn:active {
+.start:active {
   transform: translateY(0);
   box-shadow: none;
 }

@@ -49,6 +49,7 @@ directionsService = new google.maps.DirectionsService();
 directionsRenderer = new google.maps.DirectionsRenderer();
 directionsRenderer.setMap(map);
 
+// 입력한 장소에 마커 추가하고 선택된 장소로 이동
 function onPlaceChanged() {
   var place = this.getPlace();
   if (place.geometry) {
@@ -62,7 +63,7 @@ function onPlaceChanged() {
   }
 }
 
-window.window.calculateRoute = function () {
+window.calculateRoute = function () {
   const origin = document.getElementById("pickup-location").value;
   const destination = document.getElementById("dropoff-location").value;
 
@@ -71,24 +72,31 @@ window.window.calculateRoute = function () {
       {
         origin: origin,
         destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING, // 나중에 고를 수 있게 만들기
+        travelMode: google.maps.TravelMode.DRIVING,
       },
       (response, status) => {
         if (status === "OK") {
-          directionsRenderer.setDirections(response);
+          directionsRenderer.setDirections(response); // 경로를 지도에 표시
+
           const route = response.routes[0];
           const estimatedTime = route.legs[0].duration.text;
+
           document.getElementById(
             "estimated-time"
-          ).innerHTML = `Estimated travel time: ${estimatedTime}`; // 예상시간 적기
+          ).innerHTML = `Estimated travel time: ${estimatedTime}`; // 예상시간 표시
+
+          console.log(route); // 경로 정보 로그 출력
         } else {
           window.alert("Directions request failed due to " + status);
         }
       }
     );
+  } else {
+    window.alert("Please enter both pickup and dropoff locations.");
   }
 };
 
+// 주소 값이 정확한지 판단
 function handleLocationError(browserHasGeolocation, pos) {
   console.log(
     browserHasGeolocation
@@ -97,25 +105,22 @@ function handleLocationError(browserHasGeolocation, pos) {
   );
 }
 
-window.onload = function () {
-  initMap();
-  initAutocomplete();
-};
-
 // 자동 주소 완성
 function initAutocomplete() {
   const pickupInput = document.getElementById("pickup-location");
   const dropoffInput = document.getElementById("dropoff-location");
 
   if (pickupInput.type === "text") {
-    autocompletePickup = new google.maps.places.Autocomplete(pickupInput, {
-      types: ["geocode"],
+    autocompletePickup = new google.maps.places.Autocomplete(pickupInput);
+    autocompletePickup.setComponentRestrictions({
+      country: ["us"], // 미국으로 제한
     });
     autocompletePickup.addListener("place_changed", onPlaceChanged);
   }
 
-  autocompleteDropoff = new google.maps.places.Autocomplete(dropoffInput, {
-    types: ["geocode"],
+  autocompleteDropoff = new google.maps.places.Autocomplete(dropoffInput);
+  autocompleteDropoff.setComponentRestrictions({
+    country: ["us"], // 미국으로 제한
   });
   autocompleteDropoff.addListener("place_changed", onPlaceChanged);
 }
@@ -142,7 +147,14 @@ document.querySelectorAll(".ride-option").forEach((option) => {
   });
 });
 
+window.onload = function () {
+  initMap();
+  initAutocomplete();
+};
+
 // api key 숨기기
 // 마커 누르면 사라지게
 // 사라진 마커 정보 경로 검색에서 제외하기
 // 경유지 추가
+// 주소 없을때 경고 표시
+// 탑승인원 음수 고치고 최대인원 5명
