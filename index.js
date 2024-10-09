@@ -22,6 +22,10 @@ function initMap() {
     map.setOptions({ styles: styles[styleSelector.value] });
   });
 
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer();
+  directionsRenderer.setMap(map);
+
   //현재 위치를 가져온 후 지도에 마커 표시를합니다
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -44,10 +48,6 @@ function initMap() {
     handleLocationError(false, map.getCenter());
   }
 }
-
-directionsService = new google.maps.DirectionsService();
-directionsRenderer = new google.maps.DirectionsRenderer();
-directionsRenderer.setMap(map);
 
 // 입력한 장소에 마커 추가하고 선택된 장소로 이동
 function onPlaceChanged() {
@@ -77,15 +77,12 @@ window.calculateRoute = function () {
       (response, status) => {
         if (status === "OK") {
           directionsRenderer.setDirections(response); // 경로를 지도에 표시
-
           const route = response.routes[0];
           const estimatedTime = route.legs[0].duration.text;
 
           document.getElementById(
             "estimated-time"
-          ).innerHTML = `Estimated travel time: ${estimatedTime}`; // 예상시간 표시
-
-          console.log(route); // 경로 정보 로그 출력
+          ).innerHTML = `Estimated Time: ${estimatedTime}`; // 예상시간 표시
         } else {
           window.alert("Directions request failed due to " + status);
         }
@@ -101,7 +98,8 @@ function handleLocationError(browserHasGeolocation, pos) {
   console.log(
     browserHasGeolocation
       ? "Error: The Geolocation service failed."
-      : "Error: Your browser doesn't support geolocation."
+      : "Error: Your browser doesn't support geolocation.",
+    pos
   );
 }
 
