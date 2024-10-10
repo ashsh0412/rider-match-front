@@ -14,6 +14,8 @@ function initMap() {
     zoom: 13,
     disableDefaultUI: true,
     mapTypeControl: false,
+    zoomControl: true,
+    streetViewControl: true,
   });
 
   const styleSelector = document.getElementById("style-selector");
@@ -73,37 +75,6 @@ function clearMarkers() {
   }
   markers = []; // 마커 배열 초기화
 }
-
-window.calculateRoute = function () {
-  const origin = document.getElementById("pickup-location").value;
-  const destination = document.getElementById("dropoff-location").value;
-
-  if (origin && destination) {
-    clearMarkers();
-    directionsService.route(
-      {
-        origin: origin,
-        destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING,
-      },
-      (response, status) => {
-        if (status === "OK") {
-          directionsRenderer.setDirections(response); // 경로를 지도에 표시
-          const route = response.routes[0];
-          const estimatedTime = route.legs[0].duration.text;
-
-          document.getElementById(
-            "estimated-time"
-          ).innerHTML = `Estimated Time: ${estimatedTime}`; // 예상시간 표시
-        } else {
-          window.alert("Directions request failed due to " + status);
-        }
-      }
-    );
-  } else {
-    window.alert("Please enter both pickup and dropoff locations.");
-  }
-};
 
 // 주소 값이 정확한지 판단
 function handleLocationError(browserHasGeolocation, pos) {
@@ -170,6 +141,38 @@ document.querySelectorAll(".ride-option").forEach((option) => {
     }
   });
 });
+
+// 경로 시간 계산 및 경로 빌드
+window.calculateRoute = function () {
+  const origin = document.getElementById("pickup-location").value;
+  const destination = document.getElementById("dropoff-location").value;
+
+  if (origin && destination) {
+    clearMarkers();
+    directionsService.route(
+      {
+        origin: origin,
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === "OK") {
+          directionsRenderer.setDirections(response); // 경로를 지도에 표시
+          const route = response.routes[0];
+          const estimatedTime = route.legs[0].duration.text;
+
+          document.getElementById(
+            "estimated-time"
+          ).innerHTML = `Estimated Time: ${estimatedTime}`; // 예상시간 표시
+        } else {
+          window.alert("Directions request failed due to " + status);
+        }
+      }
+    );
+  } else {
+    window.alert("Please enter both pickup and dropoff locations.");
+  }
+};
 
 window.onload = function () {
   initMap();

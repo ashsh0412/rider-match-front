@@ -62,6 +62,7 @@ html {
   flex: 0 0 450px;
   padding: 40px;
   box-sizing: border-box;
+  overflow: auto;
 }
 
 .right-panel {
@@ -153,6 +154,7 @@ h1 {
   height: 100%;
   width: 100%;
   position: relative; /* Ensures the map is relative to its container */
+  overflow: hidden;
 }
 
 #style-selector-control {
