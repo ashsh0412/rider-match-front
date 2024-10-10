@@ -5,6 +5,7 @@ let autocompletePickup;
 let autocompleteDropoff;
 let directionsService;
 let directionsRenderer;
+let markers = [];
 
 // 지도를 그립니다. 디폴트 값은 게인즈빌입니다
 function initMap() {
@@ -35,10 +36,11 @@ function initMap() {
           lng: position.coords.longitude,
         };
         map.setCenter(pos); // 현재 위치 기준으로 지도 설정
-        new google.maps.Marker({
+        const marker = new google.maps.Marker({
           position: pos,
           map: map,
         });
+        markers.push(marker);
       },
       function () {
         handleLocationError(true, map.getCenter());
@@ -55,12 +57,21 @@ function onPlaceChanged() {
   if (place.geometry) {
     map.panTo(place.geometry.location);
     map.setZoom(15);
-    new google.maps.Marker({
+    const marker = new google.maps.Marker({
       position: place.geometry.location,
       map: map,
       title: place.name,
     });
+    markers.push(marker);
   }
+}
+
+// 기존 마커 제거 함수
+function clearMarkers() {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(null); // 마커를 지도에서 제거
+  }
+  markers = []; // 마커 배열 초기화
 }
 
 window.calculateRoute = function () {
@@ -68,6 +79,7 @@ window.calculateRoute = function () {
   const destination = document.getElementById("dropoff-location").value;
 
   if (origin && destination) {
+    clearMarkers();
     directionsService.route(
       {
         origin: origin,
@@ -151,8 +163,5 @@ window.onload = function () {
 };
 
 // api key 숨기기
-// 마커 누르면 사라지게
-// 사라진 마커 정보 경로 검색에서 제외하기
 // 경유지 추가
-// 주소 없을때 경고 표시
 // 탑승인원 음수 고치고 최대인원 5명
