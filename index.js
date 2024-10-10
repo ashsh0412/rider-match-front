@@ -142,16 +142,30 @@ document.querySelectorAll(".ride-option").forEach((option) => {
     this.classList.add("active");
 
     const pickupInput = document.getElementById("pickup-location");
+    const estimatedBtn = document.getElementById("estimate-btn");
 
     if (this.textContent === "Driver") {
       pickupInput.type = "number";
       pickupInput.placeholder = "Number of passengers";
       pickupInput.value = "";
+      pickupInput.min = 1; // 최소값 1
+      pickupInput.max = 5; // 최대값 5
+      estimatedBtn.style.display = "none";
       google.maps.event.clearInstanceListeners(pickupInput); // 자동완성 해제
+
+      // 입력 값이 1-5 범위가 아니면 경고하고, 범위에 맞춰 강제 조정
+      pickupInput.addEventListener("input", function () {
+        const value = this.value;
+        if (value && (value < 1 || value > 5)) {
+          this.value = ""; // 1에서 5 사이가 아닐 경우 값을 초기화
+          alert("Please enter a number between 1 and 5.");
+        }
+      });
     } else {
       pickupInput.type = "text";
       pickupInput.placeholder = "Pickup location";
       pickupInput.value = "";
+      estimatedBtn.style.display = "block";
       initAutocomplete(); // 자동완성 재설정
     }
   });
@@ -164,4 +178,3 @@ window.onload = function () {
 
 // api key 숨기기
 // 경유지 추가
-// 탑승인원 음수 고치고 최대인원 5명
