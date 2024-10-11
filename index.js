@@ -1,4 +1,5 @@
 import { styles } from "./styles.js";
+import { loadGoogleMapsAPI } from "./api.js";
 
 let map;
 let autocompletePickup;
@@ -113,21 +114,27 @@ document.querySelectorAll(".ride-option").forEach((option) => {
     this.classList.add("active");
 
     const pickupInput = document.getElementById("pickup-location");
+    const dropOffInput = document.getElementById("dropoff-location");
+    const estimatedTime = document.getElementById("estimated-time");
     const estimatedBtn = document.getElementById("estimate-btn");
 
     if (this.textContent === "Driver") {
       pickupInput.type = "number";
       pickupInput.placeholder = "Number of passengers";
       pickupInput.value = "";
+      dropOffInput.value = "";
+      estimatedTime.textContent = "";
       pickupInput.min = 1;
       pickupInput.max = 5;
       estimatedBtn.style.display = "none";
       google.maps.event.clearInstanceListeners(pickupInput); // 자동완성 해제
       pickupInput.addEventListener("input", validatePassengerCount);
+      initMap();
     } else {
       pickupInput.type = "text";
       pickupInput.placeholder = "Pickup location";
       pickupInput.value = "";
+      dropOffInput.value = "";
       estimatedBtn.style.display = "block";
       initAutocomplete(); // 자동완성 재설정
 
@@ -181,10 +188,12 @@ window.calculateRoute = function () {
   }
 };
 
-window.onload = function () {
-  initMap();
-  initAutocomplete();
-};
+loadGoogleMapsAPI().then(() => {
+  window.onload = function () {
+    initMap();
+    initAutocomplete();
+  };
+});
 
 // api key 숨기기
 // 경유지 추가
