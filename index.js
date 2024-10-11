@@ -119,28 +119,35 @@ document.querySelectorAll(".ride-option").forEach((option) => {
       pickupInput.type = "number";
       pickupInput.placeholder = "Number of passengers";
       pickupInput.value = "";
-      pickupInput.min = 1; // 최소값 1
-      pickupInput.max = 5; // 최대값 5
+      pickupInput.min = 1;
+      pickupInput.max = 5;
       estimatedBtn.style.display = "none";
       google.maps.event.clearInstanceListeners(pickupInput); // 자동완성 해제
-
-      // 입력 값이 1-5 범위가 아니면 경고하고, 범위에 맞춰 강제 조정
-      pickupInput.addEventListener("input", function () {
-        const value = this.value;
-        if (value && (value < 1 || value > 5)) {
-          this.value = ""; // 1에서 5 사이가 아닐 경우 값을 초기화
-          alert("Please enter a number between 1 and 5.");
-        }
-      });
+      pickupInput.addEventListener("input", validatePassengerCount);
     } else {
       pickupInput.type = "text";
       pickupInput.placeholder = "Pickup location";
       pickupInput.value = "";
       estimatedBtn.style.display = "block";
       initAutocomplete(); // 자동완성 재설정
+
+      // 'Driver' 모드에서 추가한 input 이벤트를 제거
+      pickupInput.removeEventListener("input", validatePassengerCount);
     }
   });
 });
+
+// 승객 수 검증 함수 (1에서 5 사이의 숫자만 허용)
+function validatePassengerCount(event) {
+  const value = event.target.value;
+
+  const passengerCount = parseInt(value); // 입력값을 정수로 변환
+
+  if (passengerCount < 1 || passengerCount > 5) {
+    alert("Please enter a number between 1 and 5.");
+    event.target.value = ""; // 1에서 5 사이가 아니면 값을 초기화
+  }
+}
 
 // 경로 시간 계산 및 경로 빌드
 window.calculateRoute = function () {
