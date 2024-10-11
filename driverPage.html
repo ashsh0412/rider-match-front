@@ -319,7 +319,7 @@
         </div>
       </div>
     </div>
-    <script src="pageForDriver.js"></script>
+    <script src="driverPage.js"></script>
     <script>
       const CONFIGURATION = {
         defaultTravelMode: "DRIVING",
@@ -335,17 +335,13 @@
           maxZoom: 20,
           mapId: "",
         },
-        mapsApiKey: "",
+        mapsApiKey: "AIzaSyAEFewn-K5EtAMNhnWJG4GXKbsWelCDDro",
       };
 
       function initMap() {
         new Commutes(CONFIGURATION);
       }
     </script>
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap&libraries=places,geometry&solution_channel=GMP_QB_commutes_v2_c"
-      async
-      defer
-    ></script>
+    <script src="api.js"></script>
   </body>
 </html>
