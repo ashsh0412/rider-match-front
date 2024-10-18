@@ -19,10 +19,10 @@ import {
 import { useEffect, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-export default function SignupCard() {  
+export default function SignupCard() {
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/users/log-in")
-  },[])
+    fetch("http://127.0.0.1:8000/api/v1/users/log-in");
+  }, []);
   const [showPassword, setShowPassword] = useState(false);
 
   return (
