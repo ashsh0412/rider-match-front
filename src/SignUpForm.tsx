@@ -13,13 +13,17 @@ import {
   Text,
   useColorModeValue,
   Link,
-  useToast, // useToast 훅을 추가
+  useToast,
+  Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { FaGoogle, FaComment } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupCard() {
   const toast = useToast(); // useToast 훅을 초기화
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
@@ -107,6 +111,7 @@ export default function SignupCard() {
           position: "top-right",
           isClosable: true,
         });
+        navigate("/log-in");
       } else {
         toast({
           title: "A user with that username already exists.",
@@ -215,9 +220,34 @@ export default function SignupCard() {
             >
               Sign up
             </Button>
-            <Stack pt={6}>
-              <Text align={"center"}>
-                Already a user? <Link color={"blue.400"}>Login</Link>
+            <Stack>
+              <HStack spacing={4}>
+                <Button
+                  w="full"
+                  variant="outline"
+                  borderColor="gray.300"
+                  color="black"
+                  _hover={{ bg: "gray.50" }}
+                  leftIcon={<Icon as={FaGoogle} />}
+                >
+                  Google
+                </Button>
+                <Button
+                  w="full"
+                  variant="outline"
+                  borderColor="gray.300"
+                  color="black"
+                  _hover={{ bg: "gray.50" }}
+                  leftIcon={<Icon as={FaComment} />}
+                >
+                  Kakao
+                </Button>
+              </HStack>
+              <Text color="gray.600" textAlign="center">
+                Already a user?{" "}
+                <Link color="blue.500" href="/log-in">
+                  Log In
+                </Link>
               </Text>
             </Stack>
           </Stack>
