@@ -11,10 +11,14 @@ const toggleButtonsVisibility = (shouldShow) => {
   }
 };
 
-const displayUserName = (username) => {
+const displayName = (first_name, last_name) => {
   const userInfoDiv = document.querySelector(".user-info");
-  userInfoDiv.textContent = `${username}`; // 사용자 이름 설정
-  userInfoDiv.style.display = "block"; // 사용자 이름을 보이게 설정
+  const initials = `${first_name.charAt(0)}${last_name.charAt(
+    0
+  )}`.toUpperCase();
+  const fullName = `${first_name} ${last_name}`;
+  userInfoDiv.textContent = fullName.length > 12 ? initials : fullName;
+  userInfoDiv.style.display = "block";
 };
 
 const checkLoginStatus = async () => {
@@ -37,7 +41,7 @@ const checkLoginStatus = async () => {
 
     // 로그인 상태일 경우 버튼 숨기기 및 사용자 이름 표시
     toggleButtonsVisibility(false);
-    displayUserName(data.username); // 사용자 이름 표시
+    displayName(data.first_name, data.last_name); // 사용자 이름 표시
   } catch (error) {
     console.error("Fetch 요청 중 문제가 발생했습니다:", error);
 
