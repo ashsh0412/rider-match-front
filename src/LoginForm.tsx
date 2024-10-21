@@ -74,6 +74,7 @@ export default function LoginCard() {
           position: "top-right",
           isClosable: true,
         });
+        window.location.href = "http://127.0.0.1:5500/index.html";
       } else {
         // 로그인 실패
         const data = await response.json(); // 에러 메시지 가져오기

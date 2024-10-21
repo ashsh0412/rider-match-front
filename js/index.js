@@ -194,6 +194,3 @@ loadGoogleMapsAPI().then(() => {
     initAutocomplete();
   };
 });
-
-// api key 숨기기
-// 경유지 추가
