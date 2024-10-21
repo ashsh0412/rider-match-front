@@ -30,6 +30,19 @@ html {
   transition: opacity 0.3s ease;
 }
 
+.log-out {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 30px;
+  font-size: 14px;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.log-out:hover {
+  opacity: 0.8;
+}
+
 .header a:hover {
   opacity: 0.8;
 }
@@ -53,12 +66,7 @@ html {
   box-shadow: none;
 }
 
-.user-info:hover {
-  opacity: 0.9;
-}
-
 .user-info {
-  cursor: pointer;
   background-color: white;
   color: black;
   padding: 8px 16px;

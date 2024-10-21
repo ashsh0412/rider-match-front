@@ -13,12 +13,14 @@ const toggleButtonsVisibility = (shouldShow) => {
 
 const displayName = (first_name, last_name) => {
   const userInfoDiv = document.querySelector(".user-info");
+  const logOutBtn = document.querySelector(".log-out");
   const initials = `${first_name.charAt(0)}${last_name.charAt(
     0
   )}`.toUpperCase();
   const fullName = `${first_name} ${last_name}`;
   userInfoDiv.textContent = fullName.length > 12 ? initials : fullName;
   userInfoDiv.style.display = "block";
+  logOutBtn.style.display = "block";
 };
 
 const checkLoginStatus = async () => {
