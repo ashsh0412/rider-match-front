@@ -36,12 +36,16 @@ const checkLoginStatus = async () => {
       throw new Error("로그인 상태 확인 중 문제가 발생했습니다.");
     }
 
-    const data = await response.json();
-    console.log("사용자 정보:", data);
+    const data = await response.json(); // 응답 데이터를 JSON으로 변환
 
     // 로그인 상태일 경우 버튼 숨기기 및 사용자 이름 표시
     toggleButtonsVisibility(false);
     displayName(data.first_name, data.last_name); // 사용자 이름 표시
+
+    const startButton = document.querySelector(".start");
+    startButton.onclick = () => {
+      window.location.href = "http://127.0.0.1:3000/signup";
+    };
   } catch (error) {
     console.error("Fetch 요청 중 문제가 발생했습니다:", error);
 
@@ -50,6 +54,11 @@ const checkLoginStatus = async () => {
 
     const userInfoDiv = document.querySelector(".user-info");
     userInfoDiv.style.display = "none"; // 사용자 이름 숨기기
+
+    const startButton = document.querySelector(".start");
+    startButton.onclick = () => {
+      window.location.href = "http://127.0.0.1:3000/log-in";
+    };
   }
 };
 

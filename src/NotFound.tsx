@@ -3,7 +3,7 @@ import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 
 export default function NotFound() {
   const handleGoHome = () => {
-    window.location.href = "/index.html";
+    window.location.href = "http://127.0.0.1:5500/index.html";
   };
 
   return (
