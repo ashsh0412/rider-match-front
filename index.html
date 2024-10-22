@@ -23,6 +23,10 @@
       </div>
     </div>
     <div class="main-content">
+      <div
+        id="toast-container"
+        style="position: fixed; top: 20px; right: 20px; z-index: 9999"
+      ></div>
       <div class="left-panel">
         <h1>Go anywhere with DriverMatch</h1>
         <div class="ride-options">
@@ -33,14 +37,14 @@
           <input
             type="text"
             id="pickup-location"
-            placeholder="Pickup location"
+            placeholder="Enter location"
           />
         </div>
         <div class="location-input">
           <input
             type="text"
             id="dropoff-location"
-            placeholder="Dropoff location"
+            placeholder="Enter destination"
           />
         </div>
         <div class="time-options">
@@ -68,5 +72,6 @@
     <script type="module" src="js/index.js"></script>
     <script src="js/getMe.js" defer></script>
     <script src="js/logout.js" defer></script>
+    <script src="js/startBtn.js"></script>
   </body>
 </html>

@@ -8,6 +8,28 @@ let directionsService;
 let directionsRenderer;
 let markers = [];
 
+// 토스트 생성
+function showToast(message) {
+  const toastContainer = document.getElementById("toast-container");
+
+  const toast = document.createElement("div");
+  toast.classList.add("toast");
+  toast.innerText = message;
+
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 100);
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 500);
+  }, 3000);
+}
+
 // 지도를 그립니다. 디폴트 값은 게인즈빌입니다
 function initMap() {
   map = new google.maps.Map(document.getElementById("map"), {
@@ -151,7 +173,7 @@ function validatePassengerCount(event) {
   const passengerCount = parseInt(value); // 입력값을 정수로 변환
 
   if (passengerCount < 1 || passengerCount > 5) {
-    alert("Please enter a number between 1 and 5.");
+    showToast("Please enter a number between 1 and 5.");
     event.target.value = ""; // 1에서 5 사이가 아니면 값을 초기화
   }
 }
@@ -179,12 +201,12 @@ window.calculateRoute = function () {
             "estimated-time"
           ).innerHTML = `Estimated Time: ${estimatedTime}`; // 예상시간 표시
         } else {
-          window.alert("Directions request failed due to " + status);
+          showToast("Directions request failed due to " + status);
         }
       }
     );
   } else {
-    window.alert("Please enter both pickup and dropoff locations.");
+    showToast("Please enter both location and destination.");
   }
 };
 
