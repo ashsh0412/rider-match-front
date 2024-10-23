@@ -1,5 +1,4 @@
-import React from "react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import {
   BrowserRouter as Router,
   Route,
@@ -10,10 +9,12 @@ import SignupCard from "./SignUpForm";
 import NotFound from "./NotFound";
 import LoginCard from "./LoginForm";
 import RideRequest from "./RiderPage";
+import theme from "./theme";
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <Router>
         <Routes>
           <Route path="/" element={<Navigate replace to="/signup" />} />

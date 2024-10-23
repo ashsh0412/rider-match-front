@@ -14,77 +14,81 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useColorMode,
 } from "@chakra-ui/react";
-import { FaReceipt, FaUser } from "react-icons/fa";
+import { FaMoon, FaReceipt, FaSun, FaUser } from "react-icons/fa";
 
 interface RideRequestProps {
   onSubmit?: (pickupLocation: string, dropoffLocation: string) => void;
 }
 
 const NavBar: React.FC = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const bg = useColorModeValue("white", "gray.800");
+
   return (
-    <Flex
+    <HStack
       w="100%"
       h="64px"
-      bg="white"
-      borderBottom="1px"
-      borderColor="gray.200"
-      px={4}
-      align="center"
+      borderBottom="2px"
+      borderColor={borderColor}
+      px={5}
       position="fixed"
-      top={0}
       zIndex={1000}
+      justifyContent={"space-between"}
+      bg={bg}
     >
-      <Flex
-        flex={1}
-        maxW="95%"
-        mx="auto"
-        justify="space-between"
-        align="center"
-      >
-        {/* Logo */}
-        <Text fontSize="2xl" fontWeight="bold">
-          DriverMatch
-        </Text>
+      {/* Logo */}
+      <Text fontSize="2xl" fontWeight="bold">
+        DriverMatch
+      </Text>
 
-        {/* User Profile */}
-        <Flex>
-          <HStack spacing={2}>
-            {/* Trip History Button */}
-            <Button variant="ghost" leftIcon={<FaReceipt />} size="md">
-              Trip History
-            </Button>
+      {/* User Profile */}
+      <HStack spacing={2}>
+        {/* Trip History Button */}
+        <Button variant="ghost" leftIcon={<FaReceipt />} size="md">
+          Trip History
+        </Button>
 
-            {/* User Profile Menu */}
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={<FaUser />}
-                variant="ghost"
-                size="md"
-                aria-label="User menu"
-              />
-              <MenuList>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Setting</MenuItem>
-                <MenuItem>Log out</MenuItem>
-              </MenuList>
-            </Menu>
-          </HStack>
-        </Flex>
-      </Flex>
-    </Flex>
+        <IconButton
+          onClick={toggleColorMode}
+          variant={"ghost"}
+          aria-label="Toggle dark mode"
+          icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+        />
+
+        {/* User Profile Menu */}
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            icon={<FaUser />}
+            variant="ghost"
+            size="md"
+            aria-label="User menu"
+          />
+          <MenuList>
+            <MenuItem>Profile</MenuItem>
+            <MenuItem>Settings</MenuItem>
+            <MenuItem>Log out</MenuItem>
+          </MenuList>
+        </Menu>
+      </HStack>
+    </HStack>
   );
 };
 
 const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
   const bgColor = useColorModeValue("white", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.600");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const inputBg = useColorModeValue("gray.100", "gray.700");
+  const inputHoverBg = useColorModeValue("gray.200", "gray.600");
+  const mainBg = useColorModeValue("gray.50", "gray.900");
 
   return (
     <Box>
       <NavBar />
-      <Flex minH="100vh" bg="gray.50" pt="64px">
+      <Flex minH="100vh" bg={mainBg} pt="64px">
         <Box
           w="400px"
           bg={bgColor}
@@ -103,10 +107,10 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
               <Input
                 placeholder="Pickup Location"
                 size="lg"
-                bg="gray.100"
+                bg={inputBg}
                 border="none"
-                _hover={{ bg: "gray.200" }}
-                _focus={{ bg: "gray.200", boxShadow: "none" }}
+                _hover={{ bg: inputHoverBg }}
+                _focus={{ bg: inputHoverBg, boxShadow: "none" }}
               />
             </Box>
 
@@ -115,10 +119,10 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
               <Input
                 placeholder="Destination"
                 size="lg"
-                bg="gray.100"
+                bg={inputBg}
                 border="none"
-                _hover={{ bg: "gray.200" }}
-                _focus={{ bg: "gray.200", boxShadow: "none" }}
+                _hover={{ bg: inputHoverBg }}
+                _focus={{ bg: inputHoverBg, boxShadow: "none" }}
               />
             </Box>
 
@@ -126,10 +130,10 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
             <Select
               placeholder="Pickup Now"
               size="lg"
-              bg="gray.100"
+              bg={inputBg}
               border="none"
-              _hover={{ bg: "gray.200" }}
-              _focus={{ bg: "gray.200", boxShadow: "none" }}
+              _hover={{ bg: inputHoverBg }}
+              _focus={{ bg: inputHoverBg, boxShadow: "none" }}
             >
               <option value="now">Pickup Now</option>
               <option value="schedule">Schedule a Ride</option>
@@ -137,11 +141,10 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
 
             {/* 내용 다 안채워지면 작동 안하게 */}
             <Button
-              colorScheme="gray"
               size="lg"
               w="100%"
-              bg="gray.100"
-              _hover={{ bg: "gray.200" }}
+              bg={inputBg}
+              _hover={{ bg: inputHoverBg }}
             >
               Search
             </Button>
@@ -149,7 +152,7 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
         </Box>
 
         {/* Map Container */}
-        <Box flex={1} bg="gray.200">
+        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
           {/* Map component would go here */}
         </Box>
       </Flex>
