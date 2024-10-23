@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   VStack,
@@ -15,8 +15,19 @@ import {
   MenuList,
   MenuItem,
   useColorMode,
+  InputGroup,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import { FaMoon, FaReceipt, FaSun, FaUser } from "react-icons/fa";
+import {
+  FaHistory,
+  FaMapMarkerAlt,
+  FaMapPin,
+  FaMoon,
+  FaReceipt,
+  FaRegClock,
+  FaSun,
+  FaUser,
+} from "react-icons/fa";
 
 interface RideRequestProps {
   onSubmit?: (pickupLocation: string, dropoffLocation: string) => void;
@@ -84,6 +95,14 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
   const inputBg = useColorModeValue("gray.100", "gray.700");
   const inputHoverBg = useColorModeValue("gray.200", "gray.600");
   const mainBg = useColorModeValue("gray.50", "gray.900");
+  const iconColor = useColorModeValue("gray.500", "gray.400");
+  const sectionBg = useColorModeValue("gray.50", "gray.700");
+
+  const recentLocations = [
+    { title: "집", address: "서울시 강남구 역삼동" },
+    { title: "회사", address: "서울시 서초구 서초동" },
+    { title: "학교", address: "서울시 관악구 신림동" },
+  ];
 
   return (
     <Box>
@@ -96,50 +115,65 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
           borderRight="1px"
           borderColor={borderColor}
           h="calc(100vh - 64px)"
+          overflowY="auto"
         >
-          <VStack spacing={4} align="stretch" mt={10}>
+          <VStack spacing={4} align="stretch">
             <Text fontSize="xl" fontWeight="bold" mb={4}>
               Request a Ride
             </Text>
 
-            {/* 구글 자동 완성 & 전 페이지에서 정보가져오기 */}
             <Box position="relative">
-              <Input
-                placeholder="Pickup Location"
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FaMapMarkerAlt color={iconColor} />
+                </InputLeftElement>
+                <Input
+                  placeholder="Pickup Location"
+                  size="lg"
+                  bg={inputBg}
+                  border="none"
+                  pl="40px"
+                  _hover={{ bg: inputHoverBg }}
+                  _focus={{ bg: inputHoverBg, boxShadow: "none" }}
+                />
+              </InputGroup>
+            </Box>
+
+            <Box position="relative">
+              <InputGroup>
+                <InputLeftElement pointerEvents="none">
+                  <FaMapPin color={iconColor} />
+                </InputLeftElement>
+                <Input
+                  placeholder="Destination"
+                  size="lg"
+                  bg={inputBg}
+                  border="none"
+                  pl="40px"
+                  _hover={{ bg: inputHoverBg }}
+                  _focus={{ bg: inputHoverBg, boxShadow: "none" }}
+                />
+              </InputGroup>
+            </Box>
+
+            <InputGroup>
+              <InputLeftElement pointerEvents="none">
+                <FaRegClock color={iconColor} />
+              </InputLeftElement>
+              <Select
+                placeholder="Pickup Now"
                 size="lg"
                 bg={inputBg}
                 border="none"
+                pl="40px"
                 _hover={{ bg: inputHoverBg }}
                 _focus={{ bg: inputHoverBg, boxShadow: "none" }}
-              />
-            </Box>
+              >
+                <option value="now">Pickup Now</option>
+                <option value="schedule">Schedule a Ride</option>
+              </Select>
+            </InputGroup>
 
-            {/* 구글 자동 완성 & 전 페이지에서 정보가져오기 */}
-            <Box position="relative">
-              <Input
-                placeholder="Destination"
-                size="lg"
-                bg={inputBg}
-                border="none"
-                _hover={{ bg: inputHoverBg }}
-                _focus={{ bg: inputHoverBg, boxShadow: "none" }}
-              />
-            </Box>
-
-            {/* 누르면 박스 바뀌게 */}
-            <Select
-              placeholder="Pickup Now"
-              size="lg"
-              bg={inputBg}
-              border="none"
-              _hover={{ bg: inputHoverBg }}
-              _focus={{ bg: inputHoverBg, boxShadow: "none" }}
-            >
-              <option value="now">Pickup Now</option>
-              <option value="schedule">Schedule a Ride</option>
-            </Select>
-
-            {/* 내용 다 안채워지면 작동 안하게 */}
             <Button
               size="lg"
               w="100%"
@@ -148,6 +182,39 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
             >
               Search
             </Button>
+
+            {/* Recent Locations */}
+            <Box mt={6}>
+              <HStack mb={3}>
+                <FaHistory />
+                <Text fontWeight="bold">Recent Locations</Text>
+              </HStack>
+              <VStack
+                spacing={3}
+                align="stretch"
+                bg={sectionBg}
+                p={4}
+                borderRadius="md"
+              >
+                {recentLocations.map((location, index) => (
+                  <Box
+                    key={index}
+                    p={3}
+                    bg={bgColor}
+                    borderRadius="md"
+                    cursor="pointer"
+                    _hover={{ bg: inputHoverBg }}
+                  >
+                    <Text fontWeight="semibold">{location.title}</Text>
+                    <Text fontSize="sm" color={iconColor}>
+                      {location.address}
+                    </Text>
+                  </Box>
+                ))}
+              </VStack>
+            </Box>
+
+            {/* Popular Destinations */}
           </VStack>
         </Box>
 
