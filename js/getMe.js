@@ -46,7 +46,7 @@ const checkLoginStatus = async () => {
 
     const startButton = document.querySelector(".start");
     startButton.onclick = () => {
-      window.location.href = "http://127.0.0.1:3000/signup";
+      window.location.href = "http://127.0.0.1:3000/rider-page";
     };
   } catch (error) {
     console.error("Fetch 요청 중 문제가 발생했습니다:", error);
