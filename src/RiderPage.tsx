@@ -27,6 +27,7 @@ import {
   FaSun,
   FaUser,
 } from "react-icons/fa";
+import MapComponent from "./maps/LoadingMap";
 interface RideRequestProps {
   onSubmit?: (pickupLocation: string, dropoffLocation: string) => void;
 }
@@ -112,11 +113,11 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
           p={6}
           borderRight="1px"
           borderColor={borderColor}
-          h="calc(100vh - 64px)"
+          h="calc(100vh - 64px)" // NavBar 높이를 고려하여 패널 높이 설정
           overflowY="auto"
         >
           <VStack spacing={4} align="stretch">
-            <Text fontSize="xl" fontWeight="bold" mb={4}>
+            <Text fontSize="xl" fontWeight="bold" mb={2}>
               Request a Ride
             </Text>
             <Box position="relative">
@@ -213,10 +214,11 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
         </Box>
 
         {/* Map Container */}
-        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}></Box>
+        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
+          <MapComponent />
+        </Box>
       </Flex>
     </Box>
   );
 };
-
 export default RideRequest;

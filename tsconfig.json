@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "maps/MapStyle.tsx"]
+  "include": ["src", "src/maps/MapStyle.tsx"]
 }

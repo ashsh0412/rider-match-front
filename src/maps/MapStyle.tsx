@@ -1,5 +1,5 @@
 // mapStyles.ts
-export const coolUrbanMapStyles = [
+export const coolUrbanMapStyles: google.maps.MapTypeStyle[] = [
   {
     elementType: "geometry",
     stylers: [{ color: "#f5f5f5" }], // 전체적인 배경 색상
@@ -32,7 +32,7 @@ export const coolUrbanMapStyles = [
   {
     featureType: "poi",
     elementType: "labels.icon",
-    stylers: [{ visibility: "off" }], // POI 아이콘 숨기기
+    stylers: [{ visibility: "on" }], // POI 아이콘 숨기기
   },
   {
     featureType: "transit.line",
@@ -43,5 +43,32 @@ export const coolUrbanMapStyles = [
     featureType: "transit.station",
     elementType: "geometry",
     stylers: [{ color: "#eeeeee" }], // 대중교통 정류장 색상
+  },
+];
+
+export const darkMapStyles: google.maps.MapTypeStyle[] = [
+  { elementType: "geometry", stylers: [{ color: "#212121" }] },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#212121" }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#1a1a1a" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#383838" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#746855" }],
   },
 ];
