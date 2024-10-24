@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Box,
   VStack,
@@ -28,7 +27,6 @@ import {
   FaSun,
   FaUser,
 } from "react-icons/fa";
-
 interface RideRequestProps {
   onSubmit?: (pickupLocation: string, dropoffLocation: string) => void;
 }
@@ -121,13 +119,13 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
             <Text fontSize="xl" fontWeight="bold" mb={4}>
               Request a Ride
             </Text>
-
             <Box position="relative">
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <FaMapMarkerAlt color={iconColor} />
                 </InputLeftElement>
                 <Input
+                  id="pickup-location"
                   placeholder="Pickup Location"
                   size="lg"
                   bg={inputBg}
@@ -138,13 +136,13 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
                 />
               </InputGroup>
             </Box>
-
             <Box position="relative">
               <InputGroup>
                 <InputLeftElement pointerEvents="none">
                   <FaMapPin color={iconColor} />
                 </InputLeftElement>
                 <Input
+                  id="dropoff-location"
                   placeholder="Destination"
                   size="lg"
                   bg={inputBg}
@@ -155,7 +153,6 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
                 />
               </InputGroup>
             </Box>
-
             <InputGroup>
               <InputLeftElement pointerEvents="none">
                 <FaRegClock color={iconColor} />
@@ -173,7 +170,6 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
                 <option value="schedule">Schedule a Ride</option>
               </Select>
             </InputGroup>
-
             <Button
               size="lg"
               w="100%"
@@ -182,7 +178,6 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
             >
               Search
             </Button>
-
             {/* Recent Locations */}
             <Box mt={6}>
               <HStack mb={3}>
@@ -213,15 +208,12 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
                 ))}
               </VStack>
             </Box>
-
             {/* Popular Destinations */}
           </VStack>
         </Box>
 
         {/* Map Container */}
-        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
-          {/* Map component would go here */}
-        </Box>
+        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}></Box>
       </Flex>
     </Box>
   );

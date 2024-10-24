@@ -17,7 +17,7 @@ function App() {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/signup" />} />
+          <Route path="/" element={<Navigate replace to="/rider-page" />} />
           <Route path="/signup" element={<SignupCard />} />
           <Route path="/log-in" element={<LoginCard />} />
           <Route path="/rider-page" element={<RideRequest />} />
