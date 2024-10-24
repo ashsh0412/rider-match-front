@@ -1,15 +1,36 @@
 import React, { useEffect, useRef } from "react";
-import { coolUrbanMapStyles, darkMapStyles } from "./MapStyle"; // 일반 스타일 임포트
-import { useColorMode } from "@chakra-ui/react"; // 다크 모드 사용을 위해 Chakra UI의 useColorMode 훅 추가
+import { coolUrbanMapStyles, darkMapStyles } from "./MapStyle";
+import { useColorMode, useToast } from "@chakra-ui/react";
+import { calcRoute, RouteOptions } from "./RouteMap";
 
 const MapComponent: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const { colorMode } = useColorMode(); // colorMode를 가져옵니다.
+  const { colorMode } = useColorMode();
+  const toast = useToast();
+  let map: google.maps.Map | null = null;
+  let directionsService: google.maps.DirectionsService | null = null;
+  let directionsRenderer: google.maps.DirectionsRenderer | null = null;
+  let marker: google.maps.Marker | null = null; // 마커를 저장할 변수 추가
+
+  // toast 메시지를 표시하는 헬퍼 함수
+  const showToast = (
+    title: string,
+    description: string,
+    status: "success" | "error"
+  ) => {
+    toast({
+      title,
+      description,
+      status,
+      duration: 5000,
+      isClosable: true,
+      position: "bottom-right",
+    });
+  };
 
   useEffect(() => {
     const initMap = async (): Promise<void> => {
       try {
-        // Google Maps와 Places 라이브러리 로드
         const { Map } = (await google.maps.importLibrary(
           "maps"
         )) as google.maps.MapsLibrary;
@@ -17,21 +38,89 @@ const MapComponent: React.FC = () => {
           "places"
         )) as google.maps.PlacesLibrary;
 
-        // 지도 스타일 설정 (다크 모드에 따라 다르게 설정)
         const mapStyles =
-          colorMode === "dark" ? darkMapStyles : coolUrbanMapStyles; // 기본 스타일
+          colorMode === "dark" ? darkMapStyles : coolUrbanMapStyles;
 
-        // 지도 초기화
-        if (mapRef.current) {
-          const map = new Map(mapRef.current, {
-            center: { lat: 29.652, lng: -82.325 }, // 서울 중심 좌표
+        if (mapRef.current && !map) {
+          map = new Map(mapRef.current, {
+            center: { lat: 29.652, lng: -82.325 },
             zoom: 15,
-            styles: mapStyles, // 스타일 적용
-            clickableIcons: false, // 클릭 가능한 아이콘 비활성화
-            disableDefaultUI: true, // 기본 UI 비활성화
+            styles: mapStyles,
+            clickableIcons: false,
+            disableDefaultUI: true,
           });
 
-          // Autocomplete 초기화 및 미국으로 제한
+          // DirectionsService 및 DirectionsRenderer 인스턴스 생성
+          directionsService = new google.maps.DirectionsService();
+          directionsRenderer = new google.maps.DirectionsRenderer();
+          directionsRenderer.setMap(map);
+
+          // 자동 완성 함수
+          const initializeAutocomplete = (
+            inputElement: HTMLInputElement,
+            autocompleteType: string
+          ) => {
+            const autocomplete = new Autocomplete(inputElement, {
+              fields: ["formatted_address", "geometry", "name"],
+              componentRestrictions: { country: ["us"] },
+            });
+
+            autocomplete.addListener("place_changed", () => {
+              const place = autocomplete.getPlace();
+              if (!place.geometry || !place.geometry.location) {
+                showToast(
+                  "No location found",
+                  `The selected ${autocompleteType} place doesn't have valid location data.`,
+                  "error"
+                );
+                return;
+              }
+
+              if (map) {
+                map.setCenter(place.geometry.location);
+                map.setZoom(17);
+
+                // 이전 마커를 제거
+                if (marker) {
+                  marker.setMap(null);
+                }
+
+                // 새로운 마커 생성
+                marker = new google.maps.Marker({
+                  position: place.geometry.location,
+                  map,
+                });
+
+                // 두 위치가 모두 입력되었는지 확인 후 calcRoute 호출
+                const pickupInput = document.getElementById(
+                  "pickup-location"
+                ) as HTMLInputElement;
+                const dropoffInput = document.getElementById(
+                  "dropoff-location"
+                ) as HTMLInputElement;
+
+                if (pickupInput.value && dropoffInput.value) {
+                  const start = pickupInput.value;
+                  const end = dropoffInput.value;
+
+                  // Create RouteOptions object
+                  const routeOptions: RouteOptions = {
+                    start,
+                    end,
+                    directionsService: directionsService!,
+                    directionsRenderer: directionsRenderer!,
+                  };
+
+                  // Call calcRoute function
+                  calcRoute(routeOptions);
+                } else {
+                  console.error("픽업 또는 드랍오프 위치가 비어 있습니다");
+                }
+              }
+            });
+          };
+
+          // 픽업 및 드랍오프 장소에 대해 함수 호출
           const pickupInput = document.getElementById(
             "pickup-location"
           ) as HTMLInputElement;
@@ -40,66 +129,43 @@ const MapComponent: React.FC = () => {
           ) as HTMLInputElement;
 
           if (pickupInput) {
-            const autocompletePickup = new Autocomplete(pickupInput, {
-              fields: ["formatted_address", "name"],
-              types: ["geocode"],
-              componentRestrictions: { country: ["us"] },
-            });
-
-            autocompletePickup.addListener("place_changed", () => {
-              const place = autocompletePickup.getPlace();
-              if (!place.geometry || !place.geometry.location) {
-                console.log("선택된 장소에 대한 정보가 없습니다.");
-                return;
-              }
-              console.log("선택된 장소:", place.name);
-              map.setCenter(place.geometry.location);
-              map.setZoom(17);
-              new google.maps.Marker({
-                position: place.geometry.location,
-                map,
-              });
-            });
+            initializeAutocomplete(pickupInput, "pickup");
           }
 
           if (dropoffInput) {
-            const autocompleteDropoff = new Autocomplete(dropoffInput, {
-              fields: ["formatted_address", "name"],
-              types: ["geocode"],
-              componentRestrictions: { country: ["us"] },
-            });
-
-            autocompleteDropoff.addListener("place_changed", () => {
-              const place = autocompleteDropoff.getPlace();
-              if (!place.geometry || !place.geometry.location) {
-                console.log("선택된 장소에 대한 정보가 없습니다.");
-                return;
-              }
-              console.log("선택된 장소:", place.name);
-              map.setCenter(place.geometry.location);
-              map.setZoom(17);
-              new google.maps.Marker({
-                position: place.geometry.location,
-                map,
-              });
-            });
+            initializeAutocomplete(dropoffInput, "dropoff");
           }
         }
       } catch (error) {
         console.error("Error initializing map: ", error);
+        showToast(
+          "Error initializing map.",
+          "Failed to load Google Maps.",
+          "error"
+        );
       }
     };
 
     if (window.google) {
       initMap();
     } else {
-      console.error("Google Maps API not loaded");
+      showToast(
+        "Error initializing map.",
+        "Failed to load Google Maps.",
+        "error"
+      );
     }
-  }, [colorMode]); // colorMode가 변경될 때마다 지도 초기화
+
+    return () => {
+      if (mapRef.current) {
+        google.maps.event.clearListeners(mapRef.current, "bounds_changed");
+      }
+    };
+  }, [colorMode, toast]);
 
   const containerStyle: React.CSSProperties = {
     width: "100%",
-    height: "100%", // height를 100vh로 고정
+    height: "100%",
     overflow: "hidden",
     display: "flex",
   };
