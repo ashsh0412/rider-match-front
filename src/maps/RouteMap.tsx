@@ -1,4 +1,3 @@
-// RouteService.ts
 export interface RouteOptions {
   start: string; // 출발지
   end: string; // 도착지
@@ -23,7 +22,6 @@ export function calcRoute({
       directionsRenderer.setDirections(result);
     } else {
       console.error("Error fetching directions:", status);
-      console.log(start, end);
     }
   });
 }

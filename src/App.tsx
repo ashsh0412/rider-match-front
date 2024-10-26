@@ -10,6 +10,7 @@ import NotFound from "./NotFound";
 import LoginCard from "./LoginForm";
 import RideRequest from "./RiderPage";
 import theme from "./theme";
+import LoginCheck from "./API/LoginCheck";
 
 function App() {
   return (
@@ -20,7 +21,14 @@ function App() {
           <Route path="/" element={<Navigate replace to="/rider-page" />} />
           <Route path="/signup" element={<SignupCard />} />
           <Route path="/log-in" element={<LoginCard />} />
-          <Route path="/rider-page" element={<RideRequest />} />
+          <Route
+            path="/rider-page"
+            element={
+              <LoginCheck>
+                <RideRequest />
+              </LoginCheck>
+            }
+          />{" "}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

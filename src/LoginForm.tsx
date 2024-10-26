@@ -15,17 +15,20 @@ import {
   HStack,
   Icon,
   Link,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginCard() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    password: "",
     username: "",
+    password: "",
   });
 
   useEffect(() => {
@@ -58,26 +61,21 @@ export default function LoginCard() {
             "Content-Type": "application/json",
             "X-CSRFToken": Cookies.get("csrftoken") || "",
           },
-          body: JSON.stringify({
-            username: username,
-            password: password,
-          }),
+          body: JSON.stringify({ username, password }),
           credentials: "include",
         }
       );
 
       if (response.ok) {
-        // 로그인 성공
         toast({
           title: "Logged In!",
           status: "success",
           position: "top-right",
           isClosable: true,
         });
-        window.location.href = "http://127.0.0.1:5500/index.html";
+        navigate("/rider-page");
       } else {
-        // 로그인 실패
-        const data = await response.json(); // 에러 메시지 가져오기
+        const data = await response.json();
         toast({
           title: data.error || "An error occurred.",
           status: "error",
@@ -96,10 +94,14 @@ export default function LoginCard() {
   };
 
   return (
-    // return 위치를 수정
-    <Flex minH="100vh" align="center" justify="center" bg="white">
+    <Flex
+      minH={"100vh"}
+      align={"center"}
+      justify={"center"}
+      bg={useColorModeValue("gray.50", "gray.800")}
+    >
       <Box
-        bg="white"
+        bg={useColorModeValue("white", "gray.700")}
         p={8}
         borderRadius="md"
         w="100%"
@@ -107,11 +109,11 @@ export default function LoginCard() {
         boxShadow="md"
       >
         <VStack spacing={6} align="stretch">
-          <Heading color="black" fontSize="3xl" textAlign="center">
+          <Heading fontSize={"3xl"} textAlign={"center"}>
             Log in
           </Heading>
-          <FormControl id="username">
-            <FormLabel color="gray.700">Username</FormLabel>
+          <FormControl id="username" isRequired>
+            <FormLabel>Username</FormLabel>
             <Input
               type="text"
               value={formData.username}
@@ -120,8 +122,8 @@ export default function LoginCard() {
               _hover={{ borderColor: "gray.400" }}
             />
           </FormControl>
-          <FormControl id="password">
-            <FormLabel color="gray.700">Password</FormLabel>
+          <FormControl id="password" isRequired>
+            <FormLabel>Password</FormLabel>
             <InputGroup>
               <Input
                 type={showPassword ? "text" : "password"}
