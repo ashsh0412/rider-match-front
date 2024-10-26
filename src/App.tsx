@@ -5,10 +5,10 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import SignupCard from "./SignUpForm";
-import NotFound from "./NotFound";
-import LoginCard from "./LoginForm";
-import RideRequest from "./RiderPage";
+import SignupCard from "./pages/SignUpForm";
+import NotFound from "./pages/NotFound";
+import LoginCard from "./pages/LoginForm";
+import RideRequest from "./pages/RiderPage";
 import theme from "./theme";
 import LoginCheck from "./api/LoginCheck";
 
@@ -20,7 +20,22 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate replace to="/rider-page" />} />
           <Route path="/signup" element={<SignupCard />} />
-          <Route path="/log-in" element={<LoginCard />} />
+          <Route
+            path="/signup"
+            element={
+              <LoginCheck>
+                <SignupCard />
+              </LoginCheck>
+            }
+          />{" "}
+          <Route
+            path="/log-in"
+            element={
+              <LoginCheck>
+                <LoginCard />
+              </LoginCheck>
+            }
+          />{" "}
           <Route
             path="/rider-page"
             element={

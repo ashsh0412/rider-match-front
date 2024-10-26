@@ -24,14 +24,15 @@ const LoginCheck = ({ children }: LoginCheckProps) => {
         });
 
         if (!response.ok) {
-          throw new Error("로그인이 필요합니다.");
+          navigate("/log-in");
+        } else {
+          navigate("/rider-page");
         }
 
         // 로그인 확인 완료
         setIsChecking(false);
       } catch (error) {
         console.error("로그인 확인 중 오류 발생:", error);
-        // 로그인되지 않은 경우 로그인 페이지로 리다이렉트
         navigate("/log-in");
       }
     };

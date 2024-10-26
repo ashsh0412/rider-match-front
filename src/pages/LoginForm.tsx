@@ -70,7 +70,7 @@ export default function LoginCard() {
         toast({
           title: "Logged In!",
           status: "success",
-          position: "top-right",
+          position: "bottom-right",
           isClosable: true,
         });
         navigate("/rider-page");
