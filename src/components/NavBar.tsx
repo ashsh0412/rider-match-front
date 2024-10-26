@@ -12,11 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { FaMoon, FaSun, FaReceipt, FaUser } from "react-icons/fa";
 import logOut from "../api/Logout";
+import { useNavigate } from "react-router-dom";
 
 const NavBar: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const borderColor = useColorModeValue("gray.200", "gray.700");
   const bg = useColorModeValue("white", "gray.800");
+  const navigate = useNavigate();
 
   return (
     <HStack
@@ -31,7 +33,14 @@ const NavBar: React.FC = () => {
       bg={bg}
     >
       {/* Logo */}
-      <Text fontSize="2xl" fontWeight="bold">
+      <Text
+        fontSize="2xl"
+        fontWeight="bold"
+        onClick={() => {
+          navigate("/rider-page");
+        }}
+        _hover={{ cursor: "pointer" }}
+      >
         DriverMatch
       </Text>
 
@@ -49,7 +58,6 @@ const NavBar: React.FC = () => {
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
         />
 
-        {/* User Profile Menu */}
         <Menu>
           <MenuButton
             as={IconButton}
@@ -59,7 +67,7 @@ const NavBar: React.FC = () => {
             aria-label="User menu"
           />
           <MenuList>
-            <MenuItem>Profile</MenuItem>
+            <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
             <MenuItem onClick={logOut}>Log out</MenuItem>
           </MenuList>
         </Menu>

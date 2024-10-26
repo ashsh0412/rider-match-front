@@ -11,6 +11,7 @@ import LoginCard from "./pages/LoginForm";
 import RideRequest from "./pages/RiderPage";
 import theme from "./theme";
 import LoginCheck from "./api/LoginCheck";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
               </LoginCheck>
             }
           />{" "}
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
