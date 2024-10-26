@@ -226,7 +226,6 @@ export default function SignupCard() {
                   w="full"
                   variant="outline"
                   borderColor="gray.300"
-                  color="black"
                   _hover={{ bg: "gray.50" }}
                   leftIcon={<Icon as={FaGoogle} />}
                 >
@@ -236,14 +235,13 @@ export default function SignupCard() {
                   w="full"
                   variant="outline"
                   borderColor="gray.300"
-                  color="black"
                   _hover={{ bg: "gray.50" }}
                   leftIcon={<Icon as={FaComment} />}
                 >
                   Kakao
                 </Button>
               </HStack>
-              <Text color="gray.600" textAlign="center">
+              <Text textAlign="center">
                 Already a user?{" "}
                 <Link color="blue.500" href="/log-in">
                   Log In

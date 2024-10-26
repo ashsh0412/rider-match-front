@@ -145,34 +145,6 @@ h1 {
   outline: none;
 }
 
-.time-options {
-  display: flex;
-  margin-bottom: 15px;
-}
-
-.time-option {
-  flex: 1;
-  padding: 12px;
-  background-color: #f6f6f6;
-  border: 1px solid #e2e2e2;
-  text-align: center;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.time-option:hover {
-  background-color: #e6e6e6;
-}
-
-.time-option:first-child {
-  border-radius: 8px 0 0 8px;
-}
-
-.time-option:last-child {
-  border-radius: 0 8px 8px 0;
-}
-
 #map {
   height: 100%;
   width: 100%;

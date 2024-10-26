@@ -10,7 +10,7 @@ import NotFound from "./NotFound";
 import LoginCard from "./LoginForm";
 import RideRequest from "./RiderPage";
 import theme from "./theme";
-import LoginCheck from "./API/LoginCheck";
+import LoginCheck from "./api/LoginCheck";
 
 function App() {
   return (
