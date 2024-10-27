@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 
 export default function NotFound() {

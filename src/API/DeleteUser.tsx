@@ -1,6 +1,6 @@
 // deleteAccount.ts
 import Cookies from "js-cookie";
-import { ToastPosition, UseToastOptions } from "@chakra-ui/react";
+import { UseToastOptions } from "@chakra-ui/react";
 import { NavigateFunction } from "react-router-dom";
 
 interface DeleteAccountProps {

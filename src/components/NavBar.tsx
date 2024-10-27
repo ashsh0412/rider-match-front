@@ -32,7 +32,6 @@ const NavBar: React.FC = () => {
       justifyContent={"space-between"}
       bg={bg}
     >
-      {/* Logo */}
       <Text
         fontSize="2xl"
         fontWeight="bold"
@@ -44,9 +43,7 @@ const NavBar: React.FC = () => {
         DriverMatch
       </Text>
 
-      {/* User Profile */}
       <HStack spacing={2}>
-        {/* Trip History Button */}
         <Button variant="ghost" leftIcon={<FaReceipt />} size="md">
           Trip History
         </Button>
