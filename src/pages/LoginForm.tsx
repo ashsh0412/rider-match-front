@@ -159,7 +159,6 @@ export default function LoginCard() {
               w="full"
               variant="outline"
               borderColor="gray.300"
-              _hover={{ bg: "gray.50" }}
               leftIcon={<Icon as={FaGoogle} />}
             >
               Google
@@ -168,7 +167,6 @@ export default function LoginCard() {
               w="full"
               variant="outline"
               borderColor="gray.300"
-              _hover={{ bg: "gray.50" }}
               leftIcon={<Icon as={FaComment} />}
             >
               Kakao

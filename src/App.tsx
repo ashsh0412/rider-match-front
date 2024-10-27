@@ -11,7 +11,7 @@ import LoginCard from "./pages/LoginForm";
 import RideRequest from "./pages/RiderPage";
 import theme from "./theme";
 import LoginCheck from "./api/LoginCheck";
-import Profile from "./pages/Profile";
+import Profile from "./pages/UserProfile";
 
 function App() {
   return (
@@ -22,21 +22,13 @@ function App() {
           <Route path="/" element={<Navigate replace to="/rider-page" />} />
           <Route path="/signup" element={<SignupCard />} />
           <Route
-            path="/signup"
-            element={
-              <LoginCheck>
-                <SignupCard />
-              </LoginCheck>
-            }
-          />{" "}
-          <Route
             path="/log-in"
             element={
               <LoginCheck>
                 <LoginCard />
               </LoginCheck>
             }
-          />{" "}
+          />
           <Route
             path="/rider-page"
             element={
@@ -44,7 +36,7 @@ function App() {
                 <RideRequest />
               </LoginCheck>
             }
-          />{" "}
+          />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

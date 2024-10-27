@@ -5,9 +5,13 @@ import { Center, Spinner } from "@chakra-ui/react";
 
 interface LoginCheckProps {
   children: React.ReactNode;
+  redirectPath?: string; // 이동할 경로를 받아오기 위한 prop 추가
 }
 
-const LoginCheck = ({ children }: LoginCheckProps) => {
+const LoginCheck = ({
+  children,
+  redirectPath = "/rider-page",
+}: LoginCheckProps) => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(true);
 
@@ -26,7 +30,7 @@ const LoginCheck = ({ children }: LoginCheckProps) => {
         if (!response.ok) {
           navigate("/log-in");
         } else {
-          navigate("/rider-page");
+          navigate(redirectPath); // 파라미터로 받은 경로로 내비게이션
         }
 
         // 로그인 확인 완료
@@ -38,7 +42,7 @@ const LoginCheck = ({ children }: LoginCheckProps) => {
     };
 
     checkLoginStatus();
-  }, [navigate]);
+  }, [navigate, redirectPath]);
 
   // 로그인 체크 중에는 아무것도 보여주지 않음
   if (isChecking) {
