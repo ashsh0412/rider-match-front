@@ -29,7 +29,7 @@ export async function DeleteAccount({ toast, navigate }: DeleteAccountProps) {
       status: "info",
       duration: 5000,
       isClosable: true,
-      position: "bottom-right" as ToastPosition,
+      position: "bottom-right",
     });
     navigate("/log-in");
   } catch (error) {
@@ -39,7 +39,7 @@ export async function DeleteAccount({ toast, navigate }: DeleteAccountProps) {
       status: "error",
       duration: 5000,
       isClosable: true,
-      position: "bottom-right" as ToastPosition,
+      position: "bottom-right",
     });
   }
 }

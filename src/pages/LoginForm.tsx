@@ -46,7 +46,7 @@ export default function LoginCard() {
       toast({
         title: "All fields must be filled.",
         status: "warning",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
       return;
@@ -79,7 +79,7 @@ export default function LoginCard() {
         toast({
           title: data.error || "An error occurred.",
           status: "error",
-          position: "top-right",
+          position: "bottom-right",
           isClosable: true,
         });
       }
@@ -87,7 +87,7 @@ export default function LoginCard() {
       toast({
         title: "Error occurred while logging in.",
         status: "error",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
     }

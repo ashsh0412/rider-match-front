@@ -49,7 +49,7 @@ export default function SignupCard() {
       toast({
         title: "All required fields must be filled.",
         status: "warning",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
       return;
@@ -60,7 +60,7 @@ export default function SignupCard() {
       toast({
         title: "Username must be at least 4 characters long.",
         status: "warning",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
       return;
@@ -71,7 +71,7 @@ export default function SignupCard() {
       toast({
         title: "Password must be at least 8 characters long.",
         status: "warning",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
       return;
@@ -83,7 +83,7 @@ export default function SignupCard() {
       toast({
         title: "Invalid email format.",
         status: "warning",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
       return;
@@ -108,7 +108,7 @@ export default function SignupCard() {
         toast({
           title: "User created successfully!",
           status: "success",
-          position: "top-right",
+          position: "bottom-right",
           isClosable: true,
         });
         navigate("/log-in");
@@ -116,7 +116,7 @@ export default function SignupCard() {
         toast({
           title: "A user with that username already exists.",
           status: "error",
-          position: "top-right",
+          position: "bottom-right",
           isClosable: true,
         });
       }
@@ -124,7 +124,7 @@ export default function SignupCard() {
       toast({
         title: "Error occurred while creating user.",
         status: "error",
-        position: "top-right",
+        position: "bottom-right",
         isClosable: true,
       });
     }
