@@ -11,7 +11,7 @@ import LoginCard from "./pages/LoginForm";
 import RideRequest from "./pages/RiderPage";
 import theme from "./theme";
 import LoginCheck from "./api/LoginCheck";
-import Profile from "./pages/UserProfile";
+import Profile from "./pages/UserInfo";
 
 function App() {
   return (

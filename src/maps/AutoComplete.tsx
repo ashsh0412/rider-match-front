@@ -1,4 +1,7 @@
+// autocomplete.ts
+
 import { calcRoute, RouteOptions } from "./RouteMap";
+import { LocationData, sendLocationToBackend } from "../api/LocationAPI";
 
 export const initializeAutocomplete = (
   inputElement: HTMLInputElement,
@@ -10,7 +13,7 @@ export const initializeAutocomplete = (
     title: string,
     description: string,
     status: "success" | "error"
-  ) => void // showToast를 인자로 받음
+  ) => void
 ) => {
   let marker: google.maps.Marker | null = null;
 
@@ -19,7 +22,7 @@ export const initializeAutocomplete = (
     componentRestrictions: { country: ["us"] },
   });
 
-  autocomplete.addListener("place_changed", () => {
+  autocomplete.addListener("place_changed", async () => {
     const place = autocomplete.getPlace();
     if (!place.geometry || !place.geometry.location) {
       showToast(
