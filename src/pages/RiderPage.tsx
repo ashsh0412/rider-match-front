@@ -23,7 +23,6 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
           </VStack>
         </Box>
 
-        {/* Map Container */}
         <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
           <MapComponent />
         </Box>

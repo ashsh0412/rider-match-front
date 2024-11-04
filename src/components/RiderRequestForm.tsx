@@ -17,7 +17,6 @@ const RideRequestForm: React.FC = () => {
   const inputBg = useColorModeValue("gray.100", "gray.700");
   const inputHoverBg = useColorModeValue("gray.200", "gray.600");
   const iconColor = useColorModeValue("gray.500", "gray.400");
-  console.log(startDate);
 
   return (
     <>
@@ -75,11 +74,11 @@ const RideRequestForm: React.FC = () => {
         bg={inputBg}
         _hover={{ bg: inputHoverBg }}
         cursor="pointer"
-        borderRadius="0.375rem" // 여기서 border radius 설정
-        fontWeight="medium" // 글자 두께 설정
-        fontSize="lg" // 글자 크기 설정
+        borderRadius="0.375rem"
+        fontWeight="medium"
+        fontSize="lg"
       >
-        Find Drivers
+        Request
       </Box>
     </>
   );

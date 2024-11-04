@@ -1,5 +1,3 @@
-// locationAPI.ts
-
 import Cookies from "js-cookie";
 
 export interface LocationData {

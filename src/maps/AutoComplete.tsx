@@ -1,7 +1,6 @@
 // autocomplete.ts
 
 import { calcRoute, RouteOptions } from "./RouteMap";
-import { LocationData, sendLocationToBackend } from "../api/LocationAPI";
 
 export const initializeAutocomplete = (
   inputElement: HTMLInputElement,
