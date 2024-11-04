@@ -119,6 +119,7 @@ function initAutocomplete() {
     autocompletePickup.setComponentRestrictions({
       country: ["us"], // 미국으로 제한
     });
+    console.log(autocompletePickup);
     autocompletePickup.addListener("place_changed", onPlaceChanged);
   }
 
@@ -126,6 +127,7 @@ function initAutocomplete() {
   autocompleteDropoff.setComponentRestrictions({
     country: ["us"], // 미국으로 제한
   });
+  console.log(autocompleteDropoff);
   autocompleteDropoff.addListener("place_changed", onPlaceChanged);
 }
 

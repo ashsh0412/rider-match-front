@@ -17,6 +17,7 @@ function saveLocationDataToCookie() {
 document
   .getElementById("pickup-location")
   .addEventListener("input", saveLocationDataToCookie);
+
 document
   .getElementById("dropoff-location")
   .addEventListener("input", saveLocationDataToCookie);
@@ -25,7 +26,7 @@ document
 function getLocationDataFromCookie() {
   const match = document.cookie.match(new RegExp("(^| )locationData=([^;]+)"));
   if (match) {
-    return JSON.parse(decodeURIComponent(match[2]));
+    return JSON.parse(decodeURIComponent(match));
   }
   return null;
 }
