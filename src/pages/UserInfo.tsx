@@ -24,6 +24,7 @@ import {
   useDisclosure,
   IconButton,
   Tooltip,
+  Switch,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
@@ -47,6 +48,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState<Partial<UserProfile>>({});
+  const [isRider, setIsRider] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef<HTMLButtonElement>(null);
 
@@ -73,6 +75,7 @@ export default function Profile() {
       const data = await response.json();
       setUserData(data);
       setFormData(data);
+      setIsRider(data.is_rider);
     } catch (error) {
       toast({
         title: "Error fetching profile",
@@ -96,7 +99,7 @@ export default function Profile() {
 
   const handleSubmit = () => {
     ProfileUpdate({
-      formData,
+      formData: { ...formData, is_rider: isRider },
       setUserData,
       setIsEditing,
       toast,
@@ -186,6 +189,15 @@ export default function Profile() {
                       type="email"
                       value={formData.email || ""}
                       onChange={handleInputChange}
+                    />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel>Rider</FormLabel>
+                    <Switch
+                      id="isRider"
+                      isChecked={isRider}
+                      onChange={() => setIsRider((prev) => !prev)}
                     />
                   </FormControl>
 

@@ -1,4 +1,3 @@
-// RideRequestForm.tsx
 import React, { useState } from "react";
 import {
   Box,
@@ -8,13 +7,19 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaMapMarkerAlt, FaMapPin } from "react-icons/fa";
-import "react-datepicker/dist/react-datepicker.css"; // CSS 파일도 필요합니다.
+import { FaMapMarkerAlt, FaMapPin, FaCheckCircle } from "react-icons/fa";
+import "react-datepicker/dist/react-datepicker.css";
 import CustomDatePicker from "./DatePicker";
 import { sendLocationToBackend } from "../api/LocationAPI";
 
-const RideRequestForm: React.FC = () => {
+interface RideRequestFormProps {
+  onSuccess?: () => void;
+}
+
+const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
+
   const inputBg = useColorModeValue("gray.100", "gray.700");
   const inputHoverBg = useColorModeValue("gray.200", "gray.600");
   const iconColor = useColorModeValue("gray.500", "gray.400");
@@ -22,7 +27,10 @@ const RideRequestForm: React.FC = () => {
   const handleSaveLocation = async () => {
     try {
       await sendLocationToBackend();
-      console.log("Location saved successfully");
+      setIsSuccess(true);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error("Error saving location:", error);
     }

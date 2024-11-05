@@ -11,13 +11,12 @@ interface LocationData {
   address?: string;
   first_name: string;
   last_name: string;
+  user: number; // 사용자 ID 추가
 }
 
 export const sendLocationToBackend = async (): Promise<void> => {
   try {
     const user = await getCurrentUser();
-    console.log("User data:", user);
-
     const startLocation = getStartCoordinates();
     const endLocation = getEndCoordinates();
 
@@ -30,13 +29,12 @@ export const sendLocationToBackend = async (): Promise<void> => {
       start_longitude: startLocation.lng,
       end_latitude: endLocation.lat,
       end_longitude: endLocation.lng,
-      first_name: user.first_name, // 이름 저장
-      last_name: user.last_name, // 성 저장
+      first_name: user.first_name,
+      last_name: user.last_name,
+      user: user.id, // 사용자 ID 추가
     };
 
-    console.log("Sending location data:", locationData);
-
-    const response = await fetch("http://127.0.0.1:8000/api/v1/locations", {
+    const response = await fetch("http://127.0.0.1:8000/api/v1/locations/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,9 +43,6 @@ export const sendLocationToBackend = async (): Promise<void> => {
       credentials: "include",
       body: JSON.stringify(locationData),
     });
-
-    const responseData = await response.json();
-    console.log("Server response:", responseData);
 
     if (!response.ok) {
       throw new Error("Failed to save location data");

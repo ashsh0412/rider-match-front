@@ -16,7 +16,7 @@ export const getCurrentUser = async (): Promise<UserData> => {
         "Content-Type": "application/json",
         "X-CSRFToken": Cookies.get("csrftoken") || "",
       },
-      credentials: "include", // 중요: 인증 쿠키 포함
+      credentials: "include",
     });
 
     if (!response.ok) {

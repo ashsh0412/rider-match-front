@@ -4,12 +4,11 @@ import "react-datepicker/dist/react-datepicker.css";
 import NavBar from "../components/NavBar";
 import RecentLocations from "../components/RecentLocations";
 import RideRequestForm from "../components/RiderRequestForm";
+import SuccessMessage from "../components/RequestSuccess";
+import { useState } from "react";
 
-interface RideRequestProps {
-  onSubmit?: (pickupLocation: string, dropoffLocation: string) => void;
-}
-
-const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
+const RideRequest: React.FC = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
   const mainBg = useColorModeValue("gray.50", "gray.900");
 
   return (
@@ -17,10 +16,14 @@ const RideRequest: React.FC<RideRequestProps> = ({ onSubmit }) => {
       <NavBar />
       <Flex minH="100vh" bg={mainBg} pt="64px">
         <Box flex="0 0 400px" p={6} h="calc(100vh - 64px)" overflowY="auto">
-          <VStack spacing={4} align="stretch">
-            <RideRequestForm />
-            <RecentLocations />
-          </VStack>
+          {isSuccess ? (
+            <SuccessMessage />
+          ) : (
+            <VStack spacing={4} align="stretch">
+              <RideRequestForm onSuccess={() => setIsSuccess(true)} />
+              <RecentLocations />
+            </VStack>
+          )}
         </Box>
 
         <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
