@@ -47,10 +47,29 @@ export function calcRoute({
           },
         };
 
+        // 시작 위치와 도착 위치를 따로 저장
+        localStorage.setItem(
+          "startCoordinates",
+          JSON.stringify(coordinates.start)
+        );
+        localStorage.setItem("endCoordinates", JSON.stringify(coordinates.end));
+
         resolve(coordinates);
       } else {
         reject(new Error(`Error fetching directions: ${status}`));
       }
     });
   });
+}
+
+// 시작 위치 가져오기
+export function getStartCoordinates() {
+  const stored = localStorage.getItem("startCoordinates");
+  return stored ? JSON.parse(stored) : null;
+}
+
+// 도착 위치 가져오기
+export function getEndCoordinates() {
+  const stored = localStorage.getItem("endCoordinates");
+  return stored ? JSON.parse(stored) : null;
 }
