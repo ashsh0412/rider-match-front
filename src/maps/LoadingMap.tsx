@@ -53,7 +53,6 @@ const MapComponent: React.FC = () => {
     let locationData: { pickup: string; dropoff: string } | null = null;
     if (match) {
       locationData = JSON.parse(decodeURIComponent(match[2]));
-      console.log(locationData);
     } else {
       console.log("Location data not found");
     }

@@ -155,7 +155,7 @@ export default function Profile() {
                     py={1}
                     borderRadius="full"
                   >
-                    {userData.is_rider ? "Rider" : "Regular User"}
+                    {userData.is_rider ? "Driver" : "Rider"}
                   </Badge>
                 </VStack>
               </VStack>
@@ -193,7 +193,7 @@ export default function Profile() {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Rider</FormLabel>
+                    <FormLabel>Switch Status</FormLabel>
                     <Switch
                       id="isRider"
                       isChecked={isRider}
