@@ -20,6 +20,7 @@ import { sendLocationToBackend } from "../api/PostLocation";
 import { useLocation } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import { getLocations } from "../api/GetLocation";
+import { getEndCoordinates, getStartCoordinates } from "../maps/RouteMap";
 
 interface RideRequestFormProps {
   onSuccess?: () => void;
@@ -41,8 +42,50 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
 
   const handleFindLocation = async () => {
     try {
-      await getLocations();
-      const locations = getLocations();
+      const locations = await getLocations(); // 한 번만 호출
+      const startLocation = getStartCoordinates();
+      const destination = getEndCoordinates();
+
+      console.log(destination);
+
+      const THRESHOLD = 0.0001;
+
+      if (locations && locations.length > 0) {
+        // destination과 비슷한 좌표를 가진 위치 데이터 필터링
+        const matchingLocations = locations.filter((location) => {
+          const latitudeDiff = Math.abs(
+            location.end_latitude - destination.lat
+          );
+          const longitudeDiff = Math.abs(
+            location.end_longitude - destination.lng
+          );
+
+          return latitudeDiff <= THRESHOLD && longitudeDiff <= THRESHOLD;
+        });
+
+        if (matchingLocations.length > 0) {
+          console.log("가까운 위치 데이터:", matchingLocations);
+          // 첫 번째 일치하는 데이터 사용
+          const matchedLocation = matchingLocations[0];
+          console.log("최종 위도:", matchedLocation.end_latitude);
+          console.log("최종 경도:", matchedLocation.end_longitude);
+
+          // 모든 일치하는 데이터 순회
+          matchingLocations.forEach((location, index) => {
+            console.log(`일치하는 위치 ${index + 1}:`, {
+              latitude: location.end_latitude,
+              longitude: location.end_longitude,
+              name: `${location.first_name} ${location.last_name}`,
+              address: location.address,
+            });
+          });
+        } else {
+          console.log("근처에 일치하는 위치 데이터가 없습니다.");
+        }
+        localStorage.removeItem("endCoordinates");
+        localStorage.removeItem("startCoordinates");
+      }
+
       setIsSuccess(true);
 
       if (onSuccess) {
@@ -143,6 +186,7 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
               <FaUserFriends color={iconColor} />
             </InputLeftElement>
             <NumberInput
+              defaultValue={1}
               border="none"
               min={1}
               max={5}
@@ -193,7 +237,7 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
         fontSize="lg"
         onClick={isRiderPage ? handleSaveLocation : handleFindLocation}
       >
-        Request
+        {mainText}
       </Box>
     </>
   );

@@ -1,6 +1,6 @@
-// api.ts
 import Cookies from "js-cookie";
 
+// api.ts
 export interface LocationData {
   start_latitude: number;
   start_longitude: number;
@@ -9,10 +9,11 @@ export interface LocationData {
   address?: string;
   first_name: string;
   last_name: string;
-  user: number; // 사용자 ID 추가
+  user: number;
 }
 
-export const getLocations = async (): Promise<LocationData> => {
+export const getLocations = async (): Promise<LocationData[]> => {
+  // 배열 타입으로 변경
   try {
     const response = await fetch(
       "http://127.0.0.1:8000/api/v1/locations/get/",
@@ -30,8 +31,8 @@ export const getLocations = async (): Promise<LocationData> => {
       throw new Error("Failed to fetch user data");
     }
 
-    const locationrData = await response.json();
-    return locationrData;
+    const locationData = await response.json();
+    return locationData;
   } catch (error) {
     console.error("Error fetching user:", error);
     throw error;
