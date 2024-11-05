@@ -53,7 +53,7 @@ const PassengerCard = ({
       _hover={{ transform: "translateY(-2px)", shadow: "md" }}
     >
       <CardBody>
-        <VStack align="stretch" spacing={3}>
+        <VStack align="stretch" spacing={2}>
           <HStack justify="space-between">
             <HStack>
               <Icon as={User} w={5} h={5} color={successColor} />
@@ -121,7 +121,7 @@ const SuccessMessage = () => {
     : "Select passengers to accept their ride request.";
   const subDescription = isRiderPage
     ? "You can check the status of your ride in the notifications."
-    : "";
+    : null;
 
   // Simulated passengers data
   const passengers: Passenger[] = [

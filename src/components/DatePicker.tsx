@@ -85,6 +85,7 @@ interface CustomDatePickerProps {
   iconColor: string;
   inputBg: string;
   inputHoverBg: string;
+  value: Date | null;
 }
 
 const CustomDatePicker: React.FC<CustomDatePickerProps> = ({

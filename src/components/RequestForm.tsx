@@ -42,11 +42,9 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
 
   const handleFindLocation = async () => {
     try {
-      const locations = await getLocations(); // 한 번만 호출
+      const locations = await getLocations();
       const startLocation = getStartCoordinates();
       const destination = getEndCoordinates();
-
-      console.log(destination);
 
       const THRESHOLD = 0.0001;
 
@@ -77,6 +75,9 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
               longitude: location.end_longitude,
               name: `${location.first_name} ${location.last_name}`,
               address: location.address,
+              user: location.user,
+              first_name: location.first_name,
+              last_name: location.last_name,
             });
           });
         } else {
@@ -113,7 +114,13 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
 
   const handleSaveLocation = async () => {
     try {
-      await sendLocationToBackend();
+      const formattedDate = startDate
+        ? startDate.toISOString().slice(0, 19).replace("T", " ")
+        : (() => {
+            const now = new Date();
+            return now.toISOString().slice(0, 19).replace("T", " ");
+          })();
+      await sendLocationToBackend(formattedDate);
       setIsSuccess(true);
 
       if (onSuccess) {
@@ -217,6 +224,7 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
       )}
 
       <CustomDatePicker
+        value={startDate}
         onChange={(date) => setStartDate(date)}
         iconColor={iconColor}
         inputBg={inputBg}
