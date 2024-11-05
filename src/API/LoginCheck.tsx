@@ -1,50 +1,45 @@
+// LoginCheck.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import { Center, Spinner } from "@chakra-ui/react";
+import { getCurrentUser } from "./GetUserInfo";
 
 interface LoginCheckProps {
   children: React.ReactNode;
-  redirectPath?: string; // 이동할 경로를 받아오기 위한 prop 추가
 }
 
-const LoginCheck = ({
-  children,
-  redirectPath = "/rider-page",
-}: LoginCheckProps) => {
+const LoginCheck = ({ children }: LoginCheckProps) => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Cookies.get("csrftoken") || "",
-          },
-          credentials: "include",
-        });
+        const userData = await getCurrentUser();
 
-        if (!response.ok) {
-          navigate("/log-in");
+        // 사용자 타입에 따라 적절한 페이지로 리다이렉트
+        if (userData.is_rider) {
+          navigate("/driver-page");
+        } else if (!userData.is_rider) {
+          navigate("/rider-page");
         } else {
-          navigate(redirectPath); // 파라미터로 받은 경로로 내비게이션
+          // 타입이 지정되지 않은 경우의 처리
+          console.warn("User type not specified");
+          navigate("/profile"); // 또는 다른 기본 페이지
         }
 
-        // 로그인 확인 완료
         setIsChecking(false);
       } catch (error) {
         console.error("로그인 확인 중 오류 발생:", error);
         navigate("/log-in");
+        setIsChecking(false);
       }
     };
 
     checkLoginStatus();
-  }, [navigate, redirectPath]);
+  }, [navigate]);
 
-  // 로그인 체크 중에는 아무것도 보여주지 않음
+  // 로그인 체크 중에는 로딩 스피너 표시
   if (isChecking) {
     return (
       <Center h="100vh">

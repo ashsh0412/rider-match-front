@@ -1,3 +1,4 @@
+// api.ts
 import Cookies from "js-cookie";
 
 export interface UserData {
@@ -6,6 +7,8 @@ export interface UserData {
   email: string;
   first_name: string;
   last_name: string;
+  is_rider: boolean;
+  is_driver: boolean;
 }
 
 export const getCurrentUser = async (): Promise<UserData> => {
