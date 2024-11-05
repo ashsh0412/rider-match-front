@@ -13,6 +13,7 @@ import theme from "./theme";
 import LoginCheck from "./api/LoginCheck";
 import Profile from "./pages/UserInfo";
 import DriverPage from "./pages/DriverPage";
+import RiderPage from "./pages/RiderPage";
 
 function App() {
   return (
@@ -34,7 +35,7 @@ function App() {
             path="/rider-page"
             element={
               <LoginCheck>
-                <RideRequest />
+                <RiderPage />
               </LoginCheck>
             }
           />

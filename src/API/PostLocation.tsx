@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { getStartCoordinates, getEndCoordinates } from "../maps/RouteMap";
-import { getCurrentUser } from "../api/GetUserInfo";
+import { getCurrentUser } from "./GetUserInfo";
 
 // LocationData 인터페이스 수정
 interface LocationData {
@@ -49,6 +49,8 @@ export const sendLocationToBackend = async (): Promise<void> => {
     }
 
     console.log("Location saved successfully");
+    localStorage.removeItem("endCoordinates");
+    localStorage.removeItem("startCoordinates");
   } catch (error) {
     console.error("Error saving location:", error);
     throw error;

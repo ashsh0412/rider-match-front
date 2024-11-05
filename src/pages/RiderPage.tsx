@@ -3,11 +3,11 @@ import MapComponent from "../maps/LoadingMap";
 import "react-datepicker/dist/react-datepicker.css";
 import NavBar from "../components/NavBar";
 import RecentLocations from "../components/RecentLocations";
-import RideRequestForm from "../components/RiderRequestForm";
-import SuccessMessage from "../components/RequestSuccess";
+import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
+import SuccessMessage from "../components/RequestSuccess";
 
-const RideRequest: React.FC = () => {
+const RiderPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const mainBg = useColorModeValue("gray.50", "gray.900");
 
@@ -34,4 +34,4 @@ const RideRequest: React.FC = () => {
   );
 };
 
-export default RideRequest;
+export default RiderPage;

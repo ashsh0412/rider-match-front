@@ -3,9 +3,9 @@ import MapComponent from "../maps/LoadingMap";
 import "react-datepicker/dist/react-datepicker.css";
 import NavBar from "../components/NavBar";
 import RecentLocations from "../components/RecentLocations";
-import RideRequestForm from "../components/RiderRequestForm";
-import SuccessMessage from "../components/RequestSuccess";
+import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
+import SuccessMessage from "../components/RequestSuccess";
 
 const DriverPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,7 +21,6 @@ const DriverPage: React.FC = () => {
           ) : (
             <VStack spacing={4} align="stretch">
               <RideRequestForm onSuccess={() => setIsSuccess(true)} />
-              <RecentLocations />
             </VStack>
           )}
         </Box>
