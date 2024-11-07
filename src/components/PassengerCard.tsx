@@ -18,7 +18,7 @@ export interface Passenger {
   time: string;
 }
 
-export interface PassengerCardProps {
+interface PassengerCardProps {
   passenger: Passenger;
   isSelected: boolean;
   onClick: (id: number) => void;

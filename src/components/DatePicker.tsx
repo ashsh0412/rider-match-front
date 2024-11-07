@@ -123,7 +123,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   }, [selected, onChange]);
 
   return (
-    <Box position="relative">
+    <Box position="relative" zIndex={1}>
       <style>{datePickerStyles}</style>
       <InputGroup>
         <InputLeftElement pointerEvents="none" h="100%">

@@ -17,7 +17,11 @@ import { reverseGeocode } from "../api/Geocoding";
 import { Passenger, PassengerCard } from "./PassengerCard";
 import PageNavigation from "./PageNavigation";
 
-const SuccessMessage = () => {
+interface SuccessMessageProps {
+  setIsSuccess: (value: boolean) => void;
+}
+
+const SuccessMessage: React.FC<SuccessMessageProps> = () => {
   const [selectedPassenger, setSelectedPassenger] = useState<number | null>(
     null
   );
@@ -34,6 +38,18 @@ const SuccessMessage = () => {
   const location = useLocation();
   const isRiderPage = location.pathname === "/rider-page";
   const hasNoPassengers = passengers.length === 0;
+  const [selectedPassengers, setSelectedPassengers] = useState<number[]>([]);
+
+  const handlePassengerSelect = (id: number) => {
+    setSelectedPassengers((prevSelected) => {
+      if (prevSelected.includes(id)) {
+        return prevSelected.filter((passengerId) => passengerId !== id); // 선택 해제
+      } else if (prevSelected.length < 5) {
+        return [...prevSelected, id]; // 최대 5명까지 선택
+      }
+      return prevSelected;
+    });
+  };
 
   // 상태에 따른 색상과 아이콘 설정
   const getStatusConfig = () => {
@@ -122,7 +138,7 @@ const SuccessMessage = () => {
             const newPassengers = optInfo
               .slice(0, maxPassengers)
               .map((passenger, index) => ({
-                id: index,
+                id: index + 1,
                 name: `${passenger.first_name} ${passenger.last_name}`,
                 pickup: passenger.pickup_location,
                 destination: passenger.dropoff_location,
@@ -147,6 +163,44 @@ const SuccessMessage = () => {
   useEffect(() => {
     initializePassengers();
   }, []);
+
+  const handleButtonClick = () => {
+    if (isRiderPage) {
+      localStorage.removeItem("endCoordinates");
+      localStorage.removeItem("startCoordinates");
+      window.location.reload();
+    } else if (hasNoPassengers) {
+      window.location.reload();
+    } else {
+      const selectedPassengerDetails = passengers.filter((p) =>
+        selectedPassengers.includes(p.id)
+      );
+    }
+    // If there are passengers and one is selected, proceed with accept logic
+  };
+
+  const getButtonConfig = () => {
+    if (isRiderPage) {
+      return {
+        text: "Done",
+        isDisabled: false,
+      };
+    }
+
+    if (hasNoPassengers) {
+      return {
+        text: "Search Again",
+        isDisabled: false,
+      };
+    }
+
+    return {
+      text: "Accept",
+      isDisabled: !selectedPassenger,
+    };
+  };
+
+  const buttonConfig = getButtonConfig();
 
   if (isLoading) {
     return (
@@ -190,8 +244,8 @@ const SuccessMessage = () => {
               <PassengerCard
                 key={passenger.id}
                 passenger={passenger}
-                isSelected={selectedPassenger === passenger.id}
-                onClick={setSelectedPassenger}
+                isSelected={selectedPassengers.includes(passenger.id)}
+                onClick={() => handlePassengerSelect(passenger.id)}
               />
             ))}
 
@@ -218,15 +272,10 @@ const SuccessMessage = () => {
         <Button
           w="full"
           mt={4}
-          isDisabled={!isRiderPage && !selectedPassenger}
-          onClick={() => {
-            if (isRiderPage) {
-              localStorage.removeItem("endCoordinates");
-              localStorage.removeItem("startCoordinates");
-            }
-          }}
+          isDisabled={buttonConfig.isDisabled}
+          onClick={handleButtonClick}
         >
-          {isRiderPage ? "Done" : "Accept"}
+          {buttonConfig.text}
         </Button>
       </VStack>
     </Box>

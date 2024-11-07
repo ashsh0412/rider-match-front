@@ -4,24 +4,19 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  NumberDecrementStepper,
-  NumberIncrementStepper,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
   Text,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import { FaMapMarkerAlt, FaMapPin, FaUserFriends } from "react-icons/fa";
+import { FaMapMarkerAlt, FaMapPin } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomDatePicker from "./DatePicker";
 import { sendLocationToBackend } from "../api/PostLocation";
 import { useLocation } from "react-router-dom";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import DriverInfo from "./DriverPageInfo";
 
 interface RideRequestFormProps {
-  onSuccess?: () => void;
+  onSuccess: () => void;
 }
 
 export const formatDateTime = (date: Date | null): string => {
@@ -141,43 +136,6 @@ export const RideRequestForm: React.FC<RideRequestFormProps> = ({
         </InputGroup>
       </Box>
 
-      {!isRiderPage && (
-        <Box position="relative" width="100%" borderRadius="0.375rem">
-          <InputGroup>
-            <InputLeftElement pointerEvents="none">
-              <FaUserFriends color={iconColor} />
-            </InputLeftElement>
-            <NumberInput
-              defaultValue={1}
-              border="none"
-              min={1}
-              max={5}
-              size="lg"
-              bg={inputBg}
-              width="100%"
-              borderRadius="0.375rem"
-              _hover={{ bg: inputHoverBg }}
-              _focus={{ bg: inputHoverBg, boxShadow: "none" }}
-            >
-              <NumberInputField
-                border="none"
-                pl="40px"
-                borderRadius="0.375rem"
-                placeholder="Select number of passengers"
-              />
-              <NumberInputStepper>
-                <NumberIncrementStepper>
-                  <ChevronUpIcon boxSize={4} />
-                </NumberIncrementStepper>
-                <NumberDecrementStepper>
-                  <ChevronDownIcon boxSize={4} />
-                </NumberDecrementStepper>
-              </NumberInputStepper>
-            </NumberInput>
-          </InputGroup>
-        </Box>
-      )}
-
       <CustomDatePicker
         value={startDate}
         onChange={(date) => setStartDate(date)}
@@ -202,6 +160,7 @@ export const RideRequestForm: React.FC<RideRequestFormProps> = ({
       >
         {mainText}
       </Box>
+      {!isRiderPage && <DriverInfo />}
     </>
   );
 };

@@ -5,6 +5,7 @@ import NavBar from "../components/NavBar";
 import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
 import SuccessMessage from "../components/RequestSuccess";
+import DriverInfo from "../components/DriverPageInfo";
 
 const DriverPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -16,7 +17,7 @@ const DriverPage: React.FC = () => {
       <Flex minH="100vh" bg={mainBg} pt="64px">
         <Box flex="0 0 400px" p={6} h="calc(100vh - 64px)" overflowY="auto">
           {isSuccess ? (
-            <SuccessMessage />
+            <SuccessMessage setIsSuccess={setIsSuccess} />
           ) : (
             <VStack spacing={4} align="stretch">
               <RideRequestForm onSuccess={() => setIsSuccess(true)} />
