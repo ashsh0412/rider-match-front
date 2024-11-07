@@ -6,10 +6,12 @@ export interface LocationData {
   start_longitude: number;
   end_latitude: number;
   end_longitude: number;
-  address?: string;
   first_name: string;
   last_name: string;
   user: number;
+  date_time: string;
+  pickup_location: string;
+  dropoff_location: string;
 }
 
 export const getLocations = async (): Promise<LocationData[]> => {

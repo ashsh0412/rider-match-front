@@ -129,20 +129,16 @@ const SuccessMessage = () => {
     ? "You can check the status of your ride in the notifications."
     : null;
 
-  // 사용자 정보와 승객 정보를 통합하는 함수
   const initializePassengers = async () => {
     setIsLoading(true);
     try {
       const formattedDate = formatDateTime(null);
       const userInfo = await createLocationData(formattedDate);
-      const optInfo = await optLocations();
 
       if (!userInfo) {
         console.error("Failed to get user info");
         return;
       }
-
-      let updatedPassengers: Passenger[] = [];
 
       if (isRiderPage) {
         const pickUpAddress = await reverseGeocode(
@@ -153,8 +149,7 @@ const SuccessMessage = () => {
           userInfo.end_latitude,
           userInfo.end_longitude
         );
-        // 라이더일 경우: 사용자의 정보만 추가
-        updatedPassengers = [
+        setPassengers([
           {
             id: 1,
             name: `${userInfo.first_name} ${userInfo.last_name}`,
@@ -162,22 +157,38 @@ const SuccessMessage = () => {
             destination: destination,
             time: userInfo.date_time,
           },
-        ];
+        ]);
       } else {
-      }
+        console.log("success");
+        const optInfo = await optLocations();
 
-      setPassengers(updatedPassengers);
+        if (optInfo && Array.isArray(optInfo)) {
+          const maxPassengers = 5;
+          const newPassengers = []; // 임시 배열 생성
+
+          for (let i = 0; i < Math.min(optInfo.length, maxPassengers); i++) {
+            const passenger = optInfo[i];
+            newPassengers.push({
+              id: i,
+              name: `${passenger.first_name} ${passenger.last_name}`,
+              pickup: passenger.pickup_location,
+              destination: passenger.dropoff_location,
+              time: passenger.date_time,
+            });
+          }
+
+          setPassengers(newPassengers); // 모든 승객 정보를 한 번에 설정
+          console.log("Updated passengers:", newPassengers);
+        }
+      }
     } catch (error) {
       console.error("Error initializing passengers:", error);
       setPassengers([]);
     } finally {
       setIsLoading(false);
-      localStorage.removeItem("endCoordinates");
-      localStorage.removeItem("startCoordinates");
     }
   };
 
-  // useEffect를 사용하여 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
     initializePassengers();
   }, []);
@@ -218,7 +229,6 @@ const SuccessMessage = () => {
           {subDescription}
         </Box>
 
-        {/* Passenger Selection Cards - 세로 정렬 */}
         {!isRiderPage && (
           <VStack spacing={4} w="100%">
             {passengers.map((passenger) => (
@@ -232,7 +242,6 @@ const SuccessMessage = () => {
           </VStack>
         )}
 
-        {/* Rider View */}
         {isRiderPage && passengers.length > 0 && (
           <VStack spacing={4} w="100%">
             <PassengerCard
@@ -248,18 +257,11 @@ const SuccessMessage = () => {
           mt={4}
           isDisabled={!isRiderPage && !selectedPassenger}
           onClick={() => {
-            if (isRiderPage) {
-              // 라이더 페이지일 때의 로직
-              // "Track Your Ride" 버튼 클릭 시 수행할 작업
-              localStorage.removeItem("endCoordinates");
-              localStorage.removeItem("startCoordinates");
-            } else {
-              // 운전자 페이지일 때의 로직
-              // "Accept Selected Ride" 버튼 클릭 시 수행할 작업
-            }
+            localStorage.removeItem("endCoordinates");
+            localStorage.removeItem("startCoordinates");
           }}
         >
-          {!isRiderPage ? "Accept Selected Ride" : "Track Your Ride"}
+          {isRiderPage ? "Done" : "Accept"}
         </Button>
       </VStack>
     </Box>

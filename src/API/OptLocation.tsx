@@ -1,9 +1,10 @@
 import { getEndCoordinates, getStartCoordinates } from "../maps/RouteMap";
 import { getLocations } from "./GetLocation";
+import { LocationData } from "./PostLocation";
 
-export const optLocations = async () => {
+export const optLocations = async (): Promise<LocationData[]> => {
   try {
-    const locations = await getLocations();
+    const locations: LocationData[] = await getLocations(); // LocationData[] 타입 명시
     const startLocation = getStartCoordinates();
     const destination = getEndCoordinates();
 
@@ -11,6 +12,7 @@ export const optLocations = async () => {
 
     if (!locations || locations.length === 0) {
       console.log("라이더 정보가 없습니다.");
+      return []; // 빈 배열 반환 추가
     }
 
     // destination과 비슷한 좌표를 가진 위치 데이터 필터링
@@ -22,17 +24,12 @@ export const optLocations = async () => {
     });
 
     if (matchingLocations.length > 0) {
-      console.log("가까운 위치 데이터:", matchingLocations);
-      const matchedLocation = matchingLocations[0];
-      console.log("최종 위도:", matchedLocation.end_latitude);
-      console.log("최종 경도:", matchedLocation.end_longitude);
-
-      return matchedLocation;
+      return matchingLocations;
     } else {
       throw new Error("근처에 일치하는 위치 데이터가 없습니다.");
     }
   } catch (error) {
-    console.error("Error finding location:", error);
-    throw error; // 에러를 호출자에게 던짐
+    console.log("Error finding location:", error);
+    return []; // 빈 배열 반환 추가
   }
 };
