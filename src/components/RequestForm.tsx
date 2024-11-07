@@ -19,14 +19,19 @@ import CustomDatePicker from "./DatePicker";
 import { sendLocationToBackend } from "../api/PostLocation";
 import { useLocation } from "react-router-dom";
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { getLocations } from "../api/GetLocation";
-import { getEndCoordinates, getStartCoordinates } from "../maps/RouteMap";
 
 interface RideRequestFormProps {
   onSuccess?: () => void;
 }
 
-const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
+export const formatDateTime = (date: Date | null): string => {
+  const targetDate = date || new Date();
+  return targetDate.toISOString().slice(0, 19).replace("T", " ");
+};
+
+export const RideRequestForm: React.FC<RideRequestFormProps> = ({
+  onSuccess,
+}) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const location = useLocation();
@@ -42,50 +47,8 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
 
   const handleFindLocation = async () => {
     try {
-      const locations = await getLocations();
-      const startLocation = getStartCoordinates();
-      const destination = getEndCoordinates();
-
-      const THRESHOLD = 0.0001;
-
-      if (locations && locations.length > 0) {
-        // destination과 비슷한 좌표를 가진 위치 데이터 필터링
-        const matchingLocations = locations.filter((location) => {
-          const latitudeDiff = Math.abs(
-            location.end_latitude - destination.lat
-          );
-          const longitudeDiff = Math.abs(
-            location.end_longitude - destination.lng
-          );
-
-          return latitudeDiff <= THRESHOLD && longitudeDiff <= THRESHOLD;
-        });
-
-        if (matchingLocations.length > 0) {
-          console.log("가까운 위치 데이터:", matchingLocations);
-          // 첫 번째 일치하는 데이터 사용
-          const matchedLocation = matchingLocations[0];
-          console.log("최종 위도:", matchedLocation.end_latitude);
-          console.log("최종 경도:", matchedLocation.end_longitude);
-
-          // 모든 일치하는 데이터 순회
-          matchingLocations.forEach((location, index) => {
-            console.log(`일치하는 위치 ${index + 1}:`, {
-              latitude: location.end_latitude,
-              longitude: location.end_longitude,
-              name: `${location.first_name} ${location.last_name}`,
-              address: location.address,
-              user: location.user,
-              first_name: location.first_name,
-              last_name: location.last_name,
-            });
-          });
-        } else {
-          console.log("근처에 일치하는 위치 데이터가 없습니다.");
-        }
-        localStorage.removeItem("endCoordinates");
-        localStorage.removeItem("startCoordinates");
-      }
+      const formattedDate = formatDateTime(startDate);
+      await sendLocationToBackend(formattedDate);
 
       setIsSuccess(true);
 
@@ -114,12 +77,7 @@ const RideRequestForm: React.FC<RideRequestFormProps> = ({ onSuccess }) => {
 
   const handleSaveLocation = async () => {
     try {
-      const formattedDate = startDate
-        ? startDate.toISOString().slice(0, 19).replace("T", " ")
-        : (() => {
-            const now = new Date();
-            return now.toISOString().slice(0, 19).replace("T", " ");
-          })();
+      const formattedDate = formatDateTime(startDate);
       await sendLocationToBackend(formattedDate);
       setIsSuccess(true);
 

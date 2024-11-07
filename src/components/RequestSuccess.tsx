@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   VStack,
@@ -10,10 +10,15 @@ import {
   Card,
   CardBody,
   Divider,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaCheckCircle } from "react-icons/fa";
 import { MapPin, Clock, User } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { createLocationData } from "../api/PostLocation";
+import { formatDateTime } from "./RequestForm";
+import { optLocations } from "../api/OptLocation";
+import { reverseGeocode } from "../api/Geocoding";
 
 interface Passenger {
   id: number;
@@ -21,7 +26,6 @@ interface Passenger {
   pickup: string;
   destination: string;
   time: string;
-  passengers: string;
 }
 
 interface PassengerCardProps {
@@ -105,6 +109,8 @@ const SuccessMessage = () => {
   const [selectedPassenger, setSelectedPassenger] = useState<number | null>(
     null
   );
+  const [passengers, setPassengers] = useState<Passenger[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.600", "gray.200");
@@ -123,33 +129,80 @@ const SuccessMessage = () => {
     ? "You can check the status of your ride in the notifications."
     : null;
 
-  // Simulated passengers data
-  const passengers: Passenger[] = [
-    {
-      id: 1,
-      name: "James Wilson",
-      pickup: "SGD Security",
-      destination: "Main Terminal",
-      time: "2:18",
-      passengers: "2",
-    },
-    {
-      id: 2,
-      name: "Sarah Parker",
-      pickup: "Central Station",
-      destination: "Airport Terminal 2",
-      time: "2:25",
-      passengers: "3",
-    },
-    {
-      id: 3,
-      name: "Michael Brown",
-      pickup: "Hotel Grand",
-      destination: "Convention Center",
-      time: "2:30",
-      passengers: "1",
-    },
-  ];
+  // 사용자 정보와 승객 정보를 통합하는 함수
+  const initializePassengers = async () => {
+    setIsLoading(true);
+    try {
+      const formattedDate = formatDateTime(null);
+      const userInfo = await createLocationData(formattedDate);
+      const optInfo = await optLocations();
+
+      if (!userInfo) {
+        console.error("Failed to get user info");
+        return;
+      }
+
+      let updatedPassengers: Passenger[] = [];
+
+      if (isRiderPage) {
+        const pickUpAddress = await reverseGeocode(
+          userInfo.start_latitude,
+          userInfo.start_longitude
+        );
+        const destination = await reverseGeocode(
+          userInfo.end_latitude,
+          userInfo.end_longitude
+        );
+        // 라이더일 경우: 사용자의 정보만 추가
+        updatedPassengers = [
+          {
+            id: 1,
+            name: `${userInfo.first_name} ${userInfo.last_name}`,
+            pickup: pickUpAddress,
+            destination: destination,
+            time: userInfo.date_time,
+          },
+        ];
+      } else {
+      }
+
+      setPassengers(updatedPassengers);
+    } catch (error) {
+      console.error("Error initializing passengers:", error);
+      setPassengers([]);
+    } finally {
+      setIsLoading(false);
+      localStorage.removeItem("endCoordinates");
+      localStorage.removeItem("startCoordinates");
+    }
+  };
+
+  // useEffect를 사용하여 컴포넌트 마운트 시 데이터 로드
+  useEffect(() => {
+    initializePassengers();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Box
+        bg={bgColor}
+        p={6}
+        borderRadius="lg"
+        boxShadow="md"
+        w="100%"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <VStack spacing={6} align="center">
+          <Spinner thickness="4px" speed="0.65s" size="xl" />
+          <Text fontSize="lg" color={textColor} fontWeight="medium">
+            Loading address information...
+          </Text>
+        </VStack>
+      </Box>
+    );
+  }
 
   return (
     <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" w="100%">
@@ -180,7 +233,7 @@ const SuccessMessage = () => {
         )}
 
         {/* Rider View */}
-        {isRiderPage && (
+        {isRiderPage && passengers.length > 0 && (
           <VStack spacing={4} w="100%">
             <PassengerCard
               passenger={passengers[0]}
@@ -193,10 +246,18 @@ const SuccessMessage = () => {
         <Button
           w="full"
           mt={4}
-          colorScheme="black"
-          bg="black"
-          _hover={{ bg: "gray.800" }}
           isDisabled={!isRiderPage && !selectedPassenger}
+          onClick={() => {
+            if (isRiderPage) {
+              // 라이더 페이지일 때의 로직
+              // "Track Your Ride" 버튼 클릭 시 수행할 작업
+              localStorage.removeItem("endCoordinates");
+              localStorage.removeItem("startCoordinates");
+            } else {
+              // 운전자 페이지일 때의 로직
+              // "Accept Selected Ride" 버튼 클릭 시 수행할 작업
+            }
+          }}
         >
           {!isRiderPage ? "Accept Selected Ride" : "Track Your Ride"}
         </Button>
