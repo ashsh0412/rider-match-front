@@ -4,106 +4,18 @@ import {
   VStack,
   Text,
   Button,
-  HStack,
   useColorModeValue,
   Icon,
-  Card,
-  CardBody,
-  Divider,
   Spinner,
 } from "@chakra-ui/react";
-import { FaCheckCircle } from "react-icons/fa";
-import { MapPin, Clock, User } from "lucide-react";
+import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { createLocationData } from "../api/PostLocation";
 import { formatDateTime } from "./RequestForm";
 import { optLocations } from "../api/OptLocation";
 import { reverseGeocode } from "../api/Geocoding";
-
-interface Passenger {
-  id: number;
-  name: string;
-  pickup: string;
-  destination: string;
-  time: string;
-}
-
-interface PassengerCardProps {
-  passenger: Passenger;
-  isSelected: boolean;
-  onClick: (id: number) => void;
-}
-
-const PassengerCard = ({
-  passenger,
-  isSelected,
-  onClick,
-}: PassengerCardProps) => {
-  const textColor = useColorModeValue("gray.600", "gray.200");
-  const subTextColor = useColorModeValue("gray.500", "gray.400");
-  const successColor = useColorModeValue("green.500", "green.300");
-  const cardBg = useColorModeValue("gray.50", "gray.700");
-  const selectedCardBg = useColorModeValue("green.50", "green.900");
-
-  return (
-    <Card
-      bg={isSelected ? selectedCardBg : cardBg}
-      width="100%"
-      cursor="pointer"
-      onClick={() => onClick(passenger.id)}
-      borderWidth={isSelected ? "2px" : "1px"}
-      borderColor={isSelected ? "green.500" : "transparent"}
-      transition="all 0.2s"
-      _hover={{ transform: "translateY(-2px)", shadow: "md" }}
-    >
-      <CardBody>
-        <VStack align="stretch" spacing={2}>
-          <HStack justify="space-between">
-            <HStack>
-              <Icon as={User} w={5} h={5} color={successColor} />
-              <Text fontWeight="bold" color={textColor}>
-                {passenger.name}
-              </Text>
-            </HStack>
-          </HStack>
-
-          <Divider />
-
-          <HStack spacing={3}>
-            <Icon as={MapPin} w={4} h={4} color={subTextColor} />
-            <VStack align="start" spacing={0}>
-              <Text fontSize="sm" color={subTextColor}>
-                Pickup
-              </Text>
-              <Text fontSize="sm" color={textColor}>
-                {passenger.pickup}
-              </Text>
-            </VStack>
-          </HStack>
-
-          <HStack spacing={3}>
-            <Icon as={MapPin} w={4} h={4} color={subTextColor} />
-            <VStack align="start" spacing={0}>
-              <Text fontSize="sm" color={subTextColor}>
-                Destination
-              </Text>
-              <Text fontSize="sm" color={textColor}>
-                {passenger.destination}
-              </Text>
-            </VStack>
-          </HStack>
-
-          <HStack spacing={3}>
-            <Icon as={Clock} w={4} h={4} color={subTextColor} />
-            <Text fontSize="sm" color={textColor}>
-              {passenger.time}
-            </Text>
-          </HStack>
-        </VStack>
-      </CardBody>
-    </Card>
-  );
-};
+import { Passenger, PassengerCard } from "./PassengerCard";
+import PageNavigation from "./PageNavigation";
 
 const SuccessMessage = () => {
   const [selectedPassenger, setSelectedPassenger] = useState<number | null>(
@@ -111,23 +23,66 @@ const SuccessMessage = () => {
   );
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
 
   const bgColor = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("gray.600", "gray.200");
   const successColor = useColorModeValue("green.500", "green.300");
+  const warningColor = useColorModeValue("yellow.500", "yellow.300");
 
   const location = useLocation();
   const isRiderPage = location.pathname === "/rider-page";
+  const hasNoPassengers = passengers.length === 0;
+
+  // 상태에 따른 색상과 아이콘 설정
+  const getStatusConfig = () => {
+    if (isRiderPage) {
+      return {
+        icon: FaCheckCircle,
+        color: successColor,
+      };
+    }
+
+    if (hasNoPassengers) {
+      return {
+        icon: FaExclamationTriangle,
+        color: warningColor,
+      };
+    }
+
+    return {
+      icon: FaCheckCircle,
+      color: successColor,
+    };
+  };
+
+  const statusConfig = getStatusConfig();
 
   const mainMessage = isRiderPage
     ? "Ride Request Successful!"
+    : hasNoPassengers
+    ? "No Available Requests"
     : "New Ride Requests Available!";
+
   const description = isRiderPage
     ? "Your ride request has been submitted successfully. We will notify you when a driver accepts your request."
+    : hasNoPassengers
+    ? "There are currently no ride requests in your area."
     : "Select passengers to accept their ride request.";
+
   const subDescription = isRiderPage
     ? "You can check the status of your ride in the notifications."
+    : hasNoPassengers
+    ? "Please check back later for new ride requests."
     : null;
+
+  const getCurrentPagePassengers = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return passengers.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const totalPages = Math.ceil(passengers.length / itemsPerPage);
 
   const initializePassengers = async () => {
     setIsLoading(true);
@@ -159,26 +114,26 @@ const SuccessMessage = () => {
           },
         ]);
       } else {
-        console.log("success");
         const optInfo = await optLocations();
 
         if (optInfo && Array.isArray(optInfo)) {
-          const maxPassengers = 5;
-          const newPassengers = []; // 임시 배열 생성
-
-          for (let i = 0; i < Math.min(optInfo.length, maxPassengers); i++) {
-            const passenger = optInfo[i];
-            newPassengers.push({
-              id: i,
-              name: `${passenger.first_name} ${passenger.last_name}`,
-              pickup: passenger.pickup_location,
-              destination: passenger.dropoff_location,
-              time: passenger.date_time,
-            });
+          if (optInfo.length > 0) {
+            const maxPassengers = 10;
+            const newPassengers = optInfo
+              .slice(0, maxPassengers)
+              .map((passenger, index) => ({
+                id: index,
+                name: `${passenger.first_name} ${passenger.last_name}`,
+                pickup: passenger.pickup_location,
+                destination: passenger.dropoff_location,
+                time: passenger.date_time,
+              }));
+            setPassengers(newPassengers);
+          } else {
+            setPassengers([]);
           }
-
-          setPassengers(newPassengers); // 모든 승객 정보를 한 번에 설정
-          console.log("Updated passengers:", newPassengers);
+        } else {
+          setPassengers([]);
         }
       }
     } catch (error) {
@@ -218,8 +173,8 @@ const SuccessMessage = () => {
   return (
     <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" w="100%">
       <VStack spacing={4} align="center">
-        <Icon as={FaCheckCircle} w={12} h={12} color={successColor} />
-        <Box fontSize="xl" fontWeight="bold" color={successColor}>
+        <Icon as={statusConfig.icon} w={12} h={12} color={statusConfig.color} />
+        <Box fontSize="xl" fontWeight="bold" color={statusConfig.color}>
           {mainMessage}
         </Box>
         <Box color={textColor} textAlign="center">
@@ -229,9 +184,9 @@ const SuccessMessage = () => {
           {subDescription}
         </Box>
 
-        {!isRiderPage && (
+        {!isRiderPage && passengers.length > 0 && (
           <VStack spacing={4} w="100%">
-            {passengers.map((passenger) => (
+            {getCurrentPagePassengers().map((passenger) => (
               <PassengerCard
                 key={passenger.id}
                 passenger={passenger}
@@ -239,6 +194,14 @@ const SuccessMessage = () => {
                 onClick={setSelectedPassenger}
               />
             ))}
+
+            {passengers.length > itemsPerPage && (
+              <PageNavigation
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
           </VStack>
         )}
 
@@ -257,8 +220,10 @@ const SuccessMessage = () => {
           mt={4}
           isDisabled={!isRiderPage && !selectedPassenger}
           onClick={() => {
-            localStorage.removeItem("endCoordinates");
-            localStorage.removeItem("startCoordinates");
+            if (isRiderPage) {
+              localStorage.removeItem("endCoordinates");
+              localStorage.removeItem("startCoordinates");
+            }
           }}
         >
           {isRiderPage ? "Done" : "Accept"}

@@ -47,9 +47,6 @@ export const RideRequestForm: React.FC<RideRequestFormProps> = ({
 
   const handleFindLocation = async () => {
     try {
-      const formattedDate = formatDateTime(startDate);
-      await sendLocationToBackend(formattedDate);
-
       setIsSuccess(true);
 
       if (onSuccess) {
