@@ -22,9 +22,6 @@ interface SuccessMessageProps {
 }
 
 const SuccessMessage: React.FC<SuccessMessageProps> = () => {
-  const [selectedPassenger, setSelectedPassenger] = useState<number | null>(
-    null
-  );
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -196,7 +193,7 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
 
     return {
       text: "Accept",
-      isDisabled: !selectedPassenger,
+      isDisabled: selectedPassengers.length === 0,
     };
   };
 
