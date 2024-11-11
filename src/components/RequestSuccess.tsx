@@ -172,8 +172,10 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
       const selectedPassengerDetails = passengers.filter((p) =>
         selectedPassengers.includes(p.id)
       );
+      localStorage.removeItem("endCoordinates");
+      localStorage.removeItem("startCoordinates");
+      console.log(selectedPassengerDetails);
     }
-    // If there are passengers and one is selected, proceed with accept logic
   };
 
   const getButtonConfig = () => {
