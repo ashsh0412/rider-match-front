@@ -16,6 +16,7 @@ import { optLocations } from "../api/OptLocation";
 import { reverseGeocode } from "../api/Geocoding";
 import { Passenger, PassengerCard } from "./PassengerCard";
 import PageNavigation from "./PageNavigation";
+import RouteMap from "../maps/OptRoute";
 
 interface SuccessMessageProps {
   setIsSuccess: (value: boolean) => void;
@@ -25,6 +26,10 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isOptRoute, setIsOptRoute] = useState(false);
+  const [selectedPassengerDetails, setSelectedPassengerDetails] = useState<
+    Passenger[]
+  >([]); // 추가된 state
   const itemsPerPage = 2;
 
   const bgColor = useColorModeValue("white", "gray.800");
@@ -172,9 +177,8 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
       const selectedPassengerDetails = passengers.filter((p) =>
         selectedPassengers.includes(p.id)
       );
-      localStorage.removeItem("endCoordinates");
-      localStorage.removeItem("startCoordinates");
-      console.log(selectedPassengerDetails);
+      setSelectedPassengerDetails(selectedPassengerDetails);
+      setIsOptRoute(true);
     }
   };
 
@@ -226,56 +230,67 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
   return (
     <Box bg={bgColor} p={6} borderRadius="lg" boxShadow="md" w="100%">
       <VStack spacing={4} align="center">
-        <Icon as={statusConfig.icon} w={12} h={12} color={statusConfig.color} />
-        <Box fontSize="xl" fontWeight="bold" color={statusConfig.color}>
-          {mainMessage}
-        </Box>
-        <Box color={textColor} textAlign="center">
-          {description}
-        </Box>
-        <Box fontSize="sm" color={textColor} textAlign="center" mb={4}>
-          {subDescription}
-        </Box>
-
-        {!isRiderPage && passengers.length > 0 && (
-          <VStack spacing={4} w="100%">
-            {getCurrentPagePassengers().map((passenger) => (
-              <PassengerCard
-                key={passenger.id}
-                passenger={passenger}
-                isSelected={selectedPassengers.includes(passenger.id)}
-                onClick={() => handlePassengerSelect(passenger.id)}
-              />
-            ))}
-
-            {passengers.length > itemsPerPage && (
-              <PageNavigation
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
-            )}
-          </VStack>
-        )}
-
-        {isRiderPage && passengers.length > 0 && (
-          <VStack spacing={4} w="100%">
-            <PassengerCard
-              passenger={passengers[0]}
-              isSelected={false}
-              onClick={() => {}}
+        {isOptRoute ? (
+          <RouteMap passengerDetails={selectedPassengerDetails} />
+        ) : (
+          <>
+            <Icon
+              as={statusConfig.icon}
+              w={12}
+              h={12}
+              color={statusConfig.color}
             />
-          </VStack>
-        )}
+            <Box fontSize="xl" fontWeight="bold" color={statusConfig.color}>
+              {mainMessage}
+            </Box>
+            <Box color={textColor} textAlign="center">
+              {description}
+            </Box>
+            <Box fontSize="sm" color={textColor} textAlign="center" mb={4}>
+              {subDescription}
+            </Box>
 
-        <Button
-          w="full"
-          mt={4}
-          isDisabled={buttonConfig.isDisabled}
-          onClick={handleButtonClick}
-        >
-          {buttonConfig.text}
-        </Button>
+            {!isRiderPage && passengers.length > 0 && (
+              <VStack spacing={4} w="100%">
+                {getCurrentPagePassengers().map((passenger) => (
+                  <PassengerCard
+                    key={passenger.id}
+                    passenger={passenger}
+                    isSelected={selectedPassengers.includes(passenger.id)}
+                    onClick={() => handlePassengerSelect(passenger.id)}
+                  />
+                ))}
+
+                {passengers.length > itemsPerPage && (
+                  <PageNavigation
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                  />
+                )}
+              </VStack>
+            )}
+
+            {isRiderPage && passengers.length > 0 && (
+              <VStack spacing={4} w="100%">
+                <PassengerCard
+                  passenger={passengers[0]}
+                  isSelected={false}
+                  onClick={() => {}}
+                />
+              </VStack>
+            )}
+
+            <Button
+              w="full"
+              mt={4}
+              isDisabled={buttonConfig.isDisabled}
+              onClick={handleButtonClick}
+            >
+              {buttonConfig.text}
+            </Button>
+          </>
+        )}
       </VStack>
     </Box>
   );

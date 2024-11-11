@@ -5,7 +5,6 @@ import NavBar from "../components/NavBar";
 import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
 import SuccessMessage from "../components/RequestSuccess";
-import DriverInfo from "../components/DriverPageInfo";
 
 const DriverPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
