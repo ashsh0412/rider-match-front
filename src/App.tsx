@@ -13,6 +13,7 @@ import LoginCheck from "./api/LoginCheck";
 import Profile from "./pages/UserInfo";
 import DriverPage from "./pages/DriverPage";
 import RiderPage from "./pages/RiderPage";
+import TripHistory from "./pages/TripHistory";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
             }
           />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/trip-history" element={<TripHistory />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

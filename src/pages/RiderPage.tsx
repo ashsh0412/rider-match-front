@@ -6,7 +6,6 @@ import RecentLocations from "../components/RecentLocations";
 import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
 import SuccessMessage from "../components/RequestSuccess";
-import DriverInfo from "../components/DriverPageInfo";
 
 const RiderPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);

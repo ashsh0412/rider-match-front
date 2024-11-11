@@ -44,7 +44,14 @@ const NavBar: React.FC = () => {
       </Text>
 
       <HStack spacing={2}>
-        <Button variant="ghost" leftIcon={<FaReceipt />} size="md">
+        <Button
+          variant="ghost"
+          leftIcon={<FaReceipt />}
+          size="md"
+          onClick={() => {
+            navigate("/trip-history");
+          }}
+        >
           Trip History
         </Button>
 
