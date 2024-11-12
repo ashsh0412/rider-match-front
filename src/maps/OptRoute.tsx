@@ -29,13 +29,33 @@ interface PickupTime {
   time: string;
 }
 
-const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
-  const directionsServiceRef = useRef<google.maps.DirectionsService | null>(
-    null
-  );
-  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(
-    null
-  );
+interface Waypoint {
+  location: string;
+  stopover: boolean;
+}
+
+interface LocationData {
+  origin: string;
+  destination: string;
+  waypoints: Waypoint[];
+  labels: {
+    origin: string;
+    destination: string;
+    passengers: {
+      name: string;
+      scheduledTime: string;
+      pickup: string;
+    }[];
+  };
+}
+
+interface Location {
+  address: string;
+  name: string;
+}
+
+// useRouteData hook
+const useRouteData = (passengerDetails: PassengerDetail[]) => {
   const [startPoint, setStartPoint] = useState<string>("");
   const [endPoint, setEndPoint] = useState<string>("");
 
@@ -73,7 +93,7 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
     fetchAddresses();
   }, [startCoordinates, endCoordinates]);
 
-  const locationData = {
+  const locationData: LocationData = {
     origin: startCoordinates
       ? `${startCoordinates.lat},${startCoordinates.lng}`
       : "",
@@ -133,25 +153,39 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
     return pickupTimes;
   };
 
+  return {
+    startPoint,
+    endPoint,
+    locationData,
+    calculatePickupTimes,
+  };
+};
+
+// useRouteCalculation hook
+interface UseRouteCalculationProps {
+  locationData: LocationData;
+  passengerDetails: PassengerDetail[];
+  calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
+}
+
+const useRouteCalculation = ({
+  locationData,
+  passengerDetails,
+  calculatePickupTimes,
+}: UseRouteCalculationProps) => {
+  const directionsServiceRef = useRef<google.maps.DirectionsService | null>(
+    null
+  );
+  const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(
+    null
+  );
+
   useEffect(() => {
     try {
       directionsServiceRef.current = new google.maps.DirectionsService();
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
         suppressMarkers: true,
       });
-
-      const map = new google.maps.Map(
-        document.getElementById("map") as HTMLElement,
-        {
-          zoom: 13,
-          center: { lat: 29.6516, lng: -82.3248 },
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-        }
-      );
-
-      if (directionsRendererRef.current) {
-        directionsRendererRef.current.setMap(map);
-      }
 
       if (directionsServiceRef.current && directionsRendererRef.current) {
         const request: google.maps.DirectionsRequest = {
@@ -171,7 +205,6 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
             if (directionsRendererRef.current) {
               directionsRendererRef.current.setDirections(response);
 
-              // 마커를 위한 데이터 준비
               const route = response.routes[0];
               const legs = route.legs;
               const pickupTimes = calculatePickupTimes(legs);
@@ -191,72 +224,32 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
                 const pickupSchedule = passengerDetails
                   .map(
                     (p, index) => `
-                <div style="margin-top: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                  <p><strong>Passenger ${index + 1}:</strong> ${p.name}</p>
-                  <p><strong>Pickup Location:</strong> ${p.pickup}</p>
-                  <p><strong>Estimated Pickup Time:</strong> ${
-                    pickupTimes[index]?.time || "N/A"
-                  }</p>
-                </div>
-              `
+                   <div style="margin-top: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                     <p><strong>Passenger ${index + 1}:</strong> ${p.name}</p>
+                     <p><strong>Pickup Location:</strong> ${p.pickup}</p>
+                     <p><strong>Estimated Pickup Time:</strong> ${
+                       pickupTimes[index]?.time || "N/A"
+                     }</p>
+                   </div>
+                 `
                   )
                   .join("");
 
                 panel.innerHTML = `
-                <div style="margin-top: 10px;">
-                  <p><strong>Total Distance:</strong> ${(
-                    totalDistance / 1609.34
-                  ).toFixed(1)} miles</p>
-                  <p><strong>Total Duration:</strong> ${Math.round(
-                    totalDuration / 60
-                  )} mins</p>
-                  <div style="margin-top: 15px;">
-                    <p><strong>Pickup Schedule:</strong></p>
-                    ${pickupSchedule}
-                  </div>
-                </div>
-              `;
+                   <div style="margin-top: 10px;">
+                     <p><strong>Total Distance:</strong> ${(
+                       totalDistance / 1609.34
+                     ).toFixed(1)} miles</p>
+                     <p><strong>Total Duration:</strong> ${Math.round(
+                       totalDuration / 60
+                     )} mins</p>
+                     <div style="margin-top: 15px;">
+                       <p><strong>Pickup Schedule:</strong></p>
+                       ${pickupSchedule}
+                     </div>
+                   </div>
+                 `;
               }
-
-              // 마커 클러스터링 및 마커 생성
-              const locations = [
-                { address: locationData.origin, name: "Driver Location" },
-                ...locationData.waypoints.map((wp, i) => ({
-                  address: wp.location,
-                  name: `Pickup ${i + 1}`,
-                })),
-                {
-                  address: locationData.destination,
-                  name: "Final Destination",
-                },
-              ];
-
-              const geocoder = new google.maps.Geocoder();
-              const markers: google.maps.Marker[] = [];
-
-              locations.forEach((loc, index) => {
-                geocoder.geocode(
-                  { address: loc.address },
-                  (results, status) => {
-                    if (status === "OK" && results && results[0]) {
-                      const marker = new google.maps.Marker({
-                        position: results[0].geometry.location,
-                        map: map,
-                        label: {
-                          text: (index + 1).toString(),
-                          color: "white",
-                          fontSize: "16px",
-                          fontWeight: "bold",
-                        },
-                      });
-                      markers.push(marker);
-                    }
-                  }
-                );
-              });
-
-              // 마커 클러스터링
-              new MarkerClusterer({ map, markers });
             }
           })
           .catch((e: Error) => {
@@ -270,7 +263,105 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
     } catch (error) {
       console.error("Error initializing map:", error);
     }
-  }, [passengerDetails, locationData]);
+  }, [locationData, passengerDetails, calculatePickupTimes]);
+
+  return {
+    directionsService: directionsServiceRef.current,
+    directionsRenderer: directionsRendererRef.current,
+  };
+};
+
+// RouteMapRenderer component
+interface RouteMapRendererProps {
+  locationData: LocationData;
+  calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
+  passengerDetails: PassengerDetail[];
+}
+
+const RouteMapRenderer: React.FC<RouteMapRendererProps> = ({
+  locationData,
+  calculatePickupTimes,
+  passengerDetails,
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+
+  const { directionsRenderer } = useRouteCalculation({
+    locationData,
+    passengerDetails,
+    calculatePickupTimes,
+  });
+
+  useEffect(() => {
+    const mapElement = document.querySelector(".map-container") as HTMLElement;
+    if (!mapElement || !directionsRenderer) return;
+
+    mapInstanceRef.current = new google.maps.Map(mapElement, {
+      zoom: 13,
+      center: { lat: 29.6516, lng: -82.3248 },
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+    });
+
+    if (directionsRenderer) {
+      directionsRenderer.setMap(mapInstanceRef.current);
+    }
+
+    const locations: Location[] = [
+      { address: locationData.origin, name: "Driver Location" },
+      ...locationData.waypoints.map(
+        (wp: Waypoint, i: number): Location => ({
+          address: wp.location,
+          name: `Pickup ${i + 1}`,
+        })
+      ),
+      {
+        address: locationData.destination,
+        name: "Final Destination",
+      },
+    ];
+
+    const geocoder = new google.maps.Geocoder();
+    const markers: google.maps.Marker[] = [];
+
+    locations.forEach((loc, index) => {
+      geocoder.geocode({ address: loc.address }, (results, status) => {
+        if (status === "OK" && results && results[0]) {
+          const marker = new google.maps.Marker({
+            position: results[0].geometry.location,
+            map: mapInstanceRef.current,
+            label: {
+              text: (index + 1).toString(),
+              color: "white",
+              fontSize: "16px",
+              fontWeight: "bold",
+            },
+          });
+          markers.push(marker);
+        }
+      });
+    });
+
+    if (markers.length > 0) {
+      new MarkerClusterer({
+        map: mapInstanceRef.current,
+        markers,
+      });
+    }
+  }, [directionsRenderer, locationData]);
+
+  return (
+    <div
+      ref={mapRef}
+      className="map-container"
+      style={{ width: "100%", height: "400px" }}
+    />
+  );
+};
+
+// Main RouteMap component
+const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
+  const { startPoint, endPoint, locationData, calculatePickupTimes } =
+    useRouteData(passengerDetails);
 
   return (
     <Container maxW="container.lg" p={0}>
@@ -289,10 +380,14 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
             <Text mb={2}>
               <strong>Final Destination:</strong> {endPoint}
             </Text>
-            <Box id="route-info" mt={6}></Box>
-            <div id="map" style={{ height: "400px" }}></div>
+            <Box id="route-info" />
           </CardBody>
         </Card>
+        <RouteMapRenderer
+          locationData={locationData}
+          calculatePickupTimes={calculatePickupTimes}
+          passengerDetails={passengerDetails}
+        />
       </VStack>
     </Container>
   );
