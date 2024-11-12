@@ -19,10 +19,14 @@ import PageNavigation from "./PageNavigation";
 import RouteMap from "../maps/OptRoute";
 
 interface SuccessMessageProps {
-  setIsSuccess: (value: boolean) => void;
+  setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>;
+  setOptRoute?: React.Dispatch<React.SetStateAction<boolean>>; // 필수 prop
 }
 
-const SuccessMessage: React.FC<SuccessMessageProps> = () => {
+const SuccessMessage: React.FC<SuccessMessageProps> = ({
+  setIsSuccess,
+  setOptRoute,
+}) => {
   const [passengers, setPassengers] = useState<Passenger[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -122,6 +126,7 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
           userInfo.end_latitude,
           userInfo.end_longitude
         );
+
         setPassengers([
           {
             id: 1,
@@ -177,8 +182,15 @@ const SuccessMessage: React.FC<SuccessMessageProps> = () => {
       const selectedPassengerDetails = passengers.filter((p) =>
         selectedPassengers.includes(p.id)
       );
+      localStorage.setItem(
+        "selectedPassengerDetails",
+        JSON.stringify(selectedPassengerDetails)
+      );
       setSelectedPassengerDetails(selectedPassengerDetails);
       setIsOptRoute(true);
+      if (setOptRoute) {
+        setOptRoute((prev) => !prev);
+      }
     }
   };
 

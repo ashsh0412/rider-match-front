@@ -3,27 +3,22 @@ export const reverseGeocode = (
   longitude: number
 ): Promise<string> => {
   return new Promise((resolve, reject) => {
-    fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-      {
-        headers: {
-          Accept: "application/json",
-          // OpenStreetMap은 사용자 에이전트를 요구합니다
-          "User-Agent": "YourAppName",
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data.display_name) {
-          resolve(data.display_name);
+    const geocoder = new google.maps.Geocoder(); // 내부에서 geocoder 생성
+    const latlng = { lat: latitude, lng: longitude };
+
+    geocoder
+      .geocode({ location: latlng })
+      .then((response) => {
+        if (response.results[0]) {
+          resolve(response.results[0].formatted_address);
         } else {
+          console.error("No results found");
           resolve("");
         }
       })
-      .catch((err) => {
-        console.error("Error during reverse geocoding:", err);
-        reject(err);
+      .catch((error) => {
+        console.error("Geocoder failed:", error);
+        reject(error);
       });
   });
 };

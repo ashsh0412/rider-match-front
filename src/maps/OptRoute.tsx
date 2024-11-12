@@ -8,9 +8,7 @@ import {
   CardBody,
   Container,
 } from "@chakra-ui/react";
-import { getEndCoordinates, getStartCoordinates } from "./RouteMap";
-import { reverseGeocode } from "../api/Geocoding";
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
+import { useRouteData } from "./UseRouteData";
 
 interface PassengerDetail {
   id: number;
@@ -49,119 +47,6 @@ interface LocationData {
   };
 }
 
-interface Location {
-  address: string;
-  name: string;
-}
-
-// useRouteData hook
-const useRouteData = (passengerDetails: PassengerDetail[]) => {
-  const [startPoint, setStartPoint] = useState<string>("");
-  const [endPoint, setEndPoint] = useState<string>("");
-
-  const startCoordinates = getStartCoordinates();
-  const endCoordinates = getEndCoordinates();
-
-  useEffect(() => {
-    const fetchAddresses = async () => {
-      try {
-        if (startCoordinates && endCoordinates) {
-          const start = await reverseGeocode(
-            startCoordinates.lat,
-            startCoordinates.lng
-          );
-          const end = await reverseGeocode(
-            endCoordinates.lat,
-            endCoordinates.lng
-          );
-          setStartPoint(start);
-          setEndPoint(end);
-        }
-      } catch (error) {
-        console.error("Error fetching addresses:", error);
-        setStartPoint(
-          startCoordinates
-            ? `${startCoordinates.lat}, ${startCoordinates.lng}`
-            : ""
-        );
-        setEndPoint(
-          endCoordinates ? `${endCoordinates.lat}, ${endCoordinates.lng}` : ""
-        );
-      }
-    };
-
-    fetchAddresses();
-  }, [startCoordinates, endCoordinates]);
-
-  const locationData: LocationData = {
-    origin: startCoordinates
-      ? `${startCoordinates.lat},${startCoordinates.lng}`
-      : "",
-    destination: endCoordinates
-      ? `${endCoordinates.lat},${endCoordinates.lng}`
-      : "",
-    waypoints:
-      passengerDetails?.map((passenger) => ({
-        location: passenger.pickup,
-        stopover: true,
-      })) || [],
-    labels: {
-      origin: startPoint,
-      destination: endPoint,
-      passengers:
-        passengerDetails?.map((p) => ({
-          name: p.name,
-          scheduledTime: new Date(p.time).toLocaleString(),
-          pickup: p.pickup,
-        })) || [],
-    },
-  };
-
-  const calculatePickupTimes = (
-    legs: google.maps.DirectionsLeg[]
-  ): PickupTime[] => {
-    let currentTime = new Date();
-    const pickupTimes: PickupTime[] = [];
-    let cumulativeDuration = 0;
-
-    try {
-      for (let i = 0; i < legs.length - 1; i++) {
-        const durationValue = Number(legs[i]?.duration?.value ?? 0);
-        if (isNaN(durationValue) || durationValue === 0) {
-          console.warn(`Invalid or missing duration value for leg ${i}`);
-          continue;
-        }
-
-        cumulativeDuration += durationValue;
-
-        const pickupTime = new Date(
-          currentTime.getTime() + cumulativeDuration * 1000
-        );
-
-        pickupTimes.push({
-          location: legs[i]?.end_address || "",
-          time: pickupTime.toLocaleString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        });
-      }
-    } catch (error) {
-      console.error("Error calculating pickup times:", error);
-    }
-
-    return pickupTimes;
-  };
-
-  return {
-    startPoint,
-    endPoint,
-    locationData,
-    calculatePickupTimes,
-  };
-};
-
-// useRouteCalculation hook
 interface UseRouteCalculationProps {
   locationData: LocationData;
   passengerDetails: PassengerDetail[];
@@ -181,6 +66,15 @@ const useRouteCalculation = ({
   );
 
   useEffect(() => {
+    // Ensure that necessary data is present before initializing map calculation
+    if (
+      !locationData.origin ||
+      !locationData.destination ||
+      !passengerDetails.length
+    ) {
+      return;
+    }
+
     try {
       directionsServiceRef.current = new google.maps.DirectionsService();
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
@@ -271,94 +165,25 @@ const useRouteCalculation = ({
   };
 };
 
-// RouteMapRenderer component
 interface RouteMapRendererProps {
   locationData: LocationData;
   calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
   passengerDetails: PassengerDetail[];
 }
 
-const RouteMapRenderer: React.FC<RouteMapRendererProps> = ({
+const PanelRenderer: React.FC<RouteMapRendererProps> = ({
   locationData,
   calculatePickupTimes,
   passengerDetails,
 }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
-
-  const { directionsRenderer } = useRouteCalculation({
+  useRouteCalculation({
     locationData,
     passengerDetails,
     calculatePickupTimes,
   });
-
-  useEffect(() => {
-    const mapElement = document.querySelector(".map-container") as HTMLElement;
-    if (!mapElement || !directionsRenderer) return;
-
-    mapInstanceRef.current = new google.maps.Map(mapElement, {
-      zoom: 13,
-      center: { lat: 29.6516, lng: -82.3248 },
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-    });
-
-    if (directionsRenderer) {
-      directionsRenderer.setMap(mapInstanceRef.current);
-    }
-
-    const locations: Location[] = [
-      { address: locationData.origin, name: "Driver Location" },
-      ...locationData.waypoints.map(
-        (wp: Waypoint, i: number): Location => ({
-          address: wp.location,
-          name: `Pickup ${i + 1}`,
-        })
-      ),
-      {
-        address: locationData.destination,
-        name: "Final Destination",
-      },
-    ];
-
-    const geocoder = new google.maps.Geocoder();
-    const markers: google.maps.Marker[] = [];
-
-    locations.forEach((loc, index) => {
-      geocoder.geocode({ address: loc.address }, (results, status) => {
-        if (status === "OK" && results && results[0]) {
-          const marker = new google.maps.Marker({
-            position: results[0].geometry.location,
-            map: mapInstanceRef.current,
-            label: {
-              text: (index + 1).toString(),
-              color: "white",
-              fontSize: "16px",
-              fontWeight: "bold",
-            },
-          });
-          markers.push(marker);
-        }
-      });
-    });
-
-    if (markers.length > 0) {
-      new MarkerClusterer({
-        map: mapInstanceRef.current,
-        markers,
-      });
-    }
-  }, [directionsRenderer, locationData]);
-
-  return (
-    <div
-      ref={mapRef}
-      className="map-container"
-      style={{ width: "100%", height: "400px" }}
-    />
-  );
+  return <div />;
 };
 
-// Main RouteMap component
 const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
   const { startPoint, endPoint, locationData, calculatePickupTimes } =
     useRouteData(passengerDetails);
@@ -383,7 +208,7 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
             <Box id="route-info" />
           </CardBody>
         </Card>
-        <RouteMapRenderer
+        <PanelRenderer
           locationData={locationData}
           calculatePickupTimes={calculatePickupTimes}
           passengerDetails={passengerDetails}

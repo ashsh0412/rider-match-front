@@ -37,6 +37,9 @@ const NavBar: React.FC = () => {
         fontWeight="bold"
         onClick={() => {
           navigate("/rider-page");
+          localStorage.removeItem("endCoordinates");
+          localStorage.removeItem("startCoordinates");
+          localStorage.removeItem("selectedPassengerDetails");
         }}
         _hover={{ cursor: "pointer" }}
       >

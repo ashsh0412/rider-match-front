@@ -72,3 +72,79 @@ export const darkMapStyles: google.maps.MapTypeStyle[] = [
     stylers: [{ color: "#746855" }],
   },
 ];
+
+// 라이트모드 스타일
+export const coolUrbanMapStylesForOpt: google.maps.MapTypeStyle[] = [
+  {
+    elementType: "geometry",
+    stylers: [{ color: "#f5f5f5" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#c9c9c9" }],
+  },
+  {
+    featureType: "landscape",
+    elementType: "geometry",
+    stylers: [{ color: "#e5e5e5" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#dadada" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "geometry",
+    stylers: [{ color: "#eeeeee" }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "on" }],
+  },
+  {
+    featureType: "transit.line",
+    elementType: "geometry",
+    stylers: [{ color: "#e5e5e5" }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "geometry",
+    stylers: [{ color: "#eeeeee" }],
+  },
+];
+
+// 다크모드 스타일
+export const darkMapStylesForOpt: google.maps.MapTypeStyle[] = [
+  { elementType: "geometry", stylers: [{ color: "#212121" }] },
+  {
+    elementType: "labels.text.stroke",
+    stylers: [{ color: "#212121" }],
+  },
+  {
+    elementType: "labels.text.fill",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#1a1a1a" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#383838" }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: "#746855" }],
+  },
+];
