@@ -24,6 +24,22 @@ export const formatDateTime = (date: Date | null): string => {
   return targetDate.toISOString().slice(0, 19).replace("T", " ");
 };
 
+export const formatEnglishDateTime = (dateStr: string): string => {
+  const date = new Date(dateStr);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  };
+
+  return date.toLocaleString("en-US", options);
+};
+
 export const RideRequestForm: React.FC<RideRequestFormProps> = ({
   onSuccess,
 }) => {
@@ -82,7 +98,7 @@ export const RideRequestForm: React.FC<RideRequestFormProps> = ({
       // 에러 토스트
       toast({
         title: "Request Failed",
-        description: "Fill out all fields",
+        description: "Enter a valid address to continue.",
         status: "error",
         duration: 3000,
         isClosable: true,

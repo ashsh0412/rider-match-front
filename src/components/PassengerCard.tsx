@@ -9,6 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Clock, MapPin, User } from "lucide-react";
+import { formatEnglishDateTime } from "./RequestForm";
 
 export interface Passenger {
   id: number;
@@ -36,6 +37,7 @@ export const PassengerCard = ({
   const selectedCardBg = useColorModeValue("green.50", "green.900");
 
   const isNoPassenger = passenger.name === "매칭 가능한 승객이 없습니다";
+  const passengerTime = formatEnglishDateTime(passenger.time);
 
   return (
     <Card
@@ -90,7 +92,7 @@ export const PassengerCard = ({
           <HStack spacing={3}>
             <Icon as={Clock} w={4} h={4} color={subTextColor} />
             <Text fontSize="sm" color={textColor}>
-              {passenger.time}
+              {passengerTime}
             </Text>
           </HStack>
         </VStack>

@@ -109,8 +109,8 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
   const initializePassengers = async () => {
     setIsLoading(true);
     try {
-      const formattedDate = formatDateTime(null);
-      const userInfo = await createLocationData(formattedDate);
+      const targetDate = formatDateTime(null); // Date 객체 반환
+      const userInfo = await createLocationData(targetDate);
 
       if (!userInfo) {
         console.error("Failed to get user info");
