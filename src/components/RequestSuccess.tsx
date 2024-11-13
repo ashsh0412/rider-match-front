@@ -109,7 +109,15 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
   const initializePassengers = async () => {
     setIsLoading(true);
     try {
-      const targetDate = formatDateTime(null); // Date 객체 반환
+      const savedDate = sessionStorage.getItem("selectedDate");
+      let targetDate: string = "";
+
+      if (savedDate) {
+        // savedDate가 string일 때 Date로 변환 후, 문자열로 변환
+        const dateObj = new Date(savedDate);
+        targetDate = dateObj.toISOString(); // ISO 형식으로 날짜를 string으로 변환
+      }
+
       const userInfo = await createLocationData(targetDate);
 
       if (!userInfo) {
@@ -151,7 +159,16 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
                 destination: passenger.dropoff_location,
                 time: passenger.date_time,
               }));
-            setPassengers(newPassengers);
+            const selectedDate = sessionStorage.getItem("selectedDate");
+            if (selectedDate) {
+              const selectedDateObj = new Date(selectedDate); // sessionStorage에서 가져온 selectedDate를 Date 객체로 변환
+
+              const filteredPassengers = newPassengers.filter((passenger) => {
+                const passengerTime = new Date(passenger.time); // 승객의 시간도 Date 객체로 변환
+                return passengerTime >= selectedDateObj; // 과거인 승객을 제외
+              });
+              setPassengers(filteredPassengers);
+            }
           } else {
             setPassengers([]);
           }

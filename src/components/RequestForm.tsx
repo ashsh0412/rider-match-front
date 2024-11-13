@@ -25,7 +25,7 @@ export const formatDateTime = (date: Date | null): string => {
 };
 
 export const formatEnglishDateTime = (dateStr: string): string => {
-  const date = new Date(dateStr);
+  const date = new Date(dateStr); // "2024-11-13 21:07:14" 같은 형식의 문자열을 Date로 변환
 
   const options: Intl.DateTimeFormatOptions = {
     year: "numeric",
@@ -154,7 +154,15 @@ export const RideRequestForm: React.FC<RideRequestFormProps> = ({
 
       <CustomDatePicker
         value={startDate}
-        onChange={(date) => setStartDate(date)}
+        onChange={(date) => {
+          if (date) {
+            setStartDate(date);
+            sessionStorage.setItem("selectedDate", date.toISOString());
+          } else {
+            // `date`가 null인 경우에 대한 처리
+            sessionStorage.setItem("selectedDate", "");
+          }
+        }}
         iconColor={iconColor}
         inputBg={inputBg}
         inputHoverBg={inputHoverBg}

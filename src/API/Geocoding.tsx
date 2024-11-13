@@ -8,6 +8,7 @@ export const reverseGeocode = (
       headers: {
         Accept: "application/json",
         "User-Agent": "YourAppName", // 사용자 에이전트 설정
+        "Accept-Language": "en",
       },
     }
   )

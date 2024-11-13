@@ -2,11 +2,6 @@ import { useState, useEffect } from "react";
 import { reverseGeocode } from "../api/Geocoding";
 import { getEndCoordinates, getStartCoordinates } from "./RouteMap";
 
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
-
 export interface PassengerDetail {
   name: string;
   pickup: string;
