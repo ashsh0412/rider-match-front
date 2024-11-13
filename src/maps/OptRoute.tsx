@@ -7,8 +7,10 @@ import {
   Card,
   CardBody,
   Container,
+  Button,
 } from "@chakra-ui/react";
 import { useRouteData } from "./UseRouteData";
+import { useNavigate } from "react-router-dom";
 
 interface PassengerDetail {
   id: number;
@@ -187,10 +189,11 @@ const PanelRenderer: React.FC<RouteMapRendererProps> = ({
 const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
   const { startPoint, endPoint, locationData, calculatePickupTimes } =
     useRouteData(passengerDetails);
+  const navigate = useNavigate();
 
   return (
-    <Container maxW="container.lg" p={0}>
-      <VStack spacing={6} align="stretch">
+    <Container maxW="container.lg">
+      <VStack spacing={2} align="stretch">
         <Card>
           <CardBody>
             <Heading size="md" mb={4}>
@@ -213,6 +216,16 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
           calculatePickupTimes={calculatePickupTimes}
           passengerDetails={passengerDetails}
         />
+        <Button
+          onClick={() => {
+            navigate("/rider-page");
+            localStorage.removeItem("endCoordinates");
+            localStorage.removeItem("startCoordinates");
+            localStorage.removeItem("selectedPassengerDetails");
+          }}
+        >
+          Done
+        </Button>
       </VStack>
     </Container>
   );

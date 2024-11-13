@@ -1,3 +1,5 @@
+import { error } from "console";
+
 export interface RouteOptions {
   start: string;
   end: string;
@@ -56,7 +58,7 @@ export function calcRoute({
 
         resolve(coordinates);
       } else {
-        reject(new Error(`Error fetching directions: ${status}`));
+        console.log("error");
       }
     });
   });

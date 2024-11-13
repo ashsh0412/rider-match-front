@@ -69,6 +69,7 @@ export const initializeAutocomplete = (
 
         // Call calcRoute function
         calcRoute(routeOptions);
+        marker.setMap(null);
       } else {
         console.log("Please enter both fields");
       }
