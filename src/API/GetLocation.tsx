@@ -12,6 +12,7 @@ export interface LocationData {
   date_time: string;
   pickup_location: string;
   dropoff_location: string;
+  id: number;
 }
 
 export const getLocations = async (): Promise<LocationData[]> => {

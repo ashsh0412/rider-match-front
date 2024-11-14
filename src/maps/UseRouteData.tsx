@@ -115,7 +115,7 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
     legs: google.maps.DirectionsLeg[]
   ): PickupTime[] => {
     const selectedDate = sessionStorage.getItem("selectedDate");
-    let currentTime = selectedDate ? new Date(selectedDate) : new Date();
+    let destinationTime = selectedDate ? new Date(selectedDate) : new Date(); // 도착 시간 기준으로 설정
 
     const pickupTimes: PickupTime[] = [];
     const a = localStorage.getItem("selectedPassengerDetails");
@@ -135,11 +135,11 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
           continue;
         }
 
-        // 이동 시간을 누적하여 예상 도착 시간 계산
+        // 누적 이동 시간을 더해서 예상 도착 시간을 계산
         cumulativeDuration += durationValue;
         const arrivalTime = new Date(
-          currentTime.getTime() + cumulativeDuration * 1000
-        );
+          destinationTime.getTime() - cumulativeDuration * 1000
+        ); // 도착 시간에서 누적 시간을 빼서 출발 시간 계산
 
         // 승객의 예약 시간과 비교하여 대기 시간 계산
         const stopTime =
@@ -147,8 +147,8 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
             ? new Date(passengerTime).getTime() - arrivalTime.getTime()
             : 0;
 
-        // 도착 시간에 대기 시간 반영
-        const adjustedPickupTime = new Date(arrivalTime.getTime() + stopTime);
+        // 출발 시간에 대기 시간 반영
+        const adjustedPickupTime = new Date(arrivalTime.getTime() - stopTime);
 
         // 날짜와 시간 모두 추가
         pickupTimes.push({

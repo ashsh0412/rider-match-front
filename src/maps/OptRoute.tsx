@@ -130,7 +130,6 @@ const useRouteCalculation = ({
                  `
                   )
                   .join("");
-                const totalDistanceInMiles = totalDistance / 1609.34; // miles로 변환
                 const totalDurationInMinutes = totalDuration / 60; // minutes로 변환
                 const totalHours = Math.floor(totalDurationInMinutes / 60); // 시간 계산
                 const remainingMinutes = Math.round(

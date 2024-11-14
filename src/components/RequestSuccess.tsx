@@ -11,7 +11,6 @@ import {
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { createLocationData } from "../api/PostLocation";
-import { formatDateTime } from "./RequestForm";
 import { optLocations } from "../api/OptLocation";
 import { reverseGeocode } from "../api/Geocoding";
 import { Passenger, PassengerCard } from "./PassengerCard";
@@ -153,7 +152,7 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
             const newPassengers = optInfo
               .slice(0, maxPassengers)
               .map((passenger, index) => ({
-                id: index + 1,
+                id: passenger.id || index + 1,
                 name: `${passenger.first_name} ${passenger.last_name}`,
                 pickup: passenger.pickup_location,
                 destination: passenger.dropoff_location,
@@ -218,6 +217,8 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
         "selectedPassengerDetails",
         JSON.stringify(selectedPassengerDetails)
       );
+      const a = localStorage.getItem("selectedPassengerDetails");
+      console.log(a);
       setSelectedPassengerDetails(selectedPassengerDetails);
       setIsOptRoute(true);
       if (setOptRoute) {

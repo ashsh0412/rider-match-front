@@ -15,6 +15,7 @@ export interface LocationData {
   date_time: string;
   pickup_location: string;
   dropoff_location: string;
+  id?: number;
 }
 
 // 위치 데이터 생성 함수를 export하여 재사용 가능하게 함

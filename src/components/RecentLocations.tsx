@@ -1,4 +1,3 @@
-// RecentLocations.tsx
 import React from "react";
 import { Box, HStack, Text, VStack, useColorModeValue } from "@chakra-ui/react";
 import { FaHistory } from "react-icons/fa";
