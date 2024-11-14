@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Box,
   VStack,
@@ -130,15 +130,26 @@ const useRouteCalculation = ({
                  `
                   )
                   .join("");
+                const totalDistanceInMiles = totalDistance / 1609.34; // miles로 변환
+                const totalDurationInMinutes = totalDuration / 60; // minutes로 변환
+                const totalHours = Math.floor(totalDurationInMinutes / 60); // 시간 계산
+                const remainingMinutes = Math.round(
+                  totalDurationInMinutes % 60
+                ); // 나머지 분 계산
 
                 panel.innerHTML = `
                    <div style="margin-top: 10px;">
                      <p><strong>Total Distance:</strong> ${(
                        totalDistance / 1609.34
                      ).toFixed(1)} miles</p>
-                     <p><strong>Total Duration:</strong> ${Math.round(
-                       totalDuration / 60
-                     )} mins</p>
+                         <p><strong>Total Duration:</strong> ${
+                           totalHours == 0 ? "" : totalHours
+                         } ${totalHours != 0 ? "hour" : ""}${
+                  totalHours > 0 ? "s" : ""
+                } ${remainingMinutes} minute${
+                  remainingMinutes !== 1 ? "s" : ""
+                }</p>
+
                      <div style="margin-top: 15px;">
                        <p><strong>Pickup Schedule:</strong></p>
                        ${pickupSchedule}

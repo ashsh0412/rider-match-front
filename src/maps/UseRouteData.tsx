@@ -114,31 +114,57 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
   const calculatePickupTimes = (
     legs: google.maps.DirectionsLeg[]
   ): PickupTime[] => {
-    let currentTime = new Date();
+    const selectedDate = sessionStorage.getItem("selectedDate");
+    let currentTime = selectedDate ? new Date(selectedDate) : new Date();
+
     const pickupTimes: PickupTime[] = [];
+    const a = localStorage.getItem("selectedPassengerDetails");
+
+    // localStorage에서 승객 데이터 가져오기
+    const passengers: PassengerDetail[] = a ? JSON.parse(a) : [];
+
     let cumulativeDuration = 0;
 
     try {
       for (let i = 0; i < legs.length - 1; i++) {
         const durationValue = Number(legs[i]?.duration?.value ?? 0);
+        const passengerTime = passengers[i]?.time;
+
         if (isNaN(durationValue) || durationValue === 0) {
           console.warn(`Invalid or missing duration value for leg ${i}`);
           continue;
         }
 
+        // 이동 시간을 누적하여 예상 도착 시간 계산
         cumulativeDuration += durationValue;
-
-        const pickupTime = new Date(
+        const arrivalTime = new Date(
           currentTime.getTime() + cumulativeDuration * 1000
         );
 
+        // 승객의 예약 시간과 비교하여 대기 시간 계산
+        const stopTime =
+          passengerTime && new Date(passengerTime) > arrivalTime
+            ? new Date(passengerTime).getTime() - arrivalTime.getTime()
+            : 0;
+
+        // 도착 시간에 대기 시간 반영
+        const adjustedPickupTime = new Date(arrivalTime.getTime() + stopTime);
+
+        // 날짜와 시간 모두 추가
         pickupTimes.push({
           location: legs[i]?.end_address || "",
-          time: pickupTime.toLocaleString("en-US", {
+          time: adjustedPickupTime.toLocaleString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
             hour: "2-digit",
             minute: "2-digit",
+            hour12: true,
           }),
         });
+
+        // 누적 시간에 대기 시간 추가 (초 단위)
+        cumulativeDuration += stopTime / 1000;
       }
     } catch (error) {
       console.error("Error calculating pickup times:", error);

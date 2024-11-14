@@ -161,12 +161,27 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
               }));
             const selectedDate = sessionStorage.getItem("selectedDate");
             if (selectedDate) {
-              const selectedDateObj = new Date(selectedDate); // sessionStorage에서 가져온 selectedDate를 Date 객체로 변환
+              const selectedDateObj = new Date(selectedDate); // 선택된 날짜를 Date 객체로 변환
+              const currentTime = new Date(); // 현재 시간을 가져옴
+
+              // 선택된 날짜의 시작 시간과 끝 시간을 정의 (00:00:00 - 23:59:59)
+              const startOfDay = new Date(selectedDateObj);
+              startOfDay.setHours(0, 0, 0, 0); // 선택된 날짜의 00:00:00
+
+              const endOfDay = new Date(selectedDateObj);
+              endOfDay.setHours(23, 59, 59, 999); // 선택된 날짜의 23:59:59
 
               const filteredPassengers = newPassengers.filter((passenger) => {
-                const passengerTime = new Date(passenger.time); // 승객의 시간도 Date 객체로 변환
-                return passengerTime >= selectedDateObj; // 과거인 승객을 제외
+                const passengerTime = new Date(passenger.time); // 승객의 시간을 Date 객체로 변환
+
+                // 승객의 시간이 선택된 날짜에 속하는지 확인
+                return (
+                  passengerTime >= startOfDay &&
+                  passengerTime <= endOfDay &&
+                  passengerTime > currentTime // 현재 시간보다 미래인 승객만
+                );
               });
+
               setPassengers(filteredPassengers);
             }
           } else {
