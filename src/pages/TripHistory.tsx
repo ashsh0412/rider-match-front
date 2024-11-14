@@ -20,42 +20,47 @@ import {
   Button,
   ButtonGroup,
   Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
   useColorModeValue,
+  Tag,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 import {
   CalendarIcon,
   TimeIcon,
-  StarIcon,
-  ChevronDownIcon,
   SearchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { MapPin, DollarSign, SortDesc } from "lucide-react";
+import { MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
-type StatusFilter = "All" | "Completed" | "Cancelled";
+type StatusFilter = "All" | "Completed" | "Cancelled" | "Pending";
 type SortField = "date" | "price" | "rating";
 type SortOrder = "asc" | "desc";
+
+interface Guest {
+  id: number;
+  name: string;
+}
+
+interface Location {
+  name: string;
+  type: "pickup" | "waypoint" | "dropoff";
+}
 
 interface Trip {
   id: number;
   date: string;
   time: string;
-  pickup: string;
-  dropoff: string;
-  price: number;
-  rating: number;
+  locations: Location[];
+  guests: Guest[];
   driverName: string;
-  status: "Completed" | "Cancelled";
+  status: "Completed" | "Cancelled" | "Pending";
 }
 
 const TripHistory: React.FC = () => {
-  // 상태 관리
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState<DateFilter>("3 months");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
@@ -66,16 +71,21 @@ const TripHistory: React.FC = () => {
 
   const bg = useColorModeValue("white", "gray.800");
 
-  // 샘플 데이터
   const allTrips: Trip[] = [
     {
       id: 1,
       date: "2024-03-15",
       time: "14:30",
-      pickup: "Seoul Station",
-      dropoff: "Gangnam Station",
-      price: 12000,
-      rating: 4.8,
+      locations: [
+        { name: "Seoul Station", type: "pickup" },
+        { name: "Hongdae Station", type: "waypoint" },
+        { name: "Gangnam Station", type: "dropoff" },
+      ],
+      guests: [
+        { id: 1, name: "John Doe" },
+        { id: 2, name: "Jane Smith" },
+        { id: 3, name: "Mike Johnson" },
+      ],
       driverName: "Kim Chul-soo",
       status: "Completed",
     },
@@ -83,32 +93,44 @@ const TripHistory: React.FC = () => {
       id: 2,
       date: "2024-03-14",
       time: "09:15",
-      pickup: "Hongdae Station",
-      dropoff: "Yeouido",
-      price: 15000,
-      rating: 4.5,
+      locations: [
+        { name: "Hongdae Station", type: "pickup" },
+        { name: "Yeouido", type: "dropoff" },
+      ],
+      guests: [
+        { id: 4, name: "Sarah Wilson" },
+        { id: 5, name: "Tom Brown" },
+      ],
       driverName: "Lee Young-hee",
-      status: "Completed",
+      status: "Pending",
     },
     {
       id: 3,
       date: "2024-03-13",
       time: "11:30",
-      pickup: "Incheon Airport",
-      dropoff: "Myeongdong",
-      price: 65000,
-      rating: 4.9,
+      locations: [
+        { name: "Incheon Airport", type: "pickup" },
+        { name: "Gimpo Airport", type: "waypoint" },
+        { name: "Myeongdong", type: "dropoff" },
+      ],
+      guests: [
+        { id: 6, name: "Alice Johnson" },
+        { id: 7, name: "Bob Wilson" },
+        { id: 8, name: "Carol Smith" },
+        { id: 9, name: "David Brown" },
+      ],
       driverName: "Park Min-ji",
-      status: "Completed",
+      status: "Pending",
     },
     {
       id: 4,
       date: "2024-03-12",
       time: "16:45",
-      pickup: "Gangnam Station",
-      dropoff: "Itaewon",
-      price: 8000,
-      rating: 4.2,
+      locations: [
+        { name: "Gangnam Station", type: "pickup" },
+        { name: "Itaewon", type: "dropoff" },
+      ],
+      guests: [{ id: 10, name: "Emma Davis" }],
       driverName: "Choi Jun-ho",
       status: "Cancelled",
     },
@@ -120,27 +142,39 @@ const TripHistory: React.FC = () => {
     "1 year": 12,
   };
 
-  // 필터링된 데이터 계산
+  const getStatusColor = (status: Trip["status"]) => {
+    switch (status) {
+      case "Completed":
+        return "green";
+      case "Cancelled":
+        return "red";
+      case "Pending":
+        return "yellow";
+      default:
+        return "gray";
+    }
+  };
+
   const filteredAndSortedTrips = useMemo(() => {
     let filtered = [...allTrips];
 
-    // 검색어 필터링
     if (searchTerm) {
       filtered = filtered.filter(
         (trip) =>
-          trip.pickup.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          trip.dropoff.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          trip.locations.some((location) =>
+            location.name.toLowerCase().includes(searchTerm.toLowerCase())
+          ) ||
+          trip.guests.some((guest) =>
+            guest.name.toLowerCase().includes(searchTerm.toLowerCase())
+          ) ||
           trip.driverName.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // 상태 필터링
     if (statusFilter !== "All") {
       filtered = filtered.filter((trip) => trip.status === statusFilter);
     }
 
-    // 날짜 필터링
-    const now = new Date();
     const monthsAgo = new Date();
     monthsAgo.setMonth(monthsAgo.getMonth() - months[dateFilter]);
 
@@ -149,18 +183,11 @@ const TripHistory: React.FC = () => {
       return tripDate >= monthsAgo;
     });
 
-    // 정렬
     filtered.sort((a, b) => {
       let comparison = 0;
       switch (sortBy) {
         case "date":
           comparison = new Date(b.date).getTime() - new Date(a.date).getTime();
-          break;
-        case "price":
-          comparison = b.price - a.price;
-          break;
-        case "rating":
-          comparison = b.rating - a.rating;
           break;
       }
       return sortOrder === "desc" ? comparison : -comparison;
@@ -169,14 +196,12 @@ const TripHistory: React.FC = () => {
     return filtered;
   }, [searchTerm, dateFilter, statusFilter, sortBy, sortOrder]);
 
-  // 페이지네이션 계산
   const totalPages = Math.ceil(filteredAndSortedTrips.length / itemsPerPage);
   const currentTrips = filteredAndSortedTrips.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // 페이지 변경 핸들러
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo(0, 0);
@@ -186,19 +211,10 @@ const TripHistory: React.FC = () => {
     <Box>
       <NavBar />
       <Box pt="80px" minH="100vh" bg={bg}>
-        <Container minW="100vh" py={8}>
+        <Container maxW="container.xl" py={8}>
           <Stack spacing={6}>
             <Flex justify="space-between" align="center">
               <Heading size="lg">Trip History</Heading>
-              <Select
-                w="150px"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-              >
-                <option>3 months</option>
-                <option>6 months</option>
-                <option>1 year</option>
-              </Select>
             </Flex>
 
             <Stack direction={{ base: "column", md: "row" }} spacing={4}>
@@ -207,7 +223,7 @@ const TripHistory: React.FC = () => {
                   <SearchIcon color="gray.400" />
                 </InputLeftElement>
                 <Input
-                  placeholder="Search place or driver"
+                  placeholder="Search place, guest or driver"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -222,25 +238,19 @@ const TripHistory: React.FC = () => {
               >
                 <option>All</option>
                 <option>Completed</option>
+                <option>Pending</option>
                 <option>Cancelled</option>
               </Select>
 
-              <Menu>
-                <MenuButton
-                  as={Button}
-                  rightIcon={<Icon as={SortDesc} />}
-                  variant="outline"
-                >
-                  Sort by: {sortBy}
-                </MenuButton>
-                <MenuList>
-                  <MenuItem onClick={() => setSortBy("date")}>Date</MenuItem>
-                  <MenuItem onClick={() => setSortBy("price")}>Price</MenuItem>
-                  <MenuItem onClick={() => setSortBy("rating")}>
-                    Rating
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+              <Select
+                maxW={{ base: "full", md: "150px" }}
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value as DateFilter)}
+              >
+                <option>3 months</option>
+                <option>6 months</option>
+                <option>1 year</option>
+              </Select>
             </Stack>
           </Stack>
 
@@ -260,9 +270,13 @@ const TripHistory: React.FC = () => {
                 transition="all 0.2s"
               >
                 <CardBody>
-                  <Flex justify="space-between">
+                  <Flex
+                    justify="space-between"
+                    flexDir={{ base: "column", md: "row" }}
+                    gap={4}
+                  >
                     <Stack spacing={4} flex={1}>
-                      <HStack spacing={6}>
+                      <HStack spacing={6} flexWrap="wrap" gap={2}>
                         <HStack color="gray.600">
                           <Icon as={CalendarIcon} />
                           <Text>{trip.date}</Text>
@@ -271,45 +285,67 @@ const TripHistory: React.FC = () => {
                           <Icon as={TimeIcon} />
                           <Text>{trip.time}</Text>
                         </HStack>
+                        <HStack color="gray.600">
+                          <Icon as={Users} />
+                          <Text>{trip.guests.length} guests</Text>
+                        </HStack>
                       </HStack>
 
                       <Stack spacing={2}>
-                        <HStack>
-                          <Icon as={MapPin} color="green.500" />
-                          <Text>{trip.pickup}</Text>
-                        </HStack>
-                        <Box pl="6px">
-                          <Divider
-                            orientation="vertical"
-                            h="20px"
-                            borderColor="gray.300"
-                          />
-                        </Box>
-                        <HStack>
-                          <Icon as={MapPin} color="red.500" />
-                          <Text>{trip.dropoff}</Text>
-                        </HStack>
+                        {trip.locations.map((location, index) => (
+                          <React.Fragment key={index}>
+                            <HStack>
+                              <Icon
+                                as={MapPin}
+                                color={
+                                  location.type === "pickup"
+                                    ? "green.500"
+                                    : location.type === "waypoint"
+                                    ? "blue.500"
+                                    : "red.500"
+                                }
+                              />
+                              <Text>
+                                {location.name}
+                                {location.type !== "dropoff" && (
+                                  <Badge ml={2} colorScheme="gray">
+                                    {location.type === "pickup"
+                                      ? "Pickup"
+                                      : "Waypoint"}
+                                  </Badge>
+                                )}
+                              </Text>
+                            </HStack>
+                            {index < trip.locations.length - 1 && (
+                              <Box pl="6px">
+                                <Divider
+                                  orientation="vertical"
+                                  h="20px"
+                                  borderColor="gray.300"
+                                />
+                              </Box>
+                            )}
+                          </React.Fragment>
+                        ))}
                       </Stack>
 
-                      <HStack spacing={6}>
-                        <HStack>
-                          <Icon as={DollarSign} color="gray.600" />
-                          <Text fontWeight="semibold">
-                            ₩{trip.price.toLocaleString()}
-                          </Text>
-                        </HStack>
-                        <HStack>
-                          <Icon as={StarIcon} color="yellow.400" />
-                          <Text>{trip.rating}</Text>
-                        </HStack>
-                      </HStack>
+                      <Wrap spacing={2}>
+                        {trip.guests.map((guest) => (
+                          <WrapItem key={guest.id}>
+                            <Tag size="md" borderRadius="full" variant="subtle">
+                              {guest.name}
+                            </Tag>
+                          </WrapItem>
+                        ))}
+                      </Wrap>
                     </Stack>
 
-                    <Stack align="flex-end" spacing={2}>
+                    <Stack
+                      align={{ base: "flex-start", md: "flex-end" }}
+                      spacing={2}
+                    >
                       <Badge
-                        colorScheme={
-                          trip.status === "Completed" ? "green" : "red"
-                        }
+                        colorScheme={getStatusColor(trip.status)}
                         fontSize="sm"
                         px={3}
                         py={1}
