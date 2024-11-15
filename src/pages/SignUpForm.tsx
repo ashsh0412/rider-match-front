@@ -15,7 +15,6 @@ import {
   Link,
   useToast,
   Icon,
-  Switch,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -26,7 +25,6 @@ export default function SignupCard() {
   const toast = useToast(); // useToast 훅을 초기화
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [isRider, setIsRider] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -103,7 +101,6 @@ export default function SignupCard() {
           email: email,
           password: password,
           username: username,
-          is_rider: isRider,
         }),
       });
 
@@ -211,14 +208,7 @@ export default function SignupCard() {
                 </InputRightElement>
               </InputGroup>
             </FormControl>
-            <FormControl isRequired>
-              <FormLabel htmlFor="isRider">Are You Rider?</FormLabel>
-              <Switch
-                id="isRider"
-                isChecked={isRider}
-                onChange={() => setIsRider((prev) => !prev)}
-              />
-            </FormControl>
+
             <Button
               loadingText="Submitting"
               size="lg"

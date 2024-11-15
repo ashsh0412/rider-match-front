@@ -19,7 +19,6 @@ import {
   InputLeftElement,
   Button,
   ButtonGroup,
-  Menu,
   useColorModeValue,
   Tag,
   Wrap,
@@ -48,6 +47,7 @@ interface Guest {
 interface Location {
   name: string;
   type: "pickup" | "waypoint" | "dropoff";
+  pickupTime?: string; // pickup time 추가
 }
 
 interface Trip {
@@ -77,8 +77,8 @@ const TripHistory: React.FC = () => {
       date: "2024-03-15",
       time: "14:30",
       locations: [
-        { name: "Seoul Station", type: "pickup" },
-        { name: "Hongdae Station", type: "waypoint" },
+        { name: "Seoul Station", type: "pickup", pickupTime: "14:30" },
+        { name: "Hongdae Station", type: "waypoint", pickupTime: "15:00" },
         { name: "Gangnam Station", type: "dropoff" },
       ],
       guests: [
@@ -94,7 +94,7 @@ const TripHistory: React.FC = () => {
       date: "2024-03-14",
       time: "09:15",
       locations: [
-        { name: "Hongdae Station", type: "pickup" },
+        { name: "Hongdae Station", type: "pickup", pickupTime: "09:15" },
         { name: "Yeouido", type: "dropoff" },
       ],
       guests: [
@@ -109,8 +109,8 @@ const TripHistory: React.FC = () => {
       date: "2024-03-13",
       time: "11:30",
       locations: [
-        { name: "Incheon Airport", type: "pickup" },
-        { name: "Gimpo Airport", type: "waypoint" },
+        { name: "Incheon Airport", type: "pickup", pickupTime: "11:30" },
+        { name: "Gimpo Airport", type: "waypoint", pickupTime: "12:15" },
         { name: "Myeongdong", type: "dropoff" },
       ],
       guests: [
@@ -127,7 +127,7 @@ const TripHistory: React.FC = () => {
       date: "2024-03-12",
       time: "16:45",
       locations: [
-        { name: "Gangnam Station", type: "pickup" },
+        { name: "Gangnam Station", type: "pickup", pickupTime: "16:45" },
         { name: "Itaewon", type: "dropoff" },
       ],
       guests: [{ id: 10, name: "Emma Davis" }],
@@ -312,6 +312,11 @@ const TripHistory: React.FC = () => {
                                     {location.type === "pickup"
                                       ? "Pickup"
                                       : "Waypoint"}
+                                  </Badge>
+                                )}
+                                {location.pickupTime && (
+                                  <Badge ml={2} colorScheme="purple">
+                                    {location.pickupTime}
                                   </Badge>
                                 )}
                               </Text>
