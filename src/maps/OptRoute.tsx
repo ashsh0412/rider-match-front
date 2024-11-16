@@ -11,6 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { useRouteData } from "./UseRouteData";
 import { useNavigate } from "react-router-dom";
+import { Passenger } from "../components/PassengerCard";
+import { getCurrentUser } from "../api/GetUserInfo";
+import { PostBooking } from "../api/PostBooking";
 
 interface PassengerDetail {
   id: number;
@@ -97,7 +100,7 @@ const useRouteCalculation = ({
 
         directionsServiceRef.current
           .route(request)
-          .then((response) => {
+          .then(async (response) => {
             if (directionsRendererRef.current) {
               directionsRendererRef.current.setDirections(response);
 
@@ -130,6 +133,36 @@ const useRouteCalculation = ({
                  `
                   )
                   .join("");
+                const data = localStorage.getItem("selectedPassengerDetails");
+                const riderInfo = await getCurrentUser();
+                if (data) {
+                  const parsedData = JSON.parse(data);
+                  if (Array.isArray(parsedData)) {
+                    // Django 모델 구조에 맞게 데이터 변환
+                    const bookingData = {
+                      rider: riderInfo.id,
+                      driver_name: riderInfo.first_name + riderInfo.last_name,
+                      passengers: parsedData.map((item: Passenger) => ({
+                        id: item.id,
+                        name: item.name,
+                      })),
+                      pickup_times: parsedData.map(
+                        (_, index) => pickupTimes[index]?.time || "N/A"
+                      ),
+                      locations: {
+                        pickups: parsedData.map(
+                          (item: Passenger) => item.pickup
+                        ),
+                        destinations: parsedData.map(
+                          (item: Passenger) => item.destination
+                        ),
+                      },
+                      guests: parsedData.length,
+                      created_at: new Date().toISOString(),
+                    };
+                    PostBooking(bookingData);
+                  }
+                }
                 const totalDurationInMinutes = totalDuration / 60; // minutes로 변환
                 const totalHours = Math.floor(totalDurationInMinutes / 60); // 시간 계산
                 const remainingMinutes = Math.round(

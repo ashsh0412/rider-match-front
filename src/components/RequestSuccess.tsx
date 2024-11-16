@@ -16,8 +16,6 @@ import { reverseGeocode } from "../api/Geocoding";
 import { Passenger, PassengerCard } from "./PassengerCard";
 import PageNavigation from "./PageNavigation";
 import RouteMap from "../maps/OptRoute";
-import { PostBooking } from "../api/PostBooking";
-import { getCurrentUser } from "../api/GetUserInfo";
 
 interface SuccessMessageProps {
   setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>;
@@ -219,48 +217,6 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
         "selectedPassengerDetails",
         JSON.stringify(selectedPassengerDetails)
       );
-      // PostBooking 함수 호출 시, 제대로 된 passengers 배열만 전달하도록 수정
-      const data = localStorage.getItem("selectedPassengerDetails");
-      const riderInfo = await getCurrentUser();
-      if (data) {
-        const parsedData = JSON.parse(data);
-        if (Array.isArray(parsedData)) {
-          // Django 모델 구조에 맞게 데이터 변환
-          const bookingData = {
-            rider: riderInfo.id,
-            driver_name: riderInfo.first_name + riderInfo.last_name,
-            passengers: parsedData.map((item: Passenger) => ({
-              id: item.id,
-              name: item.name,
-            })),
-            pickup_times: parsedData.map((item: Passenger) => item.time),
-            locations: {
-              pickups: parsedData.map((item: Passenger) => item.pickup),
-              destinations: parsedData.map(
-                (item: Passenger) => item.destination
-              ),
-            },
-            guests: parsedData.length,
-            created_at: new Date().toISOString(),
-          };
-          PostBooking(bookingData)
-            .then((response) => {
-              if (response) {
-                setSelectedPassengerDetails(parsedData);
-                setIsOptRoute(true);
-                if (setOptRoute) {
-                  setOptRoute((prev) => !prev);
-                }
-              } else {
-                console.error("Failed to create booking");
-              }
-            })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
-        }
-      }
-
       setSelectedPassengerDetails(selectedPassengerDetails);
       setIsOptRoute(true);
       if (setOptRoute) {
