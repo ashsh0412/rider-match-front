@@ -14,37 +14,44 @@ import { useNavigate } from "react-router-dom";
 import { Passenger } from "../components/PassengerCard";
 import { getCurrentUser } from "../api/GetUserInfo";
 import { PostBooking } from "../api/PostBooking";
+import { reverseGeocode } from "../api/Geocoding";
 
+// 승객 상세 정보를 위한 인터페이스
 interface PassengerDetail {
   id: number;
   name: string;
-  pickup: string;
-  destination: string;
-  time: string;
+  pickup: string; // 픽업 위치
+  destination: string; // 목적지
+  time: string; // 시간
 }
 
+// RouteMap 컴포넌트의 props 인터페이스
 interface RouteMapProps {
   passengerDetails: PassengerDetail[];
 }
 
+// 픽업 시간 정보를 위한 인터페이스
 interface PickupTime {
-  location: string;
-  time: string;
+  location: string; // 픽업 위치
+  time: string; // 픽업 시간
 }
 
+// 경유지 정보를 위한 인터페이스
 interface Waypoint {
-  location: string;
-  stopover: boolean;
+  location: string; // 경유지 위치
+  stopover: boolean; // 경유지 정차 여부
 }
 
+// 위치 데이터를 위한 인터페이스
 interface LocationData {
-  origin: string;
-  destination: string;
-  waypoints: Waypoint[];
+  origin: string; // 출발지
+  destination: string; // 최종 목적지
+  waypoints: Waypoint[]; // 경유지 목록
   labels: {
-    origin: string;
-    destination: string;
+    origin: string; // 출발지 라벨
+    destination: string; // 목적지 라벨
     passengers: {
+      // 승객 정보
       name: string;
       scheduledTime: string;
       pickup: string;
@@ -52,17 +59,20 @@ interface LocationData {
   };
 }
 
+// 경로 계산을 위한 props 인터페이스
 interface UseRouteCalculationProps {
   locationData: LocationData;
   passengerDetails: PassengerDetail[];
   calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
 }
 
+// 경로 계산을 위한 커스텀 훅
 const useRouteCalculation = ({
   locationData,
   passengerDetails,
   calculatePickupTimes,
 }: UseRouteCalculationProps) => {
+  // Google Maps Directions 서비스와 렌더러를 위한 ref
   const directionsServiceRef = useRef<google.maps.DirectionsService | null>(
     null
   );
@@ -71,7 +81,7 @@ const useRouteCalculation = ({
   );
 
   useEffect(() => {
-    // Ensure that necessary data is present before initializing map calculation
+    // 필요한 데이터가 모두 있는지 확인
     if (
       !locationData.origin ||
       !locationData.destination ||
@@ -81,23 +91,26 @@ const useRouteCalculation = ({
     }
 
     try {
+      // Google Maps 서비스 초기화
       directionsServiceRef.current = new google.maps.DirectionsService();
       directionsRendererRef.current = new google.maps.DirectionsRenderer({
-        suppressMarkers: true,
+        suppressMarkers: true, // 기본 마커 숨기기
       });
 
       if (directionsServiceRef.current && directionsRendererRef.current) {
+        // 경로 계산을 위한 요청 설정
         const request: google.maps.DirectionsRequest = {
           origin: locationData.origin,
           destination: locationData.destination,
           waypoints: locationData.waypoints,
-          optimizeWaypoints: true,
+          optimizeWaypoints: true, // 경유지 최적화
           travelMode: google.maps.TravelMode.DRIVING,
           region: "us",
           language: "en",
           unitSystem: google.maps.UnitSystem.IMPERIAL,
         };
 
+        // 경로 계산 실행
         directionsServiceRef.current
           .route(request)
           .then(async (response) => {
@@ -108,6 +121,7 @@ const useRouteCalculation = ({
               const legs = route.legs;
               const pickupTimes = calculatePickupTimes(legs);
 
+              // 총 거리와 시간 계산
               let totalDistance = 0;
               let totalDuration = 0;
 
@@ -117,9 +131,10 @@ const useRouteCalculation = ({
                 if (leg?.duration?.value)
                   totalDuration += Number(leg.duration.value);
               });
-
+              // 경로 정보 패널 업데이트
               const panel = document.getElementById("route-info");
               if (panel) {
+                // 승객별 픽업 일정 HTML 생성
                 const pickupSchedule = passengerDetails
                   .map(
                     (p, index) => `
@@ -133,15 +148,42 @@ const useRouteCalculation = ({
                  `
                   )
                   .join("");
+
+                // 로컬 스토리지에서 선택된 승객 정보 가져오기
                 const data = localStorage.getItem("selectedPassengerDetails");
                 const riderInfo = await getCurrentUser();
+
+                // 예약 데이터 생성 및 저장
                 if (data) {
                   const parsedData = JSON.parse(data);
+
                   if (Array.isArray(parsedData)) {
-                    // Django 모델 구조에 맞게 데이터 변환
+                    // Django 모델에 맞는 예약 데이터 구조 생성
+                    const startCoordinates =
+                      localStorage.getItem("startCoordinates");
+
+                    let startingPoint = "";
+                    if (startCoordinates) {
+                      try {
+                        const parsedCoordinates = JSON.parse(startCoordinates);
+                        const latitude = parsedCoordinates.lat;
+                        const longitude = parsedCoordinates.lng;
+
+                        // reverseGeocode 함수로 주소 변환
+                        startingPoint = await reverseGeocode(
+                          latitude,
+                          longitude
+                        );
+                        console.log(startingPoint);
+                      } catch (error) {
+                        console.error("Error parsing startCoordinates:", error);
+                      }
+                    }
+
+                    // 예약 데이터 생성
                     const bookingData = {
                       rider: riderInfo.id,
-                      driver_name: riderInfo.first_name + riderInfo.last_name,
+                      driver_name: `${riderInfo.first_name} ${riderInfo.last_name}`,
                       passengers: parsedData.map((item: Passenger) => ({
                         id: item.id,
                         name: item.name,
@@ -159,29 +201,37 @@ const useRouteCalculation = ({
                       },
                       guests: parsedData.length,
                       created_at: new Date().toISOString(),
+                      arrival_time:
+                        sessionStorage.getItem("selectedDate") ||
+                        new Date().toISOString(), // 기본값 추가
+                      starting_point: startingPoint || "Unknown Location",
                     };
+
+                    // PostBooking 함수 호출
                     PostBooking(bookingData);
                   }
                 }
-                const totalDurationInMinutes = totalDuration / 60; // minutes로 변환
-                const totalHours = Math.floor(totalDurationInMinutes / 60); // 시간 계산
+
+                // 총 소요 시간을 시간과 분으로 변환
+                const totalDurationInMinutes = totalDuration / 60;
+                const totalHours = Math.floor(totalDurationInMinutes / 60);
                 const remainingMinutes = Math.round(
                   totalDurationInMinutes % 60
-                ); // 나머지 분 계산
+                );
 
+                // 경로 정보 패널 HTML 업데이트
                 panel.innerHTML = `
                    <div style="margin-top: 10px;">
                      <p><strong>Total Distance:</strong> ${(
                        totalDistance / 1609.34
                      ).toFixed(1)} miles</p>
-                         <p><strong>Total Duration:</strong> ${
-                           totalHours == 0 ? "" : totalHours
-                         } ${totalHours != 0 ? "hour" : ""}${
+                     <p><strong>Total Duration:</strong> ${
+                       totalHours == 0 ? "" : totalHours
+                     } ${totalHours != 0 ? "hour" : ""}${
                   totalHours > 0 ? "s" : ""
                 } ${remainingMinutes} minute${
                   remainingMinutes !== 1 ? "s" : ""
                 }</p>
-
                      <div style="margin-top: 15px;">
                        <p><strong>Pickup Schedule:</strong></p>
                        ${pickupSchedule}
@@ -210,12 +260,14 @@ const useRouteCalculation = ({
   };
 };
 
+// 경로 지도 렌더러 컴포넌트 props 인터페이스
 interface RouteMapRendererProps {
   locationData: LocationData;
   calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
   passengerDetails: PassengerDetail[];
 }
 
+// 패널 렌더러 컴포넌트
 const PanelRenderer: React.FC<RouteMapRendererProps> = ({
   locationData,
   calculatePickupTimes,
@@ -229,6 +281,7 @@ const PanelRenderer: React.FC<RouteMapRendererProps> = ({
   return <div />;
 };
 
+// 메인 RouteMap 컴포넌트
 const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
   const { startPoint, endPoint, locationData, calculatePickupTimes } =
     useRouteData(passengerDetails);
@@ -261,6 +314,7 @@ const RouteMap: React.FC<RouteMapProps> = ({ passengerDetails }) => {
         />
         <Button
           onClick={() => {
+            // 라이더 페이지로 이동하고 로컬 스토리지 데이터 정리
             navigate("/rider-page");
             localStorage.removeItem("endCoordinates");
             localStorage.removeItem("startCoordinates");

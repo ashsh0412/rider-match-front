@@ -14,33 +14,20 @@ interface BookingData {
   };
   guests: number;
   created_at: string;
-  arrival_time: string;
-  starting_point: string;
 }
 
 // PostBooking 함수 시그니처 수정
-export const PostBooking = async (bookingData: BookingData) => {
+export const getBooking = async () => {
   try {
     const response = await fetch(
       "http://127.0.0.1:8000/api/v1/bookings/my-bookings/",
       {
-        method: "POST",
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": Cookies.get("csrftoken") || "",
         },
         credentials: "include",
-        body: JSON.stringify({
-          rider: bookingData.rider, // 현재 로그인한 사용자 ID
-          driver_name: bookingData.driver_name,
-          passengers: bookingData.passengers,
-          pickup_times: bookingData.pickup_times,
-          locations: bookingData.locations,
-          guests: bookingData.guests,
-          created_at: bookingData.created_at,
-          arrival_time: bookingData.arrival_time,
-          starting_point: bookingData.starting_point,
-        }),
       }
     );
 

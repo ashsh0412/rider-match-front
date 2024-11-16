@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Box,
   Card,
@@ -23,16 +23,18 @@ import {
   Tag,
   Wrap,
   WrapItem,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   CalendarIcon,
-  TimeIcon,
   SearchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
 import { MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
+import { getBooking } from "../api/GetBooking";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Cancelled" | "Pending";
@@ -44,6 +46,12 @@ interface Guest {
   name: string;
 }
 
+interface PickupWithTime {
+  location: string;
+  time: string;
+  type: "pickup";
+}
+
 interface Location {
   name: string;
   type: "pickup" | "waypoint" | "dropoff";
@@ -53,9 +61,11 @@ interface Location {
 interface Trip {
   id: number;
   date: string;
-  time: string;
+  startingPoint: string;
+  pickupTime: string;
+  arrivalTime: string;
   locations: Location[];
-  guests: Guest[];
+  guests: { id: number; name: string }[];
   driverName: string;
   status: "Completed" | "Cancelled" | "Pending";
 }
@@ -67,74 +77,102 @@ const TripHistory: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortField>("date");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [currentPage, setCurrentPage] = useState(1);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [loading, setLoading] = useState(true);
   const itemsPerPage = 5;
 
   const bg = useColorModeValue("white", "gray.800");
 
-  const allTrips: Trip[] = [
-    {
-      id: 1,
-      date: "2024-03-15",
-      time: "14:30",
-      locations: [
-        { name: "Seoul Station", type: "pickup", pickupTime: "14:30" },
-        { name: "Hongdae Station", type: "waypoint", pickupTime: "15:00" },
-        { name: "Gangnam Station", type: "dropoff" },
-      ],
-      guests: [
-        { id: 1, name: "John Doe" },
-        { id: 2, name: "Jane Smith" },
-        { id: 3, name: "Mike Johnson" },
-      ],
-      driverName: "Kim Chul-soo",
-      status: "Completed",
-    },
-    {
-      id: 2,
-      date: "2024-03-14",
-      time: "09:15",
-      locations: [
-        { name: "Hongdae Station", type: "pickup", pickupTime: "09:15" },
-        { name: "Yeouido", type: "dropoff" },
-      ],
-      guests: [
-        { id: 4, name: "Sarah Wilson" },
-        { id: 5, name: "Tom Brown" },
-      ],
-      driverName: "Lee Young-hee",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      date: "2024-03-13",
-      time: "11:30",
-      locations: [
-        { name: "Incheon Airport", type: "pickup", pickupTime: "11:30" },
-        { name: "Gimpo Airport", type: "waypoint", pickupTime: "12:15" },
-        { name: "Myeongdong", type: "dropoff" },
-      ],
-      guests: [
-        { id: 6, name: "Alice Johnson" },
-        { id: 7, name: "Bob Wilson" },
-        { id: 8, name: "Carol Smith" },
-        { id: 9, name: "David Brown" },
-      ],
-      driverName: "Park Min-ji",
-      status: "Pending",
-    },
-    {
-      id: 4,
-      date: "2024-03-12",
-      time: "16:45",
-      locations: [
-        { name: "Gangnam Station", type: "pickup", pickupTime: "16:45" },
-        { name: "Itaewon", type: "dropoff" },
-      ],
-      guests: [{ id: 10, name: "Emma Davis" }],
-      driverName: "Choi Jun-ho",
-      status: "Cancelled",
-    },
-  ];
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const response = await getBooking();
+        const transformedTrips: Trip[] = response.map((booking: any) => {
+          const locations: Location[] = [];
+
+          // pickups와 시간을 함께 담은 배열 생성
+          const pickupsWithTimes = booking.locations.pickups.map(
+            (pickup: string, index: number) => ({
+              location: pickup.split(",")[0].trim(),
+              time: booking.pickup_times[index],
+              type: "pickup" as const,
+            })
+          );
+
+          // 시간순으로 정렬
+          pickupsWithTimes.sort(
+            (a: PickupWithTime, b: PickupWithTime) =>
+              new Date(a.time).getTime() - new Date(b.time).getTime()
+          );
+
+          // 정렬된 pickup 위치들을 locations 배열에 추가
+          pickupsWithTimes.forEach((item: PickupWithTime) => {
+            locations.push({
+              name: item.location,
+              type: item.type,
+              pickupTime: item.time,
+            });
+          });
+
+          // destinations 추가
+          if (booking.locations.destinations.length > 0) {
+            const destination = booking.locations.destinations[0];
+            const shortenedDestination = destination.split(",")[0].trim();
+            locations.push({
+              name: shortenedDestination,
+              type: "dropoff",
+            });
+          }
+
+          const guests: Guest[] = booking.passengers.map(
+            (passenger: any, index: number) => ({
+              id: index + 1,
+              name: passenger.name,
+            })
+          );
+
+          const riderDate = booking.pickup_times[0]
+            .split(",")
+            .slice(0, 2)
+            .join(",");
+
+          const startingPoint = booking.starting_point;
+          const shortStartingPoint = startingPoint.split(",")[0].trim();
+
+          const formatArrivalTime = (arrivalTime: string): string => {
+            const date = new Date(arrivalTime);
+            return new Intl.DateTimeFormat("en-US", {
+              month: "short", // Nov
+              day: "2-digit", // 17
+              year: "numeric", // 2024
+              hour: "2-digit", // 03
+              minute: "2-digit", // 26
+              hour12: true, // AM/PM
+            }).format(date);
+          };
+
+          return {
+            id: booking.id,
+            date: riderDate,
+            locations: locations,
+            guests: guests,
+            driverName: booking.driver_name,
+            status: "Pending" as const,
+            startingPoint: shortStartingPoint, // 추가된 부분
+            arrivalTime: formatArrivalTime(booking.arrival_time), // 추가된 부분
+          };
+        });
+
+        setTrips(transformedTrips);
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrips();
+  }, []);
 
   const months: Record<DateFilter, number> = {
     "3 months": 3,
@@ -156,7 +194,7 @@ const TripHistory: React.FC = () => {
   };
 
   const filteredAndSortedTrips = useMemo(() => {
-    let filtered = [...allTrips];
+    let filtered = [...trips]; // allTrips 대신 trips 사용
 
     if (searchTerm) {
       filtered = filtered.filter(
@@ -212,191 +250,219 @@ const TripHistory: React.FC = () => {
       <NavBar />
       <Box pt="80px" minH="100vh" bg={bg}>
         <Container maxW="container.xl" py={8}>
-          <Stack spacing={6}>
-            <Flex justify="space-between" align="center">
-              <Heading size="lg">Trip History</Heading>
-            </Flex>
+          {loading ? (
+            <Center h="200px">
+              <Spinner size="xl" />
+            </Center>
+          ) : (
+            <>
+              <Stack spacing={6}>
+                <Flex justify="space-between" align="center">
+                  <Heading size="lg">Trip History</Heading>
+                </Flex>
 
-            <Stack direction={{ base: "column", md: "row" }} spacing={4}>
-              <InputGroup maxW={{ base: "full", md: "300px" }}>
-                <InputLeftElement>
-                  <SearchIcon color="gray.400" />
-                </InputLeftElement>
-                <Input
-                  placeholder="Search place, guest or driver"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </InputGroup>
+                <Stack direction={{ base: "column", md: "row" }} spacing={4}>
+                  <InputGroup maxW={{ base: "full", md: "300px" }}>
+                    <InputLeftElement>
+                      <SearchIcon color="gray.400" />
+                    </InputLeftElement>
+                    <Input
+                      placeholder="Search place, guest or driver"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </InputGroup>
 
-              <Select
-                maxW={{ base: "full", md: "150px" }}
-                value={statusFilter}
-                onChange={(e) =>
-                  setStatusFilter(e.target.value as StatusFilter)
-                }
-              >
-                <option>All</option>
-                <option>Completed</option>
-                <option>Pending</option>
-                <option>Cancelled</option>
-              </Select>
-
-              <Select
-                maxW={{ base: "full", md: "150px" }}
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value as DateFilter)}
-              >
-                <option>3 months</option>
-                <option>6 months</option>
-                <option>1 year</option>
-              </Select>
-            </Stack>
-          </Stack>
-
-          <Text mt={4} color="gray.600">
-            {filteredAndSortedTrips.length} trips found
-          </Text>
-
-          <VStack spacing={4} align="stretch" mt={4}>
-            {currentTrips.map((trip) => (
-              <Card
-                key={trip.id}
-                variant="outline"
-                _hover={{
-                  shadow: "lg",
-                  transform: "translateY(-2px)",
-                }}
-                transition="all 0.2s"
-              >
-                <CardBody>
-                  <Flex
-                    justify="space-between"
-                    flexDir={{ base: "column", md: "row" }}
-                    gap={4}
+                  <Select
+                    maxW={{ base: "full", md: "150px" }}
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as StatusFilter)
+                    }
                   >
-                    <Stack spacing={4} flex={1}>
-                      <HStack spacing={6} flexWrap="wrap" gap={2}>
-                        <HStack color="gray.600">
-                          <Icon as={CalendarIcon} />
-                          <Text>{trip.date}</Text>
-                        </HStack>
-                        <HStack color="gray.600">
-                          <Icon as={TimeIcon} />
-                          <Text>{trip.time}</Text>
-                        </HStack>
-                        <HStack color="gray.600">
-                          <Icon as={Users} />
-                          <Text>{trip.guests.length} guests</Text>
-                        </HStack>
-                      </HStack>
+                    <option>All</option>
+                    <option>Completed</option>
+                    <option>Pending</option>
+                    <option>Cancelled</option>
+                  </Select>
 
-                      <Stack spacing={2}>
-                        {trip.locations.map((location, index) => (
-                          <React.Fragment key={index}>
-                            <HStack>
-                              <Icon
-                                as={MapPin}
-                                color={
-                                  location.type === "pickup"
-                                    ? "green.500"
-                                    : location.type === "waypoint"
-                                    ? "blue.500"
-                                    : "red.500"
-                                }
-                              />
-                              <Text>
-                                {location.name}
-                                {location.type !== "dropoff" && (
-                                  <Badge ml={2} colorScheme="gray">
-                                    {location.type === "pickup"
-                                      ? "Pickup"
-                                      : "Waypoint"}
-                                  </Badge>
-                                )}
-                                {location.pickupTime && (
-                                  <Badge ml={2} colorScheme="purple">
-                                    {location.pickupTime}
-                                  </Badge>
-                                )}
-                              </Text>
-                            </HStack>
-                            {index < trip.locations.length - 1 && (
-                              <Box pl="6px">
-                                <Divider
-                                  orientation="vertical"
-                                  h="20px"
-                                  borderColor="gray.300"
-                                />
-                              </Box>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </Stack>
+                  <Select
+                    maxW={{ base: "full", md: "150px" }}
+                    value={dateFilter}
+                    onChange={(e) =>
+                      setDateFilter(e.target.value as DateFilter)
+                    }
+                  >
+                    <option>3 months</option>
+                    <option>6 months</option>
+                    <option>1 year</option>
+                  </Select>
+                </Stack>
+              </Stack>
 
-                      <Wrap spacing={2}>
-                        {trip.guests.map((guest) => (
-                          <WrapItem key={guest.id}>
-                            <Tag size="md" borderRadius="full" variant="subtle">
-                              {guest.name}
-                            </Tag>
-                          </WrapItem>
-                        ))}
-                      </Wrap>
-                    </Stack>
+              <Text mt={4} color="gray.600">
+                {filteredAndSortedTrips.length} trips found
+              </Text>
 
-                    <Stack
-                      align={{ base: "flex-start", md: "flex-end" }}
-                      spacing={2}
-                    >
-                      <Badge
-                        colorScheme={getStatusColor(trip.status)}
-                        fontSize="sm"
-                        px={3}
-                        py={1}
-                        borderRadius="full"
+              <VStack spacing={4} align="stretch" mt={4}>
+                {currentTrips.map((trip) => (
+                  <Card
+                    key={trip.id}
+                    variant="outline"
+                    _hover={{
+                      shadow: "lg",
+                      transform: "translateY(-2px)",
+                    }}
+                    transition="all 0.2s"
+                  >
+                    <CardBody>
+                      <Flex
+                        justify="space-between"
+                        flexDir={{ base: "column", md: "row" }}
+                        gap={4}
                       >
-                        {trip.status}
-                      </Badge>
-                      <Text fontSize="sm" color="gray.600">
-                        Driver: {trip.driverName}
-                      </Text>
-                    </Stack>
-                  </Flex>
-                </CardBody>
-              </Card>
-            ))}
-          </VStack>
+                        <Stack spacing={4} flex={1}>
+                          <HStack spacing={6} flexWrap="wrap" gap={2}>
+                            <HStack color="gray.600">
+                              <Icon as={CalendarIcon} />
+                              <Text>{trip.date}</Text>
+                            </HStack>
+                            <HStack color="gray.600">
+                              <Icon as={Users} />
+                              <Text>{trip.guests.length} guests</Text>
+                            </HStack>
+                          </HStack>
 
-          {totalPages > 1 && (
-            <Flex justify="center" mt={8}>
-              <ButtonGroup variant="outline" spacing={2}>
-                <Button
-                  leftIcon={<ChevronLeftIcon />}
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  isDisabled={currentPage === 1}
-                >
-                  Prev
-                </Button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <Button
-                    key={i + 1}
-                    onClick={() => handlePageChange(i + 1)}
-                    colorScheme={currentPage === i + 1 ? "blue" : "gray"}
-                    variant={currentPage === i + 1 ? "solid" : "outline"}
-                  >
-                    {i + 1}
-                  </Button>
+                          <Stack spacing={2}>
+                            <HStack>
+                              <Icon as={MapPin} color={"yellow.400"} />
+                              <Text>{trip.startingPoint}</Text>
+                              <Badge ml={2} colorScheme="gray">
+                                Starting Point
+                              </Badge>
+                            </HStack>
+                            <Box pl="6px">
+                              <Divider
+                                orientation="vertical"
+                                h="20px"
+                                borderColor="gray.300"
+                              />
+                            </Box>
+                            {trip.locations.map((location, index) => (
+                              <React.Fragment key={index}>
+                                <HStack>
+                                  <Icon
+                                    as={MapPin}
+                                    color={
+                                      location.type === "pickup"
+                                        ? "green.500"
+                                        : location.type === "waypoint"
+                                        ? "blue.500"
+                                        : "red.500"
+                                    }
+                                  />
+                                  <Text>
+                                    {location.name}
+                                    <Badge ml={2} colorScheme="gray">
+                                      {location.type === "dropoff"
+                                        ? "Destination"
+                                        : "Waypoint"}
+                                    </Badge>
+                                    {location.type === "dropoff" &&
+                                      trip.arrivalTime && ( // 도착 시간 배지 추가
+                                        <Badge colorScheme="purple" ml={2}>
+                                          {trip.arrivalTime}
+                                        </Badge>
+                                      )}
+                                    {location.pickupTime && (
+                                      <Badge ml={2} colorScheme="purple">
+                                        {location.pickupTime}
+                                      </Badge>
+                                    )}
+                                  </Text>
+                                </HStack>
+                                {index < trip.locations.length - 1 && (
+                                  <Box pl="6px">
+                                    <Divider
+                                      orientation="vertical"
+                                      h="20px"
+                                      borderColor="gray.300"
+                                    />
+                                  </Box>
+                                )}
+                              </React.Fragment>
+                            ))}
+                          </Stack>
+
+                          <Wrap spacing={2}>
+                            {trip.guests.map((guest) => (
+                              <WrapItem key={guest.id}>
+                                <Tag
+                                  size="md"
+                                  borderRadius="full"
+                                  variant="subtle"
+                                >
+                                  {guest.name}
+                                </Tag>
+                              </WrapItem>
+                            ))}
+                          </Wrap>
+                        </Stack>
+
+                        <Stack
+                          align={{ base: "flex-start", md: "flex-end" }}
+                          spacing={2}
+                        >
+                          <Badge
+                            colorScheme={getStatusColor(trip.status)}
+                            fontSize="sm"
+                            px={3}
+                            py={1}
+                            borderRadius="full"
+                          >
+                            {trip.status}
+                          </Badge>
+                          <Text fontSize="sm" color="gray.600">
+                            Driver: {trip.driverName}
+                          </Text>
+                        </Stack>
+                      </Flex>
+                    </CardBody>
+                  </Card>
                 ))}
-                <Button
-                  rightIcon={<ChevronRightIcon />}
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  isDisabled={currentPage === totalPages}
-                >
-                  Next
-                </Button>
-              </ButtonGroup>
-            </Flex>
+              </VStack>
+
+              {totalPages > 1 && (
+                <Flex justify="center" mt={8}>
+                  <ButtonGroup variant="outline" spacing={2}>
+                    <Button
+                      leftIcon={<ChevronLeftIcon />}
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      isDisabled={currentPage === 1}
+                    >
+                      Prev
+                    </Button>
+                    {[...Array(totalPages)].map((_, i) => (
+                      <Button
+                        key={i + 1}
+                        onClick={() => handlePageChange(i + 1)}
+                        colorScheme={currentPage === i + 1 ? "blue" : "gray"}
+                        variant={currentPage === i + 1 ? "solid" : "outline"}
+                      >
+                        {i + 1}
+                      </Button>
+                    ))}
+                    <Button
+                      rightIcon={<ChevronRightIcon />}
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      isDisabled={currentPage === totalPages}
+                    >
+                      Next
+                    </Button>
+                  </ButtonGroup>
+                </Flex>
+              )}
+            </>
           )}
         </Container>
       </Box>
