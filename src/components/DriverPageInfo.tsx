@@ -33,41 +33,56 @@ const DriverInfo: React.FC = () => {
         }}
       >
         <VStack align="start" spacing={4}>
-          <HStack spacing={3}>
-            <Icon as={FaClock} color={iconColor} boxSize={5} />
-            <Box>
+          <HStack
+            spacing={3}
+            align="start" // 상단 정렬로 변경
+          >
+            <Icon
+              as={FaClock}
+              color={iconColor}
+              boxSize={5}
+              mt={1} // 텍스트 첫 줄과 나란히 정렬되도록 살짝 아래로
+            />
+            <VStack align="start" spacing={1}>
               <Text fontWeight="semibold">Arrival Time Based Matching</Text>
-              <Text fontSize="sm" color="gray.500">
+              <Text
+                fontSize="sm"
+                color="gray.500"
+                lineHeight="1.5" // 줄 간격 조정
+              >
                 The selected time is your desired arrival time. We'll calculate
                 pickup times accordingly. Only drivers available on your
                 selected date will be shown.
               </Text>
-            </Box>
+            </VStack>
           </HStack>
 
-          <HStack spacing={3}>
-            <Icon as={FaRoute} color={iconColor} boxSize={5} />
-            <Box>
-              <Text fontWeight="semibold">Optimized Route System</Text>
-              <Text fontSize="sm" color="gray.500">
-                We provide the most efficient route based on all selected
-                passengers' locations traveling on the same date. The system
-                automatically calculates pickup sequence for minimal travel
-                time.
-              </Text>
-            </Box>
-          </HStack>
-
-          <HStack spacing={3}>
-            <Icon as={FaUserFriends} color={iconColor} boxSize={5} />
-            <Box>
-              <Text fontWeight="semibold">Maximum Passengers: 5</Text>
-              <Text fontSize="sm" color="gray.500">
-                During the beta phase, we're limiting to 5 passengers per ride
-                due to API limitations.
-              </Text>
-            </Box>
-          </HStack>
+          <Stack spacing={6}>
+            {" "}
+            {/* 각 섹션 사이 간격 */}
+            <HStack spacing={3} align="start">
+              <Icon as={FaRoute} color={iconColor} boxSize={5} mt={1} />
+              <VStack align="start" spacing={1}>
+                <Text fontWeight="semibold">Optimized Route System</Text>
+                <Text fontSize="sm" color="gray.500" lineHeight="1.5">
+                  We provide the most efficient route based on all selected
+                  passengers' locations traveling on the same date. The system
+                  automatically calculates pickup sequence for minimal travel
+                  time.
+                </Text>
+              </VStack>
+            </HStack>
+            <HStack spacing={3} align="start">
+              <Icon as={FaUserFriends} color={iconColor} boxSize={5} mt={1} />
+              <VStack align="start" spacing={1}>
+                <Text fontWeight="semibold">Maximum Passengers: 5</Text>
+                <Text fontSize="sm" color="gray.500" lineHeight="1.5">
+                  During the beta phase, we're limiting to 5 passengers per ride
+                  due to API limitations.
+                </Text>
+              </VStack>
+            </HStack>
+          </Stack>
         </VStack>
 
         <Box

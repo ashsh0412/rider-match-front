@@ -20,6 +20,13 @@ const NavBar: React.FC = () => {
   const bg = useColorModeValue("white", "gray.800");
   const navigate = useNavigate();
 
+  const handleLogoClick = () => {
+    navigate("/rider-page");
+    localStorage.removeItem("endCoordinates");
+    localStorage.removeItem("startCoordinates");
+    localStorage.removeItem("selectedPassengerDetails");
+  };
+
   return (
     <HStack
       w="100%"
@@ -29,40 +36,37 @@ const NavBar: React.FC = () => {
       px={5}
       position="fixed"
       zIndex={1000}
-      justifyContent={"space-between"}
+      justifyContent="space-between"
       bg={bg}
     >
+      {/* 로고 - sm(480px) 이상에서만 보임 */}
       <Text
         fontSize="2xl"
         fontWeight="bold"
-        onClick={() => {
-          navigate("/rider-page");
-          localStorage.removeItem("endCoordinates");
-          localStorage.removeItem("startCoordinates");
-          localStorage.removeItem("selectedPassengerDetails");
-        }}
+        onClick={handleLogoClick}
         _hover={{ cursor: "pointer" }}
+        display={{ base: "none", sm: "block" }}
       >
         DriverMatch
       </Text>
 
-      <HStack spacing={2}>
+      <HStack spacing={{ base: 1, md: 2 }}>
         <Button
           variant="ghost"
           leftIcon={<FaReceipt />}
           size="md"
-          onClick={() => {
-            navigate("/trip-history");
-          }}
+          onClick={() => navigate("/trip-history")}
+          px={{ base: 2, md: 4 }}
         >
-          Trip History
+          <Text>Trip History</Text>
         </Button>
 
         <IconButton
           onClick={toggleColorMode}
-          variant={"ghost"}
+          variant="ghost"
           aria-label="Toggle dark mode"
           icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
+          size={{ base: "sm", md: "md" }}
         />
 
         <Menu>
@@ -70,7 +74,7 @@ const NavBar: React.FC = () => {
             as={IconButton}
             icon={<FaUser />}
             variant="ghost"
-            size="md"
+            size={{ base: "sm", md: "md" }}
             aria-label="User menu"
           />
           <MenuList>

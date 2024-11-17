@@ -38,7 +38,7 @@ import { getBooking } from "../api/GetBooking";
 import { FaUserTie } from "react-icons/fa";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
-type StatusFilter = "All" | "Completed" | "Cancelled" | "Pending";
+type StatusFilter = "All" | "Completed" | "Pending";
 type SortField = "date" | "price" | "rating";
 type SortOrder = "asc" | "desc";
 
@@ -68,7 +68,7 @@ interface Trip {
   locations: Location[];
   guests: { id: number; name: string }[];
   driverName: string;
-  status: "Completed" | "Cancelled" | "Pending";
+  status: "Completed" | "Pending";
 }
 
 const TripHistory: React.FC = () => {
@@ -185,8 +185,6 @@ const TripHistory: React.FC = () => {
     switch (status) {
       case "Completed":
         return "green";
-      case "Cancelled":
-        return "red";
       case "Pending":
         return "yellow";
       default:
@@ -290,7 +288,6 @@ const TripHistory: React.FC = () => {
                     <option>All</option>
                     <option>Completed</option>
                     <option>Pending</option>
-                    <option>Cancelled</option>
                   </Select>
 
                   <Select
