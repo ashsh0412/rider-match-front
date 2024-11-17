@@ -217,7 +217,7 @@ export default function SignupCard() {
               _hover={{
                 bg: "gray.500",
               }}
-              onClick={handleSubmit} // Submit form on click
+              onClick={handleSubmit}
             >
               Sign up
             </Button>

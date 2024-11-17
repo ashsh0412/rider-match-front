@@ -11,6 +11,7 @@ body {
   background: linear-gradient(to right, #f8f9fa, #e9ecef);
 }
 
+/* 헤더 스타일 */
 .header {
   display: flex;
   justify-content: space-between;
@@ -45,19 +46,20 @@ body {
   border: 1px solid #1a73e8;
 }
 
-.login-btn:hover {
-  background-color: #f8f9fa;
-}
-
 .signup-btn {
   background-color: #1a73e8;
   color: white;
+}
+
+.login-btn:hover {
+  background-color: #f8f9fa;
 }
 
 .signup-btn:hover {
   background-color: #1557b0;
 }
 
+/* 메인 컨텐츠 */
 .main-content {
   display: flex;
   padding: 3rem;
@@ -79,6 +81,7 @@ body {
   line-height: 1.2;
 }
 
+/* 피처 카드 */
 .features {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -90,14 +93,13 @@ body {
   background: white;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-  position: relative;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px) translateZ(0);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.03);
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card h3 {
@@ -121,9 +123,12 @@ body {
   line-height: 1.6;
 }
 
+/* 우측 패널 (지도) */
 .right-panel {
   flex: 1;
-  height: 600px;
+  height: 80vh; /* 화면 높이의 80%로 설정 */
+  min-height: 300px; /* 최소 높이 설정 */
+  max-height: 800px; /* 최대 높이 설정 */
   background: white;
   border-radius: 24px;
   overflow: hidden;
@@ -135,23 +140,7 @@ body {
   width: 100%;
 }
 
-#style-selector-control {
-  position: absolute;
-  top: 120px;
-  right: 40px;
-  background: white;
-  padding: 0.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.selector-control {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  outline: none;
-}
-
+/* 시작 버튼 */
 .start {
   background-color: #1a73e8;
   color: #fff;
@@ -174,16 +163,14 @@ body {
 
 .start:active {
   transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
 }
 
+/* 로그아웃 & 유저 정보 */
 .log-out {
   color: #1a73e8;
-  text-decoration: none;
   padding: 0.5rem 1.5rem;
   border-radius: 24px;
   font-weight: 500;
-  transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid #1a73e8;
 }
@@ -191,7 +178,6 @@ body {
 .log-out:hover {
   background-color: #1a73e8;
   color: white;
-  box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
 }
 
 .user-info {
@@ -200,6 +186,89 @@ body {
   padding: 8px 24px;
   border-radius: 24px;
   font-weight: 500;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 1024px) {
+  .main-content {
+    padding: 2rem;
+  }
+
+  .left-panel h1 {
+    font-size: 2.5rem;
+  }
+
+  .right-panel {
+    height: 70vh; /* 더 작은 화면에서는 70%로 조정 */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header {
+    padding: 1rem 2rem;
+  }
+
+  .main-content {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .right-panel {
+    height: 50vh; /* 태블릿에서는 50%로 조정 */
+  }
+
+  .left-panel {
+    padding: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header {
+    padding: 1rem;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .main-content {
+    padding: 0.5rem;
+  }
+
+  .left-panel h1 {
+    font-size: 2rem;
+  }
+
+  .features {
+    margin-top: 1.5rem;
+  }
+
+  .right-panel {
+    height: 40vh; /* 모바일에서는 40%로 조정 */
+    min-height: 200px; /* 모바일에서의 최소 높이 */
+  }
+
+  /* 모바일에서는 피처 카드 숨기고 시작 버튼만 표시 */
+  @media screen and (max-height: 600px) {
+    .features {
+      display: none;
+    }
+
+    .start {
+      margin-top: 1rem;
+    }
+  }
+}
+
+/* 매우 작은 화면에서는 지도 숨김 */
+@media screen and (max-height: 500px) {
+  .right-panel {
+    display: none;
+  }
 }
