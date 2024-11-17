@@ -8,18 +8,17 @@ import {
   Icon,
   Stack,
 } from "@chakra-ui/react";
-import { FaUserFriends, FaInfoCircle, FaCar } from "react-icons/fa";
+import {
+  FaUserFriends,
+  FaInfoCircle,
+  FaCar,
+  FaRoute,
+  FaClock,
+} from "react-icons/fa";
 
 const DriverInfo: React.FC = () => {
   const iconColor = useColorModeValue("blue.500", "blue.300");
-  const bgColor = useColorModeValue("gray.50", "gray.700");
-
-  const safetyGuidelines = [
-    "Ensure all passengers are wearing seatbelts",
-    "Maintain posted speed limits",
-    "Check surroundings during passenger pickup/drop-off",
-    "Maintain clear communication with passengers",
-  ];
+  const bgColor = useColorModeValue("gray.100", "gray.700");
 
   return (
     <Box>
@@ -33,14 +32,32 @@ const DriverInfo: React.FC = () => {
           zIndex: 0,
         }}
       >
-        <HStack spacing={2} mb={4}>
-          <Icon as={FaInfoCircle} fontSize="xl" color={iconColor} />
-          <Text fontWeight="bold" fontSize="lg">
-            Driver Information
-          </Text>
-        </HStack>
-
         <VStack align="start" spacing={4}>
+          <HStack spacing={3}>
+            <Icon as={FaClock} color={iconColor} boxSize={5} />
+            <Box>
+              <Text fontWeight="semibold">Arrival Time Based Matching</Text>
+              <Text fontSize="sm" color="gray.500">
+                The selected time is your desired arrival time. We'll calculate
+                pickup times accordingly. Only drivers available on your
+                selected date will be shown.
+              </Text>
+            </Box>
+          </HStack>
+
+          <HStack spacing={3}>
+            <Icon as={FaRoute} color={iconColor} boxSize={5} />
+            <Box>
+              <Text fontWeight="semibold">Optimized Route System</Text>
+              <Text fontSize="sm" color="gray.500">
+                We provide the most efficient route based on all selected
+                passengers' locations traveling on the same date. The system
+                automatically calculates pickup sequence for minimal travel
+                time.
+              </Text>
+            </Box>
+          </HStack>
+
           <HStack spacing={3}>
             <Icon as={FaUserFriends} color={iconColor} boxSize={5} />
             <Box>
@@ -49,20 +66,6 @@ const DriverInfo: React.FC = () => {
                 During the beta phase, we're limiting to 5 passengers per ride
                 due to API limitations.
               </Text>
-            </Box>
-          </HStack>
-
-          <HStack spacing={3} align="start">
-            <Icon as={FaCar} color={iconColor} boxSize={5} />
-            <Box>
-              <Text fontWeight="semibold">Safety Guidelines</Text>
-              <Stack spacing={1} mt={1}>
-                {safetyGuidelines.map((guideline, index) => (
-                  <Text key={index} fontSize="sm" color="gray.500">
-                    • {guideline}
-                  </Text>
-                ))}
-              </Stack>
             </Box>
           </HStack>
         </VStack>

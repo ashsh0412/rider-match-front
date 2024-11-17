@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
 
+// BookingData 인터페이스
 interface BookingData {
   rider: number;
   driver_name: string;
@@ -18,7 +19,7 @@ interface BookingData {
   starting_point: string;
 }
 
-// PostBooking 함수 시그니처 수정
+// PostBooking 함수 수정
 export const PostBooking = async (bookingData: BookingData) => {
   try {
     const response = await fetch(
@@ -27,9 +28,9 @@ export const PostBooking = async (bookingData: BookingData) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") || "",
+          "X-CSRFToken": Cookies.get("csrftoken") || "", // CSRF token 처리
         },
-        credentials: "include",
+        credentials: "include", // 쿠키 포함
         body: JSON.stringify({
           rider: bookingData.rider, // 현재 로그인한 사용자 ID
           driver_name: bookingData.driver_name,
@@ -45,12 +46,13 @@ export const PostBooking = async (bookingData: BookingData) => {
     );
 
     if (!response.ok) {
-      throw new Error(`Booking failed: ${await response.text()}`);
+      const errorText = await response.text();
+      throw new Error(`Booking failed: ${errorText}`);
     }
 
-    return await response.json();
+    return await response.json(); // 응답을 JSON으로 반환
   } catch (e) {
     console.error("Error creating booking:", e);
-    return null;
+    return null; // 에러 발생 시 null 반환
   }
 };

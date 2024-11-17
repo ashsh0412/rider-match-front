@@ -15,14 +15,16 @@ import { Passenger } from "../components/PassengerCard";
 import { getCurrentUser } from "../api/GetUserInfo";
 import { PostBooking } from "../api/PostBooking";
 import { reverseGeocode } from "../api/Geocoding";
+import { deleteLocation } from "../api/DeleteLocation";
+import { getLocationsById } from "../api/GetSpecificLocation";
 
 // 승객 상세 정보를 위한 인터페이스
 interface PassengerDetail {
   id: number;
   name: string;
-  pickup: string; // 픽업 위치
-  destination: string; // 목적지
-  time: string; // 시간
+  pickup: string;
+  destination: string;
+  time: string;
 }
 
 // RouteMap 컴포넌트의 props 인터페이스
@@ -57,6 +59,22 @@ interface LocationData {
       pickup: string;
     }[];
   };
+}
+
+// BookingData 인터페이스 정의
+interface BookingData {
+  rider: number;
+  driver_name: string;
+  pickup_times: string[];
+  locations: {
+    pickups: string[];
+    destinations: string[];
+  };
+  guests: number;
+  created_at: string;
+  arrival_time: string;
+  starting_point: string;
+  passengers: { id: number; name: string }[];
 }
 
 // 경로 계산을 위한 props 인터페이스
@@ -174,41 +192,59 @@ const useRouteCalculation = ({
                           latitude,
                           longitude
                         );
-                        console.log(startingPoint);
                       } catch (error) {
                         console.error("Error parsing startCoordinates:", error);
                       }
                     }
 
                     // 예약 데이터 생성
-                    const bookingData = {
+                    const bookingData: BookingData = {
                       rider: riderInfo.id,
                       driver_name: `${riderInfo.first_name} ${riderInfo.last_name}`,
-                      passengers: parsedData.map((item: Passenger) => ({
-                        id: item.id,
-                        name: item.name,
-                      })),
+                      passengers: await Promise.all(
+                        parsedData.map(async (item: PassengerDetail) => {
+                          const id = await getLocationsById(item.id); // getLocationsById가 단일 숫자 id를 반환한다고 가정
+                          return {
+                            id: id, // 단일 숫자 id를 사용
+                            name: item.name,
+                          };
+                        })
+                      ),
                       pickup_times: parsedData.map(
                         (_, index) => pickupTimes[index]?.time || "N/A"
                       ),
                       locations: {
                         pickups: parsedData.map(
-                          (item: Passenger) => item.pickup
+                          (item: PassengerDetail) => item.pickup
                         ),
                         destinations: parsedData.map(
-                          (item: Passenger) => item.destination
+                          (item: PassengerDetail) => item.destination
                         ),
                       },
                       guests: parsedData.length,
                       created_at: new Date().toISOString(),
                       arrival_time:
                         sessionStorage.getItem("selectedDate") ||
-                        new Date().toISOString(), // 기본값 추가
+                        new Date().toISOString(),
                       starting_point: startingPoint || "Unknown Location",
                     };
 
-                    // PostBooking 함수 호출
-                    PostBooking(bookingData);
+                    try {
+                      const bookingResponse = await PostBooking(bookingData);
+                      const bookingId = bookingResponse?.id;
+                      console.log("Booking successful:", bookingId);
+
+                      // 새로운 승객 ID 배열 생성
+                      const newPassengerIds = await Promise.all(
+                        parsedData.map(async (passenger: Passenger) => {
+                          deleteLocation({
+                            id: passenger.id.toString(),
+                          });
+                        })
+                      );
+                    } catch (error) {
+                      console.error("Error in booking flow:", error);
+                    }
                   }
                 }
 

@@ -2,10 +2,10 @@ import { Box, VStack, Flex, useColorModeValue } from "@chakra-ui/react";
 import MapComponent from "../maps/LoadingMap";
 import "react-datepicker/dist/react-datepicker.css";
 import NavBar from "../components/NavBar";
-import RecentLocations from "../components/RecentLocations";
 import RideRequestForm from "../components/RequestForm";
 import { useState } from "react";
 import SuccessMessage from "../components/RequestSuccess";
+import TimeInfoAlert from "../components/RiderInfo";
 
 const RiderPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -21,7 +21,7 @@ const RiderPage: React.FC = () => {
           ) : (
             <VStack spacing={4} align="stretch">
               <RideRequestForm onSuccess={() => setIsSuccess(true)} />
-              <RecentLocations />
+              <TimeInfoAlert />
             </VStack>
           )}
         </Box>

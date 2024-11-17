@@ -213,26 +213,31 @@ const TripHistory: React.FC = () => {
       filtered = filtered.filter((trip) => trip.status === statusFilter);
     }
 
-    const monthsAgo = new Date();
-    monthsAgo.setMonth(monthsAgo.getMonth() - months[dateFilter]);
+    if (dateFilter) {
+      const monthsAgo = new Date();
+      monthsAgo.setMonth(monthsAgo.getMonth() - months[dateFilter]);
 
-    filtered = filtered.filter((trip) => {
-      const tripDate = new Date(trip.date);
-      return tripDate >= monthsAgo;
-    });
+      filtered = filtered.filter((trip) => {
+        const tripDate = new Date(trip.date);
+        return tripDate >= monthsAgo || isNaN(tripDate.getTime());
+      });
+    }
 
+    // 정렬
     filtered.sort((a, b) => {
-      let comparison = 0;
-      switch (sortBy) {
-        case "date":
-          comparison = new Date(b.date).getTime() - new Date(a.date).getTime();
-          break;
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) {
+        return 0;
       }
+
+      const comparison = dateB.getTime() - dateA.getTime();
       return sortOrder === "desc" ? comparison : -comparison;
     });
 
     return filtered;
-  }, [searchTerm, dateFilter, statusFilter, sortBy, sortOrder]);
+  }, [trips, searchTerm, dateFilter, statusFilter, sortBy, sortOrder]);
 
   const totalPages = Math.ceil(filteredAndSortedTrips.length / itemsPerPage);
   const currentTrips = filteredAndSortedTrips.slice(
