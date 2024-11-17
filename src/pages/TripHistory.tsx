@@ -35,6 +35,7 @@ import {
 import { MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
 import { getBooking } from "../api/GetBooking";
+import { FaUserTie } from "react-icons/fa";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Cancelled" | "Pending";
@@ -205,7 +206,8 @@ const TripHistory: React.FC = () => {
           trip.guests.some((guest) =>
             guest.name.toLowerCase().includes(searchTerm.toLowerCase())
           ) ||
-          trip.driverName.toLowerCase().includes(searchTerm.toLowerCase())
+          trip.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          trip.startingPoint.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -342,9 +344,7 @@ const TripHistory: React.FC = () => {
                             <HStack>
                               <Icon as={MapPin} color={"yellow.400"} />
                               <Text>{trip.startingPoint}</Text>
-                              <Badge ml={2} colorScheme="gray">
-                                Starting Point
-                              </Badge>
+                              <Badge colorScheme="gray">Starting Point</Badge>
                             </HStack>
                             <Box pl="6px">
                               <Divider
@@ -427,9 +427,16 @@ const TripHistory: React.FC = () => {
                           >
                             {trip.status}
                           </Badge>
-                          <Text fontSize="sm" color="gray.600">
+                          <Badge
+                            alignItems="center"
+                            px={3}
+                            py={1}
+                            colorScheme="green"
+                            fontSize="sm"
+                          >
+                            <Icon as={FaUserTie} mr={2} />
                             Driver: {trip.driverName}
-                          </Text>
+                          </Badge>
                         </Stack>
                       </Flex>
                     </CardBody>

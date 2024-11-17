@@ -92,8 +92,10 @@ const TimeInfoAlert = () => {
                 color={subTextColor}
               >
                 <ListIcon as={CheckCircle} color="blue.500" />
-                Real-time optimization adjusts routes based on traffic and road
-                conditions
+                The location is determined based on latitude and longitude, so
+                the stored location may not be highly accurate. However, the
+                margin of error on the map is very small, so it is fine to
+                proceed to this location.
               </ListItem>
             </List>
           </Box>
