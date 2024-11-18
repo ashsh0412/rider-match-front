@@ -9,7 +9,6 @@ export async function updateBookingPassengers(
     // 새로운 passengers 배열 생성
     const passengers = newPassengerIds.map((id) => ({
       id: id,
-      name: "Sungho Baek2", // 이름은 그대로 유지
     }));
 
     const response = await fetch(

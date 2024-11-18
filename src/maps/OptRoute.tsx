@@ -17,11 +17,13 @@ import { reverseGeocode } from "../api/Geocoding";
 import { getLocationsById } from "../api/GetSpecificLocation";
 import {
   BookingData,
+  Passenger,
   PassengerDetail,
   RouteMapProps,
   RouteMapRendererProps,
   UseRouteCalculationProps,
 } from "../type";
+import { deleteLocation } from "../api/DeleteLocation";
 
 // 경로 계산을 위한 커스텀 훅
 const useRouteCalculation = ({
@@ -64,7 +66,6 @@ const useRouteCalculation = ({
           travelMode: google.maps.TravelMode.DRIVING,
           region: "us",
           language: "en",
-          unitSystem: google.maps.UnitSystem.IMPERIAL,
         };
 
         // 경로 계산 실행
@@ -142,13 +143,14 @@ const useRouteCalculation = ({
                       driver_name: `${riderInfo.first_name} ${riderInfo.last_name}`,
                       passengers: await Promise.all(
                         parsedData.map(async (item: PassengerDetail) => {
-                          const id = await getLocationsById(item.id); // getLocationsById가 단일 숫자 id를 반환한다고 가정
+                          const id = await getLocationsById(item.id); // passenger의 아이디 정보를 보냄
                           return {
                             id: id, // 단일 숫자 id를 사용
                             name: item.name,
                           };
                         })
                       ),
+
                       pickup_times: parsedData.map(
                         (_, index) => pickupTimes[index]?.time || "N/A"
                       ),
@@ -169,9 +171,14 @@ const useRouteCalculation = ({
                     };
 
                     try {
-                      const bookingResponse = await PostBooking(bookingData);
-                      const bookingId = bookingResponse?.id;
-                      console.log("Booking successful:", bookingId);
+                      await PostBooking(bookingData);
+                      await Promise.all(
+                        parsedData.map(async (passenger: Passenger) => {
+                          deleteLocation({
+                            id: passenger.id.toString(),
+                          });
+                        })
+                      );
                     } catch (error) {
                       console.error("Error in booking flow:", error);
                     }
