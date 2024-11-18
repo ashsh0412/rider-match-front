@@ -8,13 +8,7 @@ import {
   Icon,
   Stack,
 } from "@chakra-ui/react";
-import {
-  FaUserFriends,
-  FaInfoCircle,
-  FaCar,
-  FaRoute,
-  FaClock,
-} from "react-icons/fa";
+import { FaUserFriends, FaCar, FaRoute, FaClock } from "react-icons/fa";
 
 const DriverInfo: React.FC = () => {
   const iconColor = useColorModeValue("blue.500", "blue.300");

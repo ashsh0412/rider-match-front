@@ -1,21 +1,5 @@
 import Cookies from "js-cookie";
 
-interface BookingData {
-  rider: number;
-  driver_name: string;
-  passengers: Array<{
-    id: number;
-    name: string;
-  }>;
-  pickup_times: string[];
-  locations: {
-    pickups: string[];
-    destinations: string[];
-  };
-  guests: number;
-  created_at: string;
-}
-
 // PostBooking 함수 시그니처 수정
 export const getBooking = async () => {
   try {

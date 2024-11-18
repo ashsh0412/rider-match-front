@@ -32,15 +32,7 @@ import NavBar from "../components/NavBar";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
 import { ProfileUpdate } from "../api/UpdateUser";
 import { DeleteAccount } from "../api/DeleteUser";
-
-interface UserProfile {
-  first_name: string;
-  last_name: string;
-  email: string;
-  date_joined: string;
-  is_rider: boolean;
-  username: string;
-}
+import { UserProfile } from "../type";
 
 export default function Profile() {
   const toast = useToast();

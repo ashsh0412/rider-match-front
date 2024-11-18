@@ -1,11 +1,6 @@
 import React from "react";
 import { HStack, Button, Text } from "@chakra-ui/react";
-
-interface PageNavigationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
+import { PageNavigationProps } from "../type";
 
 const PageNavigation: React.FC<PageNavigationProps> = ({
   currentPage,

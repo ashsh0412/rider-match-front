@@ -1,12 +1,8 @@
-// LoginCheck.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Center, Spinner } from "@chakra-ui/react";
 import { getCurrentUser } from "./GetUserInfo";
-
-interface LoginCheckProps {
-  children: React.ReactNode;
-}
+import { LoginCheckProps } from "../type";
 
 const LoginCheck = ({ children }: LoginCheckProps) => {
   const navigate = useNavigate();

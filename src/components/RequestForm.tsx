@@ -14,10 +14,7 @@ import CustomDatePicker from "./DatePicker";
 import { sendLocationToBackend } from "../api/PostLocation";
 import { useLocation } from "react-router-dom";
 import DriverInfo from "./DriverPageInfo";
-
-interface RideRequestFormProps {
-  onSuccess: () => void;
-}
+import { RideRequestFormProps } from "../type";
 
 export const formatDateTime = (date: Date | null): string => {
   const targetDate = date || new Date();

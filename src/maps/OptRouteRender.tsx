@@ -1,32 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useColorMode } from "@chakra-ui/react";
 import { darkMapStylesForOpt, coolUrbanMapStylesForOpt } from "./MapStyle";
-
-interface LocationData {
-  origin: google.maps.LatLngLiteral;
-  destination: google.maps.LatLngLiteral;
-  waypoints: { location: string }[];
-}
-
-interface Passenger {
-  id: number;
-  name: string;
-  pickup: string;
-  destination: string;
-  time: string;
-}
-
-interface Coordinates {
-  lat: number;
-  lng: number;
-}
+import { Coordinates, LocationDataForRouteRender, Passenger } from "../type";
 
 export const OptMapRenderer: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [locationData, setLocationData] = useState<LocationData | null>(null);
+  const [locationData, setLocationData] =
+    useState<LocationDataForRouteRender | null>(null);
   const { colorMode } = useColorMode();
 
   // 숫자 마커 스타일 생성 함수

@@ -1,11 +1,10 @@
-import { getEndCoordinates, getStartCoordinates } from "../maps/RouteMap";
+import { getEndCoordinates } from "../maps/RouteMap";
+import { LocationData } from "../type";
 import { getLocations } from "./GetLocation";
-import { LocationData } from "./PostLocation";
 
 export const optLocations = async (): Promise<LocationData[]> => {
   try {
     const locations: LocationData[] = await getLocations(); // LocationData[] 타입 명시
-    const startLocation = getStartCoordinates();
     const destination = getEndCoordinates();
 
     const THRESHOLD = 0.0001;

@@ -37,54 +37,18 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { DeleteIcon, MapPin, TrashIcon, Users } from "lucide-react";
+import { MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
 import { getBooking } from "../api/GetBooking";
-import { FaDelicious, FaUserTie } from "react-icons/fa";
+import { FaUserTie } from "react-icons/fa";
 import { getUserLocations } from "../api/GetLocation";
 import { deleteLocation } from "../api/DeleteLocation";
+import { Guest, Location, LocationCard, PickupWithTime, Trip } from "../type";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Pending";
 type SortField = "date" | "price" | "rating";
 type SortOrder = "asc" | "desc";
-
-interface Guest {
-  id: number;
-  name: string;
-}
-
-interface PickupWithTime {
-  location: string;
-  time: string;
-  type: "pickup";
-}
-
-interface Location {
-  name: string;
-  type: "pickup" | "waypoint" | "dropoff";
-  pickupTime?: string;
-}
-
-interface Trip {
-  id: number;
-  date: string;
-  startingPoint: string;
-  pickupTime: string;
-  arrivalTime: string;
-  locations: Location[];
-  guests: { id: number; name: string }[];
-  driverName: string;
-  status: "Completed" | "Pending";
-}
-
-interface LocationCard {
-  id: number;
-  user: number;
-  pickupLocation: string;
-  dropoffLocation: string;
-  dateTime: string;
-}
 
 const TripHistory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -412,7 +376,7 @@ const TripHistory: React.FC = () => {
               <HStack>
                 <Icon as={MapPin} color="yellow.400" />
                 <Text>{trip.startingPoint}</Text>
-                <Badge colorScheme="yellow">Starting Point</Badge>
+                <Badge>Starting Point</Badge>
               </HStack>
               <Box pl="6px">
                 <Divider

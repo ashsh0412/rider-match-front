@@ -10,20 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { Clock, MapPin, User } from "lucide-react";
 import { formatEnglishDateTime } from "./RequestForm";
-
-export interface Passenger {
-  id: number;
-  name: string;
-  pickup: string;
-  destination: string;
-  time: string;
-}
-
-interface PassengerCardProps {
-  passenger: Passenger;
-  isSelected: boolean;
-  onClick: (id: number) => void;
-}
+import { PassengerCardProps } from "../type";
 
 export const PassengerCard = ({
   passenger,

@@ -1,29 +1,11 @@
-import { error } from "console";
-
-export interface RouteOptions {
-  start: string;
-  end: string;
-  directionsService: google.maps.DirectionsService;
-  directionsRenderer: google.maps.DirectionsRenderer;
-}
-
-export interface Coordinates {
-  start: {
-    lat: number;
-    lng: number;
-  };
-  end: {
-    lat: number;
-    lng: number;
-  };
-}
+import { CoordinatesForRouteMap, RouteOptions } from "../type";
 
 export function calcRoute({
   start,
   end,
   directionsService,
   directionsRenderer,
-}: RouteOptions): Promise<Coordinates> {
+}: RouteOptions): Promise<CoordinatesForRouteMap> {
   return new Promise((resolve, reject) => {
     const request = {
       origin: start,

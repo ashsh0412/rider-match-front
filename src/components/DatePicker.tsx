@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import { Box, InputGroup, InputLeftElement, Input } from "@chakra-ui/react";
 import { FaRegClock } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
+import { CustomDatePickerProps } from "../type";
 
 const datePickerStyles = `
   .date-picker {
@@ -79,14 +80,6 @@ const datePickerStyles = `
     z-index: 9999 !important;
   }
 `;
-
-interface CustomDatePickerProps {
-  onChange: (date: Date | null) => void;
-  iconColor: string;
-  inputBg: string;
-  inputHoverBg: string;
-  value: Date | null;
-}
 
 const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   onChange,

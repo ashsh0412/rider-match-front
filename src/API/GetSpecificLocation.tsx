@@ -1,14 +1,5 @@
 import Cookies from "js-cookie";
-
-// API 응답을 위한 인터페이스
-interface LocationResponse {
-  user: number;
-}
-
-// 위치 데이터를 위한 인터페이스
-export interface LocationData {
-  user: number;
-}
+import { LocationResponse } from "../type";
 
 export const getLocationsById = async (id: number): Promise<number> => {
   try {

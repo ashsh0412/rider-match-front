@@ -1,6 +1,7 @@
 // autocomplete.ts
 
-import { calcRoute, RouteOptions } from "./RouteMap";
+import { RouteOptions } from "../type";
+import { calcRoute } from "./RouteMap";
 
 export const initializeAutocomplete = (
   inputElement: HTMLInputElement,

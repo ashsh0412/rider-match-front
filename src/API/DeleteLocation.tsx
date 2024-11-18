@@ -1,8 +1,5 @@
 import Cookies from "js-cookie";
-
-interface DeleteAccountProps {
-  id: string; // id 프로퍼티 추가
-}
+import { DeleteAccountProps } from "../type";
 
 export async function deleteLocation({ id }: DeleteAccountProps) {
   try {

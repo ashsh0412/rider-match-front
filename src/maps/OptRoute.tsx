@@ -11,78 +11,17 @@ import {
 } from "@chakra-ui/react";
 import { useRouteData } from "./UseRouteData";
 import { useNavigate } from "react-router-dom";
-import { Passenger } from "../components/PassengerCard";
 import { getCurrentUser } from "../api/GetUserInfo";
 import { PostBooking } from "../api/PostBooking";
 import { reverseGeocode } from "../api/Geocoding";
-import { deleteLocation } from "../api/DeleteLocation";
 import { getLocationsById } from "../api/GetSpecificLocation";
-
-// 승객 상세 정보를 위한 인터페이스
-interface PassengerDetail {
-  id: number;
-  name: string;
-  pickup: string;
-  destination: string;
-  time: string;
-}
-
-// RouteMap 컴포넌트의 props 인터페이스
-interface RouteMapProps {
-  passengerDetails: PassengerDetail[];
-}
-
-// 픽업 시간 정보를 위한 인터페이스
-interface PickupTime {
-  location: string; // 픽업 위치
-  time: string; // 픽업 시간
-}
-
-// 경유지 정보를 위한 인터페이스
-interface Waypoint {
-  location: string; // 경유지 위치
-  stopover: boolean; // 경유지 정차 여부
-}
-
-// 위치 데이터를 위한 인터페이스
-interface LocationData {
-  origin: string; // 출발지
-  destination: string; // 최종 목적지
-  waypoints: Waypoint[]; // 경유지 목록
-  labels: {
-    origin: string; // 출발지 라벨
-    destination: string; // 목적지 라벨
-    passengers: {
-      // 승객 정보
-      name: string;
-      scheduledTime: string;
-      pickup: string;
-    }[];
-  };
-}
-
-// BookingData 인터페이스 정의
-interface BookingData {
-  rider: number;
-  driver_name: string;
-  pickup_times: string[];
-  locations: {
-    pickups: string[];
-    destinations: string[];
-  };
-  guests: number;
-  created_at: string;
-  arrival_time: string;
-  starting_point: string;
-  passengers: { id: number; name: string }[];
-}
-
-// 경로 계산을 위한 props 인터페이스
-interface UseRouteCalculationProps {
-  locationData: LocationData;
-  passengerDetails: PassengerDetail[];
-  calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
-}
+import {
+  BookingData,
+  PassengerDetail,
+  RouteMapProps,
+  RouteMapRendererProps,
+  UseRouteCalculationProps,
+} from "../type";
 
 // 경로 계산을 위한 커스텀 훅
 const useRouteCalculation = ({
@@ -233,15 +172,6 @@ const useRouteCalculation = ({
                       const bookingResponse = await PostBooking(bookingData);
                       const bookingId = bookingResponse?.id;
                       console.log("Booking successful:", bookingId);
-
-                      // 새로운 승객 ID 배열 생성
-                      const newPassengerIds = await Promise.all(
-                        parsedData.map(async (passenger: Passenger) => {
-                          deleteLocation({
-                            id: passenger.id.toString(),
-                          });
-                        })
-                      );
                     } catch (error) {
                       console.error("Error in booking flow:", error);
                     }
@@ -262,8 +192,8 @@ const useRouteCalculation = ({
                        totalDistance / 1609.34
                      ).toFixed(1)} miles</p>
                      <p><strong>Total Duration:</strong> ${
-                       totalHours == 0 ? "" : totalHours
-                     } ${totalHours != 0 ? "hour" : ""}${
+                       totalHours === 0 ? "" : totalHours
+                     } ${totalHours !== 0 ? "hour" : ""}${
                   totalHours > 0 ? "s" : ""
                 } ${remainingMinutes} minute${
                   remainingMinutes !== 1 ? "s" : ""
@@ -297,11 +227,6 @@ const useRouteCalculation = ({
 };
 
 // 경로 지도 렌더러 컴포넌트 props 인터페이스
-interface RouteMapRendererProps {
-  locationData: LocationData;
-  calculatePickupTimes: (legs: google.maps.DirectionsLeg[]) => PickupTime[];
-  passengerDetails: PassengerDetail[];
-}
 
 // 패널 렌더러 컴포넌트
 const PanelRenderer: React.FC<RouteMapRendererProps> = ({

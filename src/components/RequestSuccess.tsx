@@ -13,14 +13,10 @@ import { useLocation } from "react-router-dom";
 import { createLocationData } from "../api/PostLocation";
 import { optLocations } from "../api/OptLocation";
 import { reverseGeocode } from "../api/Geocoding";
-import { Passenger, PassengerCard } from "./PassengerCard";
 import PageNavigation from "./PageNavigation";
 import RouteMap from "../maps/OptRoute";
-
-interface SuccessMessageProps {
-  setIsSuccess: React.Dispatch<React.SetStateAction<boolean>>;
-  setOptRoute?: React.Dispatch<React.SetStateAction<boolean>>; // 필수 prop
-}
+import { Passenger, SuccessMessageProps } from "../type";
+import { PassengerCard } from "./PassengerCard";
 
 const SuccessMessage: React.FC<SuccessMessageProps> = ({
   setIsSuccess,

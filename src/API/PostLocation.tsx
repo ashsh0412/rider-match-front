@@ -2,21 +2,7 @@ import Cookies from "js-cookie";
 import { getStartCoordinates, getEndCoordinates } from "../maps/RouteMap";
 import { getCurrentUser } from "./GetUserInfo";
 import { reverseGeocode } from "./Geocoding";
-
-// LocationData 인터페이스를 export하여 다른 파일에서 사용 가능하게 함
-export interface LocationData {
-  start_latitude: number;
-  start_longitude: number;
-  end_latitude: number;
-  end_longitude: number;
-  first_name: string;
-  last_name: string;
-  user: number;
-  date_time: string;
-  pickup_location: string;
-  dropoff_location: string;
-  id?: number;
-}
+import { LocationData } from "../type";
 
 // 위치 데이터 생성 함수를 export하여 재사용 가능하게 함
 export const createLocationData = async (

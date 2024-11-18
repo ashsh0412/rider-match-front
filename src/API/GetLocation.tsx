@@ -1,20 +1,6 @@
 import Cookies from "js-cookie";
 import { getCurrentUser } from "./GetUserInfo";
-
-// api.ts
-export interface LocationData {
-  start_latitude: number;
-  start_longitude: number;
-  end_latitude: number;
-  end_longitude: number;
-  first_name: string;
-  last_name: string;
-  user: number;
-  date_time: string;
-  pickup_location: string;
-  dropoff_location: string;
-  id: number;
-}
+import { LocationData } from "../type";
 
 export const getLocations = async (): Promise<LocationData[]> => {
   // 배열 타입으로 변경

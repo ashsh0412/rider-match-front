@@ -1,40 +1,18 @@
 import { useState, useEffect } from "react";
 import { reverseGeocode } from "../api/Geocoding";
 import { getEndCoordinates, getStartCoordinates } from "./RouteMap";
+import {
+  LocationDataForRouteData,
+  PassengerDetailForRouteData,
+  PickupTime,
+} from "../type";
 
-export interface PassengerDetail {
-  name: string;
-  pickup: string;
-  time: string;
-}
-
-export interface LocationData {
-  origin: string;
-  destination: string;
-  waypoints: {
-    location: string;
-    stopover: boolean;
-  }[];
-  labels: {
-    origin: string;
-    destination: string;
-    passengers: {
-      name: string;
-      scheduledTime: string;
-      pickup: string;
-    }[];
-  };
-}
-
-export interface PickupTime {
-  location: string;
-  time: string;
-}
-
-export const useRouteData = (passengerDetails: PassengerDetail[]) => {
+export const useRouteData = (
+  passengerDetails: PassengerDetailForRouteData[]
+) => {
   const [startPoint, setStartPoint] = useState<string>("");
   const [endPoint, setEndPoint] = useState<string>("");
-  const [locationData, setLocationData] = useState<LocationData>({
+  const [locationData, setLocationData] = useState<LocationDataForRouteData>({
     origin: "",
     destination: "",
     waypoints: [],
@@ -84,7 +62,7 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
   useEffect(() => {
     if (!startPoint || !endPoint) return;
 
-    const newLocationData: LocationData = {
+    const newLocationData: LocationDataForRouteData = {
       origin: startCoordinates
         ? `${startCoordinates.lat},${startCoordinates.lng}`
         : "",
@@ -121,7 +99,7 @@ export const useRouteData = (passengerDetails: PassengerDetail[]) => {
     const a = localStorage.getItem("selectedPassengerDetails");
 
     // localStorage에서 승객 데이터 가져오기
-    const passengers: PassengerDetail[] = a ? JSON.parse(a) : [];
+    const passengers: PassengerDetailForRouteData[] = a ? JSON.parse(a) : [];
 
     let cumulativeDuration = 0;
 

@@ -1,13 +1,6 @@
 // src/utils/updateProfile.ts
 import Cookies from "js-cookie";
-import { ToastId, UseToastOptions } from "@chakra-ui/react";
-
-interface UpdateProfileProps {
-  formData: Record<string, any>;
-  setUserData: React.Dispatch<React.SetStateAction<any>>;
-  setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  toast: (options: UseToastOptions) => ToastId;
-}
+import { UpdateProfileProps } from "../type";
 
 export const ProfileUpdate = async ({
   formData,
