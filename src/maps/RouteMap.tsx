@@ -6,7 +6,7 @@ export function calcRoute({
   directionsService,
   directionsRenderer,
 }: RouteOptions): Promise<CoordinatesForRouteMap> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const request = {
       origin: start,
       destination: end,
@@ -30,13 +30,6 @@ export function calcRoute({
             lng: endLocation.lng(),
           },
         };
-
-        // 시작 위치와 도착 위치를 따로 저장
-        localStorage.setItem(
-          "startCoordinates",
-          JSON.stringify(coordinates.start)
-        );
-        localStorage.setItem("endCoordinates", JSON.stringify(coordinates.end));
 
         resolve(coordinates);
       } else {

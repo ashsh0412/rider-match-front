@@ -150,7 +150,6 @@ export const useRouteData = (
 
     return pickupTimes;
   };
-
   return {
     startPoint,
     endPoint,

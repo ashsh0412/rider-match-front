@@ -114,10 +114,6 @@ export const OptMapRenderer: React.FC = () => {
           stopover: true,
         })),
         travelMode: google.maps.TravelMode.DRIVING,
-        drivingOptions: {
-          departureTime: new Date(), // 현재 시간을 기준으로 교통 상황 반영
-          trafficModel: google.maps.TrafficModel.BEST_GUESS, // 교통 상황을 반영한 경로 계산
-        },
       };
 
       try {

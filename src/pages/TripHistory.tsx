@@ -103,11 +103,27 @@ const TripHistory: React.FC = () => {
           const locations: Location[] = [];
 
           const pickupsWithTimes = booking.locations.pickups.map(
-            (pickup: string, index: number) => ({
-              location: pickup.split(",")[0].trim(),
-              time: booking.pickup_times[index],
-              type: "pickup" as const,
-            })
+            (pickup: string, index: number) => {
+              // pickup이 유효한 문자열인지 확인
+              let location = "";
+              if (pickup && typeof pickup === "string") {
+                location = pickup.split(",")[0].trim();
+
+                // 첫 번째 부분이 10글자 이하일 때, 두 번째 부분도 가져오기
+                if (location.length <= 10) {
+                  const parts = pickup.split(",");
+                  if (parts.length > 1) {
+                    location += ", " + parts[1].trim();
+                  }
+                }
+              }
+
+              return {
+                location,
+                time: booking.pickup_times[index],
+                type: "pickup" as const,
+              };
+            }
           );
 
           pickupsWithTimes.sort(
@@ -125,7 +141,14 @@ const TripHistory: React.FC = () => {
 
           if (booking.locations.destinations.length > 0) {
             const destination = booking.locations.destinations[0];
-            const shortenedDestination = destination.split(",")[0].trim();
+            let shortenedDestination = destination.split(",")[0].trim();
+
+            if (
+              shortenedDestination.length <= 10 &&
+              destination.split(",").length > 1
+            ) {
+              shortenedDestination += ", " + destination.split(",")[1].trim();
+            }
             locations.push({
               name: shortenedDestination,
               type: "dropoff",
@@ -144,8 +167,20 @@ const TripHistory: React.FC = () => {
             .slice(0, 2)
             .join(",");
 
+          // 현재 시각 가져오기
+          const currentTime = new Date();
+
+          // 백엔드에서 도착 시간을 가져오기
+          const arrivalTime = new Date(booking.arrival_time);
           const startingPoint = booking.starting_point;
-          const shortStartingPoint = startingPoint.split(",")[0].trim();
+          let shortStartingPoint = startingPoint.split(",")[0].trim();
+          if (
+            shortStartingPoint.length <= 10 &&
+            startingPoint.split(",").length > 1
+          ) {
+            shortStartingPoint += ", " + startingPoint.split(",")[1].trim();
+          }
+          const status = arrivalTime < currentTime ? "Completed" : "Pending";
 
           return {
             id: booking.id,
@@ -153,7 +188,7 @@ const TripHistory: React.FC = () => {
             locations: locations,
             guests: guests,
             driverName: booking.driver_name,
-            status: "Pending" as const,
+            status: status,
             startingPoint: shortStartingPoint,
             arrivalTime: formatDateTime(booking.arrival_time),
             pickupTime: booking.pickup_times[0],

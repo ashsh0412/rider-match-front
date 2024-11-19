@@ -1,5 +1,3 @@
-// autocomplete.ts
-
 import { RouteOptions } from "../type";
 import { calcRoute } from "./RouteMap";
 
@@ -31,6 +29,16 @@ export const initializeAutocomplete = (
         "error"
       );
       return;
+    }
+
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    // 선택한 위치를 기존 아이템 이름으로 localStorage에 저장
+    if (autocompleteType === "pickup") {
+      localStorage.setItem("startCoordinates", JSON.stringify({ lat, lng }));
+    } else if (autocompleteType === "dropoff") {
+      localStorage.setItem("endCoordinates", JSON.stringify({ lat, lng }));
     }
 
     if (map) {
