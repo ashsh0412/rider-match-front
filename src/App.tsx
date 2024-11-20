@@ -20,9 +20,7 @@ import GoogleConfirm from "./API/GoogleConfirm";
 function App() {
   const isDevelopment = process.env.NODE_ENV === "development";
   // basename은 경로만 포함해야 합니다
-  const basename = isDevelopment
-    ? "http://127.0.0.1:3000"
-    : "https://rider-match-front.onrender.com";
+  const basename = isDevelopment ? "/" : "/rider-match-front";
 
   return (
     <ChakraProvider theme={theme}>
