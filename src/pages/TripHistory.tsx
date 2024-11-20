@@ -30,6 +30,7 @@ import {
   Tab,
   TabPanels,
   TabPanel,
+  useToast,
 } from "@chakra-ui/react";
 import {
   CalendarIcon,
@@ -43,7 +44,17 @@ import { getBooking } from "../API/GetBooking";
 import { FaUserTie } from "react-icons/fa";
 import { getUserLocations } from "../API/GetLocation";
 import { deleteLocation } from "../API/DeleteLocation";
-import { Guest, Location, LocationCard, PickupWithTime, Trip } from "../type";
+import {
+  BASE_URL,
+  Guest,
+  Location,
+  LocationCard,
+  PickupWithTime,
+  Trip,
+} from "../type";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../API/GetUserInfo";
+import Cookies from "js-cookie";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Pending";
@@ -61,7 +72,37 @@ const TripHistory: React.FC = () => {
   const [locations, setLocations] = useState<LocationCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
+  const navigate = useNavigate();
+  const toast = useToast();
   const itemsPerPage = 5;
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}users/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken") || "",
+        },
+      });
+
+      if (!response.ok) {
+        navigate("/log-in");
+        throw new Error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      toast({
+        title: "Error fetching profile",
+        description: "Unable to fetch user profile. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      navigate("/log-in");
+    }
+  };
 
   const bg = useColorModeValue("white", "gray.800");
 
