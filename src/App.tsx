@@ -18,10 +18,14 @@ import KakaoConfirm from "./API/KakaoConfirm";
 import GoogleConfirm from "./API/GoogleConfirm";
 
 function App() {
+  const isDevelopment = process.env.NODE_ENV === "development";
+  // basename은 경로만 포함해야 합니다
+  const basename = isDevelopment ? "" : "/rider-match-front";
+
   return (
     <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <Router>
+      <Router basename={basename}>
         <Routes>
           <Route path="/" element={<Navigate replace to="/rider-page" />} />
           <Route path="/signup" element={<SignupCard />} />
