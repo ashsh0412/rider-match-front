@@ -39,10 +39,10 @@ import {
 } from "@chakra-ui/icons";
 import { MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
-import { getBooking } from "../api/GetBooking";
+import { getBooking } from "../API/GetBooking";
 import { FaUserTie } from "react-icons/fa";
-import { getUserLocations } from "../api/GetLocation";
-import { deleteLocation } from "../api/DeleteLocation";
+import { getUserLocations } from "../API/GetLocation";
+import { deleteLocation } from "../API/DeleteLocation";
 import { Guest, Location, LocationCard, PickupWithTime, Trip } from "../type";
 
 type DateFilter = "3 months" | "6 months" | "1 year";

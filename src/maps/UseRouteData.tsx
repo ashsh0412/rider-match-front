@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { reverseGeocode } from "../api/Geocoding";
+import { reverseGeocode } from "../API/Geocoding";
 import { getEndCoordinates, getStartCoordinates } from "./RouteMap";
 import {
   LocationDataForRouteData,

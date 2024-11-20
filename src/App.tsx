@@ -9,13 +9,13 @@ import SignupCard from "./pages/SignUpForm";
 import NotFound from "./pages/NotFound";
 import LoginCard from "./pages/LoginForm";
 import theme from "./theme";
-import LoginCheck from "./api/LoginCheck";
+import LoginCheck from "./API/LoginCheck";
 import Profile from "./pages/UserInfo";
 import DriverPage from "./pages/DriverPage";
 import RiderPage from "./pages/RiderPage";
 import TripHistory from "./pages/TripHistory";
-import KakaoConfirm from "./api/KakaoConfirm";
-import GoogleConfirm from "./api/GoogleConfirm";
+import KakaoConfirm from "./API/KakaoConfirm";
+import GoogleConfirm from "./API/GoogleConfirm";
 
 function App() {
   return (

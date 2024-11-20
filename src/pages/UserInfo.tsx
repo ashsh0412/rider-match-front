@@ -30,8 +30,8 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import NavBar from "../components/NavBar";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import { ProfileUpdate } from "../api/UpdateUser";
-import { DeleteAccount } from "../api/DeleteUser";
+import { ProfileUpdate } from "../API/UpdateUser";
+import { DeleteAccount } from "../API/DeleteUser";
 import { UserProfile } from "../type";
 
 export default function Profile() {

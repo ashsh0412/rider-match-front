@@ -10,9 +10,9 @@ import {
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import { createLocationData } from "../api/PostLocation";
-import { optLocations } from "../api/OptLocation";
-import { reverseGeocode } from "../api/Geocoding";
+import { createLocationData } from "../API/PostLocation";
+import { optLocations } from "../API/OptLocation";
+import { reverseGeocode } from "../API/Geocoding";
 import PageNavigation from "./PageNavigation";
 import RouteMap from "../maps/OptRoute";
 import { Passenger, SuccessMessageProps } from "../type";

@@ -11,7 +11,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaMoon, FaSun, FaReceipt, FaUser } from "react-icons/fa";
-import logOut from "../api/Logout";
+import logOut from "../API/Logout";
 import { useNavigate } from "react-router-dom";
 
 const NavBar: React.FC = () => {

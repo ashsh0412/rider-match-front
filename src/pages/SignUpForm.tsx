@@ -25,7 +25,7 @@ import {
   googleRedirectUri,
   kakaoClientId,
   kakaoRedirectUri,
-} from "../api";
+} from "../keys";
 export default function SignupCard() {
   const toast = useToast(); // useToast 훅을 초기화
   const navigate = useNavigate();

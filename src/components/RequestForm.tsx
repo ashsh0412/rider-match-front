@@ -11,7 +11,7 @@ import {
 import { FaMapMarkerAlt, FaMapPin } from "react-icons/fa";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomDatePicker from "./DatePicker";
-import { sendLocationToBackend } from "../api/PostLocation";
+import { sendLocationToBackend } from "../API/PostLocation";
 import { useLocation } from "react-router-dom";
 import DriverInfo from "./DriverPageInfo";
 import { RideRequestFormProps } from "../type";

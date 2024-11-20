@@ -11,10 +11,10 @@ import {
 } from "@chakra-ui/react";
 import { useRouteData } from "./UseRouteData";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../api/GetUserInfo";
-import { PostBooking } from "../api/PostBooking";
-import { reverseGeocode } from "../api/Geocoding";
-import { getLocationsById } from "../api/GetSpecificLocation";
+import { getCurrentUser } from "../API/GetUserInfo";
+import { PostBooking } from "../API/PostBooking";
+import { reverseGeocode } from "../API/Geocoding";
+import { getLocationsById } from "../API/GetSpecificLocation";
 import {
   BookingData,
   Passenger,
@@ -23,7 +23,7 @@ import {
   RouteMapRendererProps,
   UseRouteCalculationProps,
 } from "../type";
-import { deleteLocation } from "../api/DeleteLocation";
+import { deleteLocation } from "../API/DeleteLocation";
 
 // 경로 계산을 위한 커스텀 훅
 const useRouteCalculation = ({

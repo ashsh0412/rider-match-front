@@ -26,7 +26,7 @@ import {
   googleRedirectUri,
   kakaoClientId,
   kakaoRedirectUri,
-} from "../api";
+} from "../keys";
 
 export default function LoginCard() {
   const toast = useToast();
