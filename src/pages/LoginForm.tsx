@@ -21,12 +21,6 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import {
-  googleClientId,
-  googleRedirectUri,
-  kakaoClientId,
-  kakaoRedirectUri,
-} from "../keys";
 
 export default function LoginCard() {
   const toast = useToast();
@@ -36,8 +30,8 @@ export default function LoginCard() {
     username: "",
     password: "",
   });
-  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&response_type=code&scope=openid%20profile%20email`;
-  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUri}&response_type=code`;
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=527380010985-t4bcqpmkc7npagt417spra1fl3tpkh5s.apps.googleusercontent.com&redirect_uri=http://127.0.0.1:3000/oauth/google&response_type=code&scope=openid%20profile%20email`;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=7cfbc93e53b15cc24fff53e43bf0dc37&redirect_uri=http://127.0.0.1:3000/oauth/kakao&response_type=code`;
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/users/log-in");
