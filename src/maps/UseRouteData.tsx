@@ -96,17 +96,11 @@ export const useRouteData = (
     let destinationTime = selectedDate ? new Date(selectedDate) : new Date(); // 도착 시간 기준으로 설정
 
     const pickupTimes: PickupTime[] = [];
-    const a = localStorage.getItem("selectedPassengerDetails");
-
-    // localStorage에서 승객 데이터 가져오기
-    const passengers: PassengerDetailForRouteData[] = a ? JSON.parse(a) : [];
-
     let cumulativeDuration = 0;
 
     try {
       for (let i = 0; i < legs.length - 1; i++) {
         const durationValue = Number(legs[i]?.duration?.value ?? 0);
-        const passengerTime = passengers[i]?.time;
 
         if (isNaN(durationValue) || durationValue === 0) {
           console.warn(`Invalid or missing duration value for leg ${i}`);
@@ -117,21 +111,12 @@ export const useRouteData = (
         cumulativeDuration += durationValue;
         const arrivalTime = new Date(
           destinationTime.getTime() - cumulativeDuration * 1000
-        ); // 도착 시간에서 누적 시간을 빼서 출발 시간 계산
-
-        // 승객의 예약 시간과 비교하여 대기 시간 계산
-        const stopTime =
-          passengerTime && new Date(passengerTime) > arrivalTime
-            ? new Date(passengerTime).getTime() - arrivalTime.getTime()
-            : 0;
-
-        // 출발 시간에 대기 시간 반영
-        const adjustedPickupTime = new Date(arrivalTime.getTime() - stopTime);
+        ); // 도착 시간에서 누적 시간을 빼서 픽업 시간 계산
 
         // 날짜와 시간 모두 추가
         pickupTimes.push({
           location: legs[i]?.end_address || "",
-          time: adjustedPickupTime.toLocaleString("en-US", {
+          time: arrivalTime.toLocaleString("en-US", {
             year: "numeric",
             month: "short",
             day: "2-digit",
@@ -140,9 +125,6 @@ export const useRouteData = (
             hour12: true,
           }),
         });
-
-        // 누적 시간에 대기 시간 추가 (초 단위)
-        cumulativeDuration += stopTime / 1000;
       }
     } catch (error) {
       console.error("Error calculating pickup times:", error);

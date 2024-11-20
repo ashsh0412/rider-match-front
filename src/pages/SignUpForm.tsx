@@ -20,7 +20,12 @@ import { useEffect, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
+import {
+  googleClientId,
+  googleRedirectUri,
+  kakaoClientId,
+  kakaoRedirectUri,
+} from "../api";
 export default function SignupCard() {
   const toast = useToast(); // useToast 훅을 초기화
   const navigate = useNavigate();
@@ -32,6 +37,8 @@ export default function SignupCard() {
     password: "",
     username: "",
   });
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&response_type=code&scope=openid%20profile%20email`;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUri}&response_type=code`;
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/users/");
@@ -114,7 +121,7 @@ export default function SignupCard() {
         navigate("/log-in");
       } else {
         toast({
-          title: "A user with that username already exists.",
+          title: "A user with that username or email address already exists.",
           status: "error",
           position: "bottom-right",
           isClosable: true,
@@ -224,6 +231,8 @@ export default function SignupCard() {
             <Stack>
               <HStack spacing={4}>
                 <Button
+                  as="a"
+                  href={googleAuthUrl}
                   w="full"
                   variant="outline"
                   borderColor="gray.300"
@@ -232,6 +241,8 @@ export default function SignupCard() {
                   Google
                 </Button>
                 <Button
+                  as="a"
+                  href={kakaoAuthUrl}
                   w="full"
                   variant="outline"
                   borderColor="gray.300"

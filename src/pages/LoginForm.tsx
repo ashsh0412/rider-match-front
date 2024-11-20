@@ -21,6 +21,12 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import {
+  googleClientId,
+  googleRedirectUri,
+  kakaoClientId,
+  kakaoRedirectUri,
+} from "../api";
 
 export default function LoginCard() {
   const toast = useToast();
@@ -30,6 +36,8 @@ export default function LoginCard() {
     username: "",
     password: "",
   });
+  const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${googleClientId}&redirect_uri=${googleRedirectUri}&response_type=code&scope=openid%20profile%20email`;
+  const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoClientId}&redirect_uri=${kakaoRedirectUri}&response_type=code`;
 
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/v1/users/log-in");
@@ -156,6 +164,8 @@ export default function LoginCard() {
           </Text>
           <HStack spacing={4}>
             <Button
+              as="a"
+              href={googleAuthUrl}
               w="full"
               variant="outline"
               borderColor="gray.300"
@@ -164,6 +174,8 @@ export default function LoginCard() {
               Google
             </Button>
             <Button
+              as="a"
+              href={kakaoAuthUrl}
               w="full"
               variant="outline"
               borderColor="gray.300"

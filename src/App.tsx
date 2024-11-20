@@ -14,6 +14,8 @@ import Profile from "./pages/UserInfo";
 import DriverPage from "./pages/DriverPage";
 import RiderPage from "./pages/RiderPage";
 import TripHistory from "./pages/TripHistory";
+import KakaoConfirm from "./api/KakaoConfirm";
+import GoogleConfirm from "./api/GoogleConfirm";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
           />
           <Route path="/profile" element={<Profile />} />
           <Route path="/trip-history" element={<TripHistory />} />
+          <Route path="/oauth/kakao" element={<KakaoConfirm />} />
+          <Route path="/oauth/google" element={<GoogleConfirm />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
