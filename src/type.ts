@@ -283,4 +283,9 @@ export const BASE_URL =
 export const KAKAO_REDIRECT_URL =
   process.env.NODE_ENV === "development"
     ? "http://127.0.0.1:3000/oauth/kakao"
-    : "https://rider-match-front.onrender.com/oauth/kakao";
+    : "https://drivermatch.store/oauth/kakao";
+
+export const GOOGLE_REDIRECT_URL =
+  process.env.NODE_ENV === "development"
+    ? "http://127.0.0.1:3000/oauth/kakao"
+    : "https://drivermatch.store/oauth/google";
