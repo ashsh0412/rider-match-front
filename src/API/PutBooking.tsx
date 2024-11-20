@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { BASE_URL } from "../type";
 
 // updateBookingPassengers.ts
 export async function updateBookingPassengers(
@@ -12,7 +13,7 @@ export async function updateBookingPassengers(
     }));
 
     const response = await fetch(
-      `http://127.0.0.1:8000/api/v1/bookings/my-bookings/${bookingId}/`,
+      `${BASE_URL}bookings/my-bookings/${bookingId}/`,
       {
         method: "POST",
         headers: {

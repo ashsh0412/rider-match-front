@@ -30,9 +30,9 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import NavBar from "../components/NavBar";
 import { FiEdit2, FiTrash2 } from "react-icons/fi";
-import { ProfileUpdate } from "../API/UpdateUser";
-import { DeleteAccount } from "../API/DeleteUser";
-import { UserProfile } from "../type";
+import { ProfileUpdate } from "./UpdateUser";
+import { DeleteAccount } from "./DeleteUser";
+import { BASE_URL, UserProfile } from "../type";
 
 export default function Profile() {
   const toast = useToast();
@@ -50,7 +50,7 @@ export default function Profile() {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+      const response = await fetch(`${BASE_URL}users/me`, {
         method: "GET",
         credentials: "include",
         headers: {

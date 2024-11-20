@@ -1,31 +1,28 @@
 import Cookies from "js-cookie";
-import { BookingData } from "../type";
+import { BASE_URL, BookingData } from "../type";
 
 // PostBooking 함수 수정
 export const PostBooking = async (bookingData: BookingData) => {
   try {
-    const response = await fetch(
-      "http://127.0.0.1:8000/api/v1/bookings/my-bookings/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") || "", // CSRF token 처리
-        },
-        credentials: "include", // 쿠키 포함
-        body: JSON.stringify({
-          rider: bookingData.rider, // 현재 로그인한 사용자 ID
-          driver_name: bookingData.driver_name,
-          passengers: bookingData.passengers,
-          pickup_times: bookingData.pickup_times,
-          locations: bookingData.locations,
-          guests: bookingData.guests,
-          created_at: bookingData.created_at,
-          arrival_time: bookingData.arrival_time,
-          starting_point: bookingData.starting_point,
-        }),
-      }
-    );
+    const response = await fetch(`${BASE_URL}bookings/my-bookings/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken") || "", // CSRF token 처리
+      },
+      credentials: "include", // 쿠키 포함
+      body: JSON.stringify({
+        rider: bookingData.rider, // 현재 로그인한 사용자 ID
+        driver_name: bookingData.driver_name,
+        passengers: bookingData.passengers,
+        pickup_times: bookingData.pickup_times,
+        locations: bookingData.locations,
+        guests: bookingData.guests,
+        created_at: bookingData.created_at,
+        arrival_time: bookingData.arrival_time,
+        starting_point: bookingData.starting_point,
+      }),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();

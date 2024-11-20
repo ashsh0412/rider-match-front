@@ -11,7 +11,7 @@ import {
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
 import { createLocationData } from "../API/PostLocation";
-import { optLocations } from "../API/OptLocation";
+import { optLocations } from "../maps/OptLocation";
 import { reverseGeocode } from "../API/Geocoding";
 import PageNavigation from "./PageNavigation";
 import RouteMap from "../maps/OptRoute";

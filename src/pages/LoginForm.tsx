@@ -21,6 +21,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../type";
 
 export default function LoginCard() {
   const toast = useToast();
@@ -34,7 +35,7 @@ export default function LoginCard() {
   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=7cfbc93e53b15cc24fff53e43bf0dc37&redirect_uri=http://127.0.0.1:3000/oauth/kakao&response_type=code`;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/users/log-in");
+    fetch(`${BASE_URL}users/log-in`);
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,18 +56,15 @@ export default function LoginCard() {
     }
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/users/log-in",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": Cookies.get("csrftoken") || "",
-          },
-          body: JSON.stringify({ username, password }),
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}users/log-in`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken") || "",
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+      });
 
       if (response.ok) {
         toast({

@@ -2,6 +2,7 @@
 import Cookies from "js-cookie";
 import { UseToastOptions } from "@chakra-ui/react";
 import { NavigateFunction } from "react-router-dom";
+import { BASE_URL } from "../type";
 
 interface DeleteAccountProps {
   toast: (options?: UseToastOptions) => void;
@@ -10,7 +11,7 @@ interface DeleteAccountProps {
 
 export async function DeleteAccount({ toast, navigate }: DeleteAccountProps) {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+    const response = await fetch(`${BASE_URL}users/me`, {
       method: "DELETE",
       credentials: "include",
       headers: {

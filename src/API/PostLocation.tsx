@@ -2,7 +2,7 @@ import Cookies from "js-cookie";
 import { getStartCoordinates, getEndCoordinates } from "../maps/RouteMap";
 import { getCurrentUser } from "./GetUserInfo";
 import { reverseGeocode } from "./Geocoding";
-import { LocationData } from "../type";
+import { BASE_URL, LocationData } from "../type";
 
 // 위치 데이터 생성 함수를 export하여 재사용 가능하게 함
 export const createLocationData = async (
@@ -41,7 +41,7 @@ export const sendLocationToBackend = async (
   try {
     const locationData = await createLocationData(date_time);
 
-    const response = await fetch("http://127.0.0.1:8000/api/v1/locations/", {
+    const response = await fetch(`${BASE_URL}locations/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

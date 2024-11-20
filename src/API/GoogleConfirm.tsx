@@ -1,18 +1,12 @@
-import {
-  Box,
-  Heading,
-  Spinner,
-  Text,
-  useToast,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, Spinner, useToast, VStack } from "@chakra-ui/react";
 import Cookies from "js-cookie";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { BASE_URL } from "../type";
 
 const instance = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1/",
+  baseURL: BASE_URL,
   withCredentials: true,
 });
 

@@ -1,6 +1,6 @@
-import { getEndCoordinates } from "../maps/RouteMap";
+import { getEndCoordinates } from "./RouteMap";
 import { LocationData } from "../type";
-import { getLocations } from "./GetLocation";
+import { getLocations } from "../API/GetLocation";
 
 export const optLocations = async (): Promise<LocationData[]> => {
   try {

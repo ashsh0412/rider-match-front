@@ -1,6 +1,6 @@
 // src/utils/updateProfile.ts
 import Cookies from "js-cookie";
-import { UpdateProfileProps } from "../type";
+import { BASE_URL, UpdateProfileProps } from "../type";
 
 export const ProfileUpdate = async ({
   formData,
@@ -9,7 +9,7 @@ export const ProfileUpdate = async ({
   toast,
 }: UpdateProfileProps) => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+    const response = await fetch(`${BASE_URL}users/me`, {
       method: "PUT",
       credentials: "include",
       headers: {

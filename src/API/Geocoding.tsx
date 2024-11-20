@@ -1,4 +1,4 @@
-export const reverseGeocode = (
+export const reverseGeocode = async (
   latitude: number,
   longitude: number
 ): Promise<string> => {

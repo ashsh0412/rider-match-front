@@ -10,7 +10,7 @@ import NotFound from "./pages/NotFound";
 import LoginCard from "./pages/LoginForm";
 import theme from "./theme";
 import LoginCheck from "./API/LoginCheck";
-import Profile from "./pages/UserInfo";
+import Profile from "./API/UserInfo";
 import DriverPage from "./pages/DriverPage";
 import RiderPage from "./pages/RiderPage";
 import TripHistory from "./pages/TripHistory";

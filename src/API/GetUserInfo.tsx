@@ -1,10 +1,10 @@
 // api.ts
 import Cookies from "js-cookie";
-import { UserData } from "../type";
+import { BASE_URL, UserData } from "../type";
 
 export const getCurrentUser = async (): Promise<UserData> => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/v1/users/me", {
+    const response = await fetch(`${BASE_URL}users/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

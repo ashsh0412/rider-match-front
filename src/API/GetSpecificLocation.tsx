@@ -1,19 +1,16 @@
 import Cookies from "js-cookie";
-import { LocationResponse } from "../type";
+import { BASE_URL, LocationResponse } from "../type";
 
 export const getLocationsById = async (id: number): Promise<number> => {
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/v1/locations/get/${id}/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") || "",
-        },
-        credentials: "include",
-      }
-    );
+    const response = await fetch(`${BASE_URL}locations/get/${id}/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": Cookies.get("csrftoken") || "",
+      },
+      credentials: "include",
+    });
 
     if (!response.ok) {
       throw new Error(`API 요청 실패. 상태 코드: ${response.status}`);

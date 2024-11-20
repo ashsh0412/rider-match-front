@@ -1,9 +1,10 @@
 // logOut.js
 import Cookies from "js-cookie";
+import { BASE_URL } from "../type";
 
 const logOut = async () => {
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/v1/users/log-out", {
+    const response = await fetch(`${BASE_URL}users/log-out`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

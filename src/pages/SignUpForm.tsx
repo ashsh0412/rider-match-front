@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { FaGoogle, FaComment } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../type";
 
 export default function SignupCard() {
   const toast = useToast(); // useToast 훅을 초기화
@@ -37,7 +38,7 @@ export default function SignupCard() {
   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=7cfbc93e53b15cc24fff53e43bf0dc37&redirect_uri=http://127.0.0.1:3000/oauth/kakao&response_type=code`;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/v1/users/");
+    fetch(`${BASE_URL}users/`);
   }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +94,7 @@ export default function SignupCard() {
     }
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/users/", {
+      const response = await fetch(`${BASE_URL}users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
