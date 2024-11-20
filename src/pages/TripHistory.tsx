@@ -72,37 +72,7 @@ const TripHistory: React.FC = () => {
   const [locations, setLocations] = useState<LocationCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
-  const navigate = useNavigate();
-  const toast = useToast();
   const itemsPerPage = 5;
-
-  const fetchUserProfile = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}users/me`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") || "",
-        },
-      });
-
-      if (!response.ok) {
-        navigate("/log-in");
-        throw new Error("Failed to fetch user profile");
-      }
-    } catch (error) {
-      toast({
-        title: "Error fetching profile",
-        description: "Unable to fetch user profile. Please try again later.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-right",
-      });
-      navigate("/log-in");
-    }
-  };
 
   const bg = useColorModeValue("white", "gray.800");
 
