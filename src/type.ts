@@ -287,5 +287,5 @@ export const KAKAO_REDIRECT_URL =
 
 export const GOOGLE_REDIRECT_URL =
   process.env.NODE_ENV === "development"
-    ? "http://127.0.0.1:3000/oauth/kakao"
+    ? "http://127.0.0.1:3000/oauth/google"
     : "https://drivermatch.store/oauth/google";
