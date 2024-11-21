@@ -4,7 +4,7 @@ import { BASE_URL } from "../type";
 // PostBooking 함수 시그니처 수정
 export const getBooking = async () => {
   try {
-    const response = await fetch(`${BASE_URL}v1/bookings/my-bookings/`, {
+    const response = await fetch(`${BASE_URL}bookings/my-bookings/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -16,6 +16,7 @@ import RiderPage from "./pages/RiderPage";
 import TripHistory from "./pages/TripHistory";
 import KakaoConfirm from "./API/KakaoConfirm";
 import GoogleConfirm from "./API/GoogleConfirm";
+import WelcomePage from "./pages/WelcomePage";
 
 function App() {
   const isDevelopment = process.env.NODE_ENV === "development";
@@ -27,7 +28,8 @@ function App() {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <Router basename={basename}>
         <Routes>
-          <Route path="/" element={<Navigate replace to="/rider-page" />} />
+          <Route path="/" element={<Navigate replace to="/welcome" />} />
+          <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/signup" element={<SignupCard />} />
           <Route
             path="/log-in"
@@ -53,8 +55,22 @@ function App() {
               </LoginCheck>
             }
           />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/trip-history" element={<TripHistory />} />
+          <Route
+            path="/profile"
+            element={
+              <LoginCheck>
+                <Profile />
+              </LoginCheck>
+            }
+          />
+          <Route
+            path="/trip-history"
+            element={
+              <LoginCheck>
+                <TripHistory />
+              </LoginCheck>
+            }
+          />
           <Route path="/oauth/kakao" element={<KakaoConfirm />} />
           <Route path="/oauth/google" element={<GoogleConfirm />} />
           <Route path="*" element={<NotFound />} />

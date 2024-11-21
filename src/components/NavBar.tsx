@@ -79,7 +79,7 @@ const NavBar: React.FC = () => {
           />
           <MenuList>
             <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
-            <MenuItem onClick={logOut}>Log out</MenuItem>
+            <MenuItem onClick={() => logOut(navigate)}>Log out</MenuItem>{" "}
           </MenuList>
         </Menu>
       </HStack>

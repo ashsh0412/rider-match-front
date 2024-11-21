@@ -37,10 +37,6 @@ export default function SignupCard() {
   const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=527380010985-t4bcqpmkc7npagt417spra1fl3tpkh5s.apps.googleusercontent.com&redirect_uri=${GOOGLE_REDIRECT_URL}&response_type=code&scope=openid%20profile%20email`;
   const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?client_id=7cfbc93e53b15cc24fff53e43bf0dc37&redirect_uri=${KAKAO_REDIRECT_URL}&response_type=code`;
 
-  useEffect(() => {
-    fetch(`${BASE_URL}users/`);
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });

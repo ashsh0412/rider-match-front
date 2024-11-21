@@ -7,7 +7,7 @@ import {
   ListIcon,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { Clock, AlertCircle, Users, CheckCircle } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 
 const TimeInfoAlert = () => {
   const bgColor = useColorModeValue("blue.50", "blue.900");

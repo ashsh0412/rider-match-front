@@ -48,7 +48,7 @@ export default function KakaoConfirm() {
           position: "bottom-right",
           description: "Successfully Loged In!",
         });
-        navigate("/");
+        navigate("/rider-page");
       }
     }
   };

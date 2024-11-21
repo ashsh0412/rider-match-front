@@ -40,7 +40,6 @@ export const sendLocationToBackend = async (
 ): Promise<void> => {
   try {
     const locationData = await createLocationData(date_time);
-
     const response = await fetch(`${BASE_URL}locations/`, {
       method: "POST",
       headers: {
