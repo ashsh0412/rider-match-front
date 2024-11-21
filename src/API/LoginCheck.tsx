@@ -19,9 +19,7 @@ const LoginCheck = ({ children }: LoginCheckProps) => {
         } else if (!userData.is_rider) {
           navigate("/rider-page");
         } else {
-          // 타입이 지정되지 않은 경우의 처리
           console.warn("User type not specified");
-          navigate("/profile"); // 또는 다른 기본 페이지
         }
 
         setIsChecking(false);

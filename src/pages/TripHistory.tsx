@@ -53,7 +53,6 @@ import {
   Trip,
 } from "../type";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../API/GetUserInfo";
 import Cookies from "js-cookie";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
@@ -73,6 +72,8 @@ const TripHistory: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
   const itemsPerPage = 5;
+  const toast = useToast();
+  const navigate = useNavigate();
 
   const bg = useColorModeValue("white", "gray.800");
 
@@ -86,6 +87,39 @@ const TripHistory: React.FC = () => {
       minute: "2-digit",
       hour12: true,
     }).format(date);
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}users/me`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": Cookies.get("csrftoken") || "",
+        },
+      });
+
+      if (!response.ok) {
+        navigate("/log-in");
+        throw new Error("Failed to fetch user profile");
+      }
+    } catch (error) {
+      toast({
+        title: "Error fetching trip history",
+        description:
+          "Unable to fetch user trip history. Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+      navigate("/log-in");
+    }
   };
 
   useEffect(() => {

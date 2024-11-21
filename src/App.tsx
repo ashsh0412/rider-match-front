@@ -55,22 +55,8 @@ function App() {
               </LoginCheck>
             }
           />
-          <Route
-            path="/profile"
-            element={
-              <LoginCheck>
-                <Profile />
-              </LoginCheck>
-            }
-          />
-          <Route
-            path="/trip-history"
-            element={
-              <LoginCheck>
-                <TripHistory />
-              </LoginCheck>
-            }
-          />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/trip-history" element={<TripHistory />} />
           <Route path="/oauth/kakao" element={<KakaoConfirm />} />
           <Route path="/oauth/google" element={<GoogleConfirm />} />
           <Route path="*" element={<NotFound />} />
