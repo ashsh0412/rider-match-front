@@ -14,8 +14,19 @@ const RiderPage: React.FC = () => {
   return (
     <Box>
       <NavBar />
-      <Flex minH="100vh" bg={mainBg} pt="64px">
-        <Box flex="0 0 400px" p={6} h="calc(100vh - 64px)" overflowY="auto">
+      <Flex
+        minH="100vh"
+        bg={mainBg}
+        pt="64px"
+        direction={{ base: "column", md: "row" }}
+      >
+        <Box
+          w={{ base: "full", md: "400px" }}
+          h={{ base: "auto", md: "calc(100vh - 64px)" }}
+          p={6}
+          overflowY={{ base: "visible", md: "auto" }}
+          bg={mainBg}
+        >
           {isSuccess ? (
             <SuccessMessage setIsSuccess={setIsSuccess} />
           ) : (
@@ -26,7 +37,11 @@ const RiderPage: React.FC = () => {
           )}
         </Box>
 
-        <Box flex={1} bg={useColorModeValue("gray.200", "gray.700")}>
+        <Box
+          flex={1}
+          display={{ base: "none", md: "block" }}
+          bg={useColorModeValue("gray.200", "gray.700")}
+        >
           <MapComponent />
         </Box>
       </Flex>
