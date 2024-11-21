@@ -45,7 +45,7 @@ export default function SignupCard() {
   const handleSubmit = async () => {
     const { firstName, lastName, email, password, username } = formData;
 
-    if (!firstName || !lastName || !password || !username) {
+    if (!firstName || !lastName || !password || !username || !email) {
       toast({
         title: "All required fields must be filled.",
         status: "warning",
@@ -180,7 +180,7 @@ export default function SignupCard() {
                 onChange={handleInputChange}
               />
             </FormControl>
-            <FormControl id="email">
+            <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
               <Input
                 type="email"
