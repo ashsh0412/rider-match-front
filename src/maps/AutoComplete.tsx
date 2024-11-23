@@ -17,7 +17,6 @@ export const initializeAutocomplete = (
 
   const autocomplete = new google.maps.places.Autocomplete(inputElement, {
     fields: ["formatted_address", "geometry", "name"],
-    componentRestrictions: { country: ["us"] },
   });
 
   autocomplete.addListener("place_changed", async () => {
@@ -33,7 +32,6 @@ export const initializeAutocomplete = (
 
     const lat = place.geometry.location.lat();
     const lng = place.geometry.location.lng();
-
     // 선택한 위치를 기존 아이템 이름으로 localStorage에 저장
     if (autocompleteType === "pickup") {
       localStorage.setItem("startCoordinates", JSON.stringify({ lat, lng }));
@@ -67,7 +65,6 @@ export const initializeAutocomplete = (
       if (pickupInput.value && dropoffInput.value) {
         const start = pickupInput.value;
         const end = dropoffInput.value;
-
         // Create RouteOptions object
         const routeOptions: RouteOptions = {
           start,

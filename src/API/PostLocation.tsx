@@ -11,15 +11,32 @@ export const createLocationData = async (
   const user = await getCurrentUser();
   const startLocation = getStartCoordinates();
   const endLocation = getEndCoordinates();
+
+  if (!startLocation || !endLocation) {
+    throw new Error("Location coordinates not found");
+  }
+
+  // 간단히 경로가 존재하는지만 확인
+  const isDriveable = await new Promise<boolean>((resolve) => {
+    new google.maps.DirectionsService().route(
+      {
+        origin: new google.maps.LatLng(startLocation.lat, startLocation.lng),
+        destination: new google.maps.LatLng(endLocation.lat, endLocation.lng),
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => resolve(status === "OK")
+    );
+  });
+
+  if (!isDriveable) {
+    throw new Error("This route is not accessible by car");
+  }
+
   const pickUpAddress = await reverseGeocode(
     startLocation.lat,
     startLocation.lng
   );
   const destination = await reverseGeocode(endLocation.lat, endLocation.lng);
-
-  if (!startLocation || !endLocation) {
-    throw new Error("Location coordinates not found");
-  }
 
   return {
     start_latitude: startLocation.lat,

@@ -33,7 +33,7 @@ export function calcRoute({
 
         resolve(coordinates);
       } else {
-        console.log("error");
+        console.error("Error calculating route:", { status, result });
       }
     });
   });

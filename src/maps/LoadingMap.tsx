@@ -43,19 +43,8 @@ const MapComponent: React.FC = () => {
   };
 
   useEffect(() => {
-    const match = document.cookie.match(
-      new RegExp("(^| )locationData=([^;]+)")
-    );
-
     directionsService.current = new google.maps.DirectionsService();
     directionsRenderer.current = new google.maps.DirectionsRenderer();
-
-    let locationData: { pickup: string; dropoff: string } | null = null;
-    if (match) {
-      locationData = JSON.parse(decodeURIComponent(match[2]));
-    } else {
-      console.log("Location data not found");
-    }
 
     const initMap = async (): Promise<void> => {
       try {
@@ -141,7 +130,7 @@ const MapComponent: React.FC = () => {
 
     return () => {
       if (mapRef.current) {
-        google.maps.event.clearListeners(mapRef.current, "bounds_changed");
+        // google.maps.event.clearListeners(mapRef.current, "bounds_changed");
       }
     };
   }, [colorMode, toast]);

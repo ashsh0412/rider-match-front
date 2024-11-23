@@ -64,7 +64,6 @@ const useRouteCalculation = ({
           waypoints: locationData.waypoints,
           optimizeWaypoints: true, // 경유지 최적화
           travelMode: google.maps.TravelMode.DRIVING,
-          region: "us",
           language: "en",
         };
 
