@@ -165,7 +165,7 @@ export default function LoginCard() {
             >
               Google
             </Button>
-            <Button
+            {/* <Button
               as="a"
               href={kakaoAuthUrl}
               w="full"
@@ -174,7 +174,7 @@ export default function LoginCard() {
               leftIcon={<Icon as={FaComment} />}
             >
               Kakao
-            </Button>
+            </Button> */}
           </HStack>
           <Text textAlign="center">
             Don't have an account?{" "}

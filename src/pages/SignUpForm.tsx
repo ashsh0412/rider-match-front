@@ -233,7 +233,7 @@ export default function SignupCard() {
                 >
                   Google
                 </Button>
-                <Button
+                {/* <Button
                   as="a"
                   href={kakaoAuthUrl}
                   w="full"
@@ -242,7 +242,7 @@ export default function SignupCard() {
                   leftIcon={<Icon as={FaComment} />}
                 >
                   Kakao
-                </Button>
+                </Button> */}
               </HStack>
               <Text textAlign="center">
                 Already a user?{" "}
