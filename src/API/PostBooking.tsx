@@ -21,12 +21,18 @@ export const PostBooking = async (bookingData: BookingData) => {
         created_at: bookingData.created_at,
         arrival_time: bookingData.arrival_time,
         starting_point: bookingData.starting_point,
+        map_url: sessionStorage.getItem("googleMapLink"),
       }),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(`Booking failed: ${errorText}`);
+    } else {
+      localStorage.removeItem("selectedPassengerDetails");
+      localStorage.removeItem("startCoordinates");
+      localStorage.removeItem("endCoordinates");
+      sessionStorage.removeItem("googleMapLink");
     }
 
     return await response.json(); // 응답을 JSON으로 반환

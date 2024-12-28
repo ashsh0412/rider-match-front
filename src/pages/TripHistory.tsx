@@ -31,6 +31,7 @@ import {
   TabPanels,
   TabPanel,
   useToast,
+  Tooltip,
 } from "@chakra-ui/react";
 import {
   CalendarIcon,
@@ -38,7 +39,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { MapPin, Users } from "lucide-react";
+import { MapIcon, MapPin, Users } from "lucide-react";
 import NavBar from "../components/NavBar";
 import { getBooking } from "../API/GetBooking";
 import { FaUserTie } from "react-icons/fa";
@@ -52,8 +53,9 @@ import {
   PickupWithTime,
   Trip,
 } from "../type";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { m } from "framer-motion";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Pending";
@@ -237,6 +239,7 @@ const TripHistory: React.FC = () => {
             startingPoint: shortStartingPoint,
             arrivalTime: formatDateTime(booking.arrival_time),
             pickupTime: booking.pickup_times[0],
+            mapUrl: booking.map_url,
           };
         });
 
@@ -541,6 +544,21 @@ const TripHistory: React.FC = () => {
               <Icon as={FaUserTie} mr={2} />
               Driver: {trip.driverName}
             </Badge>
+            <Tooltip label="View Map" placement="top">
+              <Icon
+                onClick={() => {
+                  if (trip.mapUrl) {
+                    window.open(trip.mapUrl, "_blank");
+                  }
+                }}
+                as={MapIcon}
+                cursor="pointer"
+                boxSize={7}
+                color="blue.500"
+                _hover={{ color: "blue.600" }}
+                mt="auto"
+              />
+            </Tooltip>
           </Stack>
         </Flex>
       </CardBody>

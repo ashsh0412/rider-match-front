@@ -265,6 +265,7 @@ export interface Trip {
   guests: { id: number; name: string }[];
   driverName: string;
   status: "Completed" | "Pending";
+  mapUrl: string;
 }
 
 export interface LocationCard {

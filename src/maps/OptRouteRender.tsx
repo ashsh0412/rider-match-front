@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useColorMode } from "@chakra-ui/react";
 import { darkMapStylesForOpt, coolUrbanMapStylesForOpt } from "./MapStyle";
 import { Coordinates, LocationDataForRouteRender, Passenger } from "../type";
+import { geocode } from "../API/Geocoding";
 
 export const OptMapRenderer: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -73,6 +74,29 @@ export const OptMapRenderer: React.FC = () => {
 
   useEffect(() => {
     if (!locationData?.origin || !locationData?.destination) return;
+
+    // 구글 맵 경로 계산 링크
+    const origin = `${locationData.origin.lat},${locationData.origin.lng}`;
+    const destination = `${locationData.destination.lat},${locationData.destination.lng}`;
+    let completedGeocodes = 0;
+    const waypointCoords: string[] = [];
+
+    locationData.waypoints.forEach((wp) => {
+      geocode(wp.location, (result) => {
+        waypointCoords.push(result);
+        completedGeocodes++;
+
+        // 모든 waypoint가 처리되었을 때
+        if (completedGeocodes === locationData.waypoints.length) {
+          const waypointsString = waypointCoords.join("|");
+
+          sessionStorage.setItem(
+            "googleMapLink",
+            `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypointsString}&travelmode=driving`
+          );
+        }
+      });
+    });
 
     const initializeMap = () => {
       const mapElement = mapRef.current;
