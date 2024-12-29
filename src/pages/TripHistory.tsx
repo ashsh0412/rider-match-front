@@ -460,6 +460,9 @@ const TripHistory: React.FC = () => {
                 <Icon as={MapPin} color="yellow.400" />
                 <Text>{trip.startingPoint}</Text>
                 <Badge>Starting Point</Badge>
+                <Badge colorScheme="purple" ml={2}>
+                  Departure: {trip.pickupTime}
+                </Badge>
               </HStack>
               <Box pl="6px">
                 <Divider
@@ -475,10 +478,10 @@ const TripHistory: React.FC = () => {
                       as={MapPin}
                       color={
                         location.type === "pickup"
-                          ? "green.500"
-                          : location.type === "waypoint"
                           ? "blue.500"
-                          : "red.500"
+                          : location.type === "dropoff"
+                          ? "red.500"
+                          : "green.500"
                       }
                     />
                     <Text>
@@ -490,12 +493,12 @@ const TripHistory: React.FC = () => {
                       </Badge>
                       {location.type === "dropoff" && trip.arrivalTime && (
                         <Badge colorScheme="purple" ml={2}>
-                          {trip.arrivalTime}
+                          Arrival: {trip.arrivalTime}
                         </Badge>
                       )}
-                      {location.pickupTime && (
+                      {location.type === "pickup" && location.pickupTime && (
                         <Badge ml={2} colorScheme="purple">
-                          {location.pickupTime}
+                          Departure: {location.pickupTime}
                         </Badge>
                       )}
                     </Text>
