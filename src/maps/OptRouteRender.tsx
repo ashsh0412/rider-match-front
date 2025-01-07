@@ -75,29 +75,6 @@ export const OptMapRenderer: React.FC = () => {
   useEffect(() => {
     if (!locationData?.origin || !locationData?.destination) return;
 
-    // 구글 맵 경로 계산 링크
-    const origin = `${locationData.origin.lat},${locationData.origin.lng}`;
-    const destination = `${locationData.destination.lat},${locationData.destination.lng}`;
-    let completedGeocodes = 0;
-    const waypointCoords: string[] = [];
-
-    locationData.waypoints.forEach((wp) => {
-      geocode(wp.location, (result) => {
-        waypointCoords.push(result);
-        completedGeocodes++;
-
-        // 모든 waypoint가 처리되었을 때
-        if (completedGeocodes === locationData.waypoints.length) {
-          const waypointsString = waypointCoords.join("|");
-
-          sessionStorage.setItem(
-            "googleMapLink",
-            `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypointsString}&travelmode=driving`
-          );
-        }
-      });
-    });
-
     const initializeMap = () => {
       const mapElement = mapRef.current;
 
@@ -162,6 +139,47 @@ export const OptMapRenderer: React.FC = () => {
               strokeColor: colorMode === "dark" ? "#4285F4" : "#4285F4",
               strokeWeight: 4,
             },
+          });
+
+          // 최적화된 경로 순서 가져오기
+          const waypointOrder = result.routes[0].waypoint_order;
+
+          // Google Maps 링크 생성
+          const origin = `${locationData.origin.lat},${locationData.origin.lng}`;
+          const destination = `${locationData.destination.lat},${locationData.destination.lng}`;
+          let completedGeocodes = 0;
+          const waypointCoords: string[] = new Array(
+            locationData.waypoints.length
+          );
+
+          // 최적화된 순서로 waypoint 처리
+          locationData.waypoints.forEach((wp, index) => {
+            geocode(wp.location, (geocodeResult) => {
+              // waypointOrder를 사용하여 올바른 순서로 저장
+              const optimizedIndex = waypointOrder[index];
+              waypointCoords[optimizedIndex] = geocodeResult;
+              completedGeocodes++;
+
+              // 모든 waypoint가 처리되었을 때
+              // 모든 waypoint가 처리되었을 때
+              if (completedGeocodes === locationData.waypoints.length) {
+                // 모든 좌표가 유효한지 확인
+                const allCoordsValid = waypointCoords.every(
+                  (coord) => coord != null
+                );
+
+                if (allCoordsValid) {
+                  const waypointsString = waypointCoords.join("|");
+
+                  sessionStorage.setItem(
+                    "googleMapLink",
+                    `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypointsString}&travelmode=driving&optimize=true`
+                  );
+                } else {
+                  console.error("Some waypoints failed to geocode");
+                }
+              }
+            });
           });
 
           // 경유지 마커 생성

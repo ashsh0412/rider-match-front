@@ -19,8 +19,6 @@ export const PostBooking = async (bookingData: BookingData) => {
         locations: bookingData.locations,
         guests: bookingData.guests,
         created_at: bookingData.created_at,
-        arrival_time: bookingData.arrival_time,
-        departure_time: bookingData.departure_time,
         starting_point: bookingData.starting_point,
         map_url: sessionStorage.getItem("googleMapLink"),
       }),

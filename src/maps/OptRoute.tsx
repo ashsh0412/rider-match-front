@@ -38,6 +38,9 @@ const useRouteCalculation = ({
     null
   );
   const [routeInfo, setRouteInfo] = useState<string>("");
+  const [optimizedPassengers, setOptimizedPassengers] = useState<
+    PassengerDetail[]
+  >([]);
 
   useEffect(() => {
     if (
@@ -73,6 +76,15 @@ const useRouteCalculation = ({
 
         const route = response.routes[0];
         const legs = route.legs;
+
+        // 최적화된 waypoint 순서를 사용하여 승객 목록 재정렬
+        const waypointOrder = route.waypoint_order;
+        const reorderedPassengers = waypointOrder.map(
+          (index) => passengerDetails[index]
+        );
+        setOptimizedPassengers(reorderedPassengers);
+
+        // 재정렬된 승객 순서로 픽업 시간 계산
         const pickupTimes = calculatePickupTimes(legs);
 
         let totalDistance = 0;
@@ -86,7 +98,8 @@ const useRouteCalculation = ({
         const totalHours = Math.floor(totalDuration / 3600);
         const remainingMinutes = Math.round((totalDuration % 3600) / 60);
 
-        const pickupSchedule = passengerDetails
+        // 최적화된 순서로 픽업 스케줄 표시
+        const pickupSchedule = reorderedPassengers
           .map(
             (p, index) => `
             <div style="margin-top: 10px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
@@ -109,65 +122,60 @@ const useRouteCalculation = ({
           remainingMinutes || 0
         } minutes</p>
             <div style="margin-top: 15px;">
-              <p><strong>Pickup Schedule:</strong></p>
+              <p><strong>Optimized Pickup Schedule:</strong></p>
               ${pickupSchedule}
             </div>
           </div>
         `);
 
         // PostBooking 처리
-        // PostBooking 처리 부분만 수정
         const data = localStorage.getItem("selectedPassengerDetails");
         const startCoordinates = localStorage.getItem("startCoordinates");
         if (data && startCoordinates) {
           try {
-            const parsedData = JSON.parse(data);
             const parsedCoordinates = JSON.parse(startCoordinates);
             const riderInfo = await getCurrentUser();
 
-            // 좌표를 주소로 변환
             const startingPoint = await reverseGeocode(
               parsedCoordinates.lat,
               parsedCoordinates.lng
+            );
+
+            // 모든 목적지가 같은지 확인
+            const allSameDestination = reorderedPassengers.every(
+              (passenger, _, array) =>
+                passenger.destination === array[0].destination
             );
 
             const bookingData: BookingData = {
               rider: riderInfo.id,
               driver_name: `${riderInfo.first_name} ${riderInfo.last_name}`,
               passengers: await Promise.all(
-                parsedData.map(async (item: PassengerDetail) => ({
+                reorderedPassengers.map(async (item: PassengerDetail) => ({
                   id: await getLocationsById(item.id),
                   name: item.name,
                 }))
               ),
               pickup_times: pickupTimes.map((time) => time?.time || "N/A"),
               locations: {
-                pickups: parsedData.map((item: PassengerDetail) => item.pickup),
-                destinations: parsedData.map(
-                  (item: PassengerDetail) => item.destination
+                pickups: reorderedPassengers.map(
+                  (item: PassengerDetail) => item.pickup
                 ),
+                // 모든 목적지가 같은 경우 하나만 사용, 다른 경우 각각의 목적지 사용
+                destinations: allSameDestination
+                  ? [reorderedPassengers[0].destination]
+                  : reorderedPassengers.map(
+                      (item: PassengerDetail) => item.destination
+                    ),
               },
-              guests: parsedData.length,
+              guests: reorderedPassengers.length,
               created_at: new Date().toISOString(),
-              // 출발 시간은 선택된 시간
-              departure_time:
-                sessionStorage.getItem("selectedDate") ||
-                new Date().toISOString(),
-              // 도착 시간은 출발 시간 + 총 이동 시간
-              arrival_time: (() => {
-                const lastPickupTime =
-                  pickupTimes[pickupTimes.length - 1]?.time;
-                if (!lastPickupTime) {
-                  throw new Error("도착 시간 계산에 실패했습니다.");
-                }
-                return new Date(lastPickupTime).toISOString();
-              })(),
               starting_point: startingPoint,
             };
 
             await PostBooking(bookingData);
             await Promise.all(
-              parsedData.map((passenger: Passenger) =>
+              reorderedPassengers.map((passenger: Passenger) =>
                 deleteLocation({ id: passenger.id.toString() })
               )
             );
@@ -186,7 +194,11 @@ const useRouteCalculation = ({
     calculateRoute();
   }, [locationData, passengerDetails, calculatePickupTimes]);
 
-  return { routeInfo, directionsRenderer: directionsRendererRef.current };
+  return {
+    routeInfo,
+    directionsRenderer: directionsRendererRef.current,
+    optimizedPassengers,
+  };
 };
 
 // 패널 렌더러 컴포넌트

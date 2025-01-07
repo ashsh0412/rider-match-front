@@ -141,7 +141,6 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
         ]);
       } else {
         const optInfo = await optLocations();
-
         if (optInfo && Array.isArray(optInfo)) {
           if (optInfo.length > 0) {
             const maxPassengers = 10;
@@ -154,27 +153,22 @@ const SuccessMessage: React.FC<SuccessMessageProps> = ({
                 destination: passenger.dropoff_location,
                 time: passenger.date_time,
               }));
+
             const selectedDate = sessionStorage.getItem("selectedDate");
             if (selectedDate) {
-              const selectedDateObj = new Date(selectedDate); // 선택된 날짜를 Date 객체로 변환
-              const currentTime = new Date(); // 현재 시간을 가져옴
+              const selectedDateObj = new Date(selectedDate);
 
-              // 선택된 날짜의 시작 시간과 끝 시간을 정의 (00:00:00 - 23:59:59)
+              // 선택된 날짜의 시작과 끝 시간 설정
               const startOfDay = new Date(selectedDateObj);
-              startOfDay.setHours(0, 0, 0, 0); // 선택된 날짜의 00:00:00
+              startOfDay.setHours(0, 0, 0, 0);
 
               const endOfDay = new Date(selectedDateObj);
-              endOfDay.setHours(23, 59, 59, 999); // 선택된 날짜의 23:59:59
+              endOfDay.setHours(23, 59, 59, 999);
 
               const filteredPassengers = newPassengers.filter((passenger) => {
-                const passengerTime = new Date(passenger.time); // 승객의 시간을 Date 객체로 변환
-
-                // 승객의 시간이 선택된 날짜에 속하는지 확인
-                return (
-                  passengerTime >= startOfDay &&
-                  passengerTime <= endOfDay &&
-                  passengerTime > currentTime // 현재 시간보다 미래인 승객만
-                );
+                const passengerTime = new Date(passenger.time);
+                // 현재 시간 체크 조건 제거, 해당 날짜의 모든 예약 포함
+                return passengerTime >= startOfDay && passengerTime <= endOfDay;
               });
 
               setPassengers(filteredPassengers);

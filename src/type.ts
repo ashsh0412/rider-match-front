@@ -37,8 +37,6 @@ export interface BookingData {
     destinations: string[];
   };
   guests: number;
-  created_at: string;
-  arrival_time: string;
   starting_point: string;
 }
 
@@ -128,8 +126,6 @@ export interface BookingData {
   };
   guests: number;
   created_at: string;
-  arrival_time: string;
-  departure_time: string;
   starting_point: string;
   passengers: { id: number; name: string }[];
 }

@@ -93,53 +93,44 @@ export const useRouteData = (
     legs: google.maps.DirectionsLeg[]
   ): PickupTime[] => {
     const selectedDate = sessionStorage.getItem("selectedDate");
-    let startTime = selectedDate ? new Date(selectedDate) : new Date(); // 출발 시간으로 변경
+    let startTime = selectedDate ? new Date(selectedDate) : new Date();
     const pickupTimes: PickupTime[] = [];
-    let cumulativeDuration = 0;
+
+    const formatTime = (date: Date) => {
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    };
 
     try {
-      // 첫 번째 픽업 지점(출발 지점)의 시간 추가
+      // 첫 번째 위치(출발지)
       pickupTimes.push({
         location: legs[0]?.start_address || "",
-        time: startTime.toLocaleString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        }),
+        time: formatTime(startTime),
       });
 
-      // 각 경유지의 픽업 시간 계산
-      for (let i = 0; i < legs.length; i++) {
-        const durationValue = Number(legs[i]?.duration?.value ?? 0);
+      let currentTime = startTime.getTime();
 
-        if (isNaN(durationValue) || durationValue === 0) {
+      // 각 구간별 시간 계산
+      for (let i = 0; i < legs.length; i++) {
+        const durationInMinutes = Number(legs[i]?.duration?.value ?? 0) / 60;
+
+        if (isNaN(durationInMinutes) || durationInMinutes === 0) {
           console.warn(`Invalid or missing duration value for leg ${i}`);
           continue;
         }
 
-        // 누적 이동 시간을 더해서 다음 픽업 시간을 계산
-        cumulativeDuration += durationValue;
-        const pickupTime = new Date(
-          startTime.getTime() + cumulativeDuration * 1000
-        ); // 출발 시간에서 누적 시간을 더함
+        currentTime += durationInMinutes * 60 * 1000;
 
-        // 마지막 leg는 최종 목적지이므로 픽업 시간으로 추가하지 않음
-        if (i < legs.length - 1) {
-          pickupTimes.push({
-            location: legs[i]?.end_address || "",
-            time: pickupTime.toLocaleString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            }),
-          });
-        }
+        pickupTimes.push({
+          location: legs[i]?.end_address || "",
+          time: formatTime(new Date(currentTime)),
+        });
       }
     } catch (error) {
       console.error("Error calculating pickup times:", error);

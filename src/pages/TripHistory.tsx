@@ -45,17 +45,9 @@ import { getBooking } from "../API/GetBooking";
 import { FaUserTie } from "react-icons/fa";
 import { getUserLocations } from "../API/GetLocation";
 import { deleteLocation } from "../API/DeleteLocation";
-import {
-  BASE_URL,
-  Guest,
-  Location,
-  LocationCard,
-  PickupWithTime,
-  Trip,
-} from "../type";
-import { Link, useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import { m } from "framer-motion";
+import { Guest, Location, LocationCard, PickupWithTime, Trip } from "../type";
+import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../API/GetUserInfo";
 
 type DateFilter = "3 months" | "6 months" | "1 year";
 type StatusFilter = "All" | "Completed" | "Pending";
@@ -97,24 +89,12 @@ const TripHistory: React.FC = () => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${BASE_URL}users/me`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": Cookies.get("csrftoken") || "",
-        },
-      });
-
-      if (!response.ok) {
-        navigate("/log-in");
-        throw new Error("Failed to fetch user profile");
-      }
+      await getCurrentUser();
+      // 추가 로직 처리 가능
     } catch (error) {
       toast({
-        title: "Error fetching trip history",
-        description:
-          "Unable to fetch user trip history. Please try again later.",
+        title: "Error fetching user profile",
+        description: "Unable to fetch user profile. Please try again later.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -149,47 +129,23 @@ const TripHistory: React.FC = () => {
         const transformedTrips: Trip[] = response.map((booking: any) => {
           const locations: Location[] = [];
 
-          const pickupsWithTimes = booking.locations.pickups.map(
-            (pickup: string, index: number) => {
-              // pickup이 유효한 문자열인지 확인
-              let location = "";
-              if (pickup && typeof pickup === "string") {
-                location = pickup.split(",")[0].trim();
-
-                // 첫 번째 부분이 10글자 이하일 때, 두 번째 부분도 가져오기
-                if (location.length <= 10) {
-                  const parts = pickup.split(",");
-                  if (parts.length > 1) {
-                    location += ", " + parts[1].trim();
-                  }
-                }
-              }
-
-              return {
-                location,
-                time: booking.pickup_times[index],
-                type: "pickup" as const,
-              };
+          // 경유지 (pickups) 처리
+          booking.locations.pickups.forEach((pickup: string, index: number) => {
+            let shortenedPickup = pickup.split(",")[0].trim();
+            if (shortenedPickup.length <= 10 && pickup.split(",").length > 1) {
+              shortenedPickup += ", " + pickup.split(",")[1].trim();
             }
-          );
-
-          pickupsWithTimes.sort(
-            (a: PickupWithTime, b: PickupWithTime) =>
-              new Date(a.time).getTime() - new Date(b.time).getTime()
-          );
-
-          pickupsWithTimes.forEach((item: PickupWithTime) => {
             locations.push({
-              name: item.location,
-              type: item.type,
-              pickupTime: item.time,
+              name: shortenedPickup,
+              type: "waypoint" as const,
+              pickupTime: booking.pickup_times[index + 1],
             });
           });
 
+          // 목적지 처리
           if (booking.locations.destinations.length > 0) {
             const destination = booking.locations.destinations[0];
             let shortenedDestination = destination.split(",")[0].trim();
-
             if (
               shortenedDestination.length <= 10 &&
               destination.split(",").length > 1
@@ -198,47 +154,37 @@ const TripHistory: React.FC = () => {
             }
             locations.push({
               name: shortenedDestination,
-              type: "dropoff",
+              type: "dropoff" as const,
+              pickupTime: booking.pickup_times[booking.pickup_times.length - 1],
             });
           }
 
-          const guests: Guest[] = booking.passengers.map(
-            (passenger: any, index: number) => ({
-              id: index + 1,
-              name: passenger.name,
-            })
-          );
-
-          const riderDate = booking.pickup_times[0]
-            .split(",")
-            .slice(0, 2)
-            .join(",");
-
-          // 현재 시각 가져오기
-          const currentTime = new Date();
-
-          // 백엔드에서 도착 시간을 가져오기
-          const arrivalTime = new Date(booking.arrival_time);
-          const startingPoint = booking.starting_point;
-          let shortStartingPoint = startingPoint.split(",")[0].trim();
-          if (
-            shortStartingPoint.length <= 10 &&
-            startingPoint.split(",").length > 1
-          ) {
-            shortStartingPoint += ", " + startingPoint.split(",")[1].trim();
+          // starting point는 별도 필드로만 사용
+          const startingPointArr = booking.starting_point.split(",");
+          let shortStartingPoint = startingPointArr[0].trim();
+          if (shortStartingPoint.length <= 10 && startingPointArr.length > 1) {
+            shortStartingPoint += ", " + startingPointArr[1].trim();
           }
-          const status = arrivalTime < currentTime ? "Completed" : "Pending";
+
+          const guests = booking.passengers.map((passenger: any) => ({
+            id: passenger.id,
+            name: passenger.name,
+          }));
 
           return {
             id: booking.id,
-            date: riderDate,
-            locations: locations,
-            guests: guests,
+            date: booking.pickup_times[0].split(",").slice(0, 2).join(","),
+            locations,
+            guests,
             driverName: booking.driver_name,
-            status: status,
+            status:
+              new Date(booking.pickup_times[booking.pickup_times.length - 1]) <
+              new Date()
+                ? "Completed"
+                : "Pending",
             startingPoint: shortStartingPoint,
-            arrivalTime: formatDateTime(booking.arrival_time),
             pickupTime: booking.pickup_times[0],
+            arrivalTime: booking.pickup_times[booking.pickup_times.length - 1],
             mapUrl: booking.map_url,
           };
         });
@@ -472,16 +418,16 @@ const TripHistory: React.FC = () => {
                 />
               </Box>
               {trip.locations.map((location, index) => (
-                <React.Fragment key={index}>
+                <React.Fragment key={`${location.name}-${index}`}>
                   <HStack>
                     <Icon
                       as={MapPin}
                       color={
-                        location.type === "pickup"
-                          ? "blue.500"
+                        location.type === "waypoint"
+                          ? "green.500"
                           : location.type === "dropoff"
                           ? "red.500"
-                          : "green.500"
+                          : "blue.500"
                       }
                     />
                     <Text>
@@ -491,14 +437,10 @@ const TripHistory: React.FC = () => {
                           ? "Destination"
                           : "Waypoint"}
                       </Badge>
-                      {location.type === "dropoff" && trip.arrivalTime && (
+                      {location.pickupTime && (
                         <Badge colorScheme="purple" ml={2}>
-                          Arrival: {trip.arrivalTime}
-                        </Badge>
-                      )}
-                      {location.type === "pickup" && location.pickupTime && (
-                        <Badge ml={2} colorScheme="purple">
-                          Departure: {location.pickupTime}
+                          {location.type === "dropoff" ? "Arrival" : "Pickup"}:{" "}
+                          {location.pickupTime}
                         </Badge>
                       )}
                     </Text>
