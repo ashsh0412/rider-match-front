@@ -402,14 +402,19 @@ const TripHistory: React.FC = () => {
             </HStack>
 
             <Stack spacing={2}>
-              <HStack>
-                <Icon as={MapPin} color="yellow.400" />
-                <Text>{trip.startingPoint}</Text>
-                <Badge>Starting Point</Badge>
-                <Badge colorScheme="purple" ml={2}>
-                  Departure: {trip.pickupTime}
-                </Badge>
-              </HStack>
+              <VStack align="flex-start" spacing={2}>
+                <HStack spacing={2} flexWrap="wrap">
+                  <HStack>
+                    <Icon as={MapPin} color="yellow.400" />
+                    <Text>{trip.startingPoint}</Text>
+                    <Badge>Starting Point</Badge>
+                  </HStack>
+                  <Badge colorScheme="purple">
+                    Departure: {trip.pickupTime}
+                  </Badge>
+                </HStack>
+              </VStack>
+
               <Box pl="6px">
                 <Divider
                   orientation="vertical"
@@ -417,34 +422,37 @@ const TripHistory: React.FC = () => {
                   borderColor="gray.300"
                 />
               </Box>
+
               {trip.locations.map((location, index) => (
                 <React.Fragment key={`${location.name}-${index}`}>
-                  <HStack>
-                    <Icon
-                      as={MapPin}
-                      color={
-                        location.type === "waypoint"
-                          ? "green.500"
-                          : location.type === "dropoff"
-                          ? "red.500"
-                          : "blue.500"
-                      }
-                    />
-                    <Text>
-                      {location.name}
-                      <Badge ml={2} colorScheme="gray">
-                        {location.type === "dropoff"
-                          ? "Destination"
-                          : "Waypoint"}
-                      </Badge>
+                  <VStack align="flex-start" spacing={2}>
+                    <HStack spacing={2} flexWrap="wrap">
+                      <HStack>
+                        <Icon
+                          as={MapPin}
+                          color={
+                            location.type === "waypoint"
+                              ? "green.500"
+                              : location.type === "dropoff"
+                              ? "red.500"
+                              : "blue.500"
+                          }
+                        />
+                        <Text>{location.name}</Text>
+                        <Badge colorScheme="gray">
+                          {location.type === "dropoff"
+                            ? "Destination"
+                            : "Waypoint"}
+                        </Badge>
+                      </HStack>
                       {location.pickupTime && (
-                        <Badge colorScheme="purple" ml={2}>
+                        <Badge colorScheme="purple">
                           {location.type === "dropoff" ? "Arrival" : "Pickup"}:{" "}
                           {location.pickupTime}
                         </Badge>
                       )}
-                    </Text>
-                  </HStack>
+                    </HStack>
+                  </VStack>
                   {index < trip.locations.length - 1 && (
                     <Box pl="6px">
                       <Divider

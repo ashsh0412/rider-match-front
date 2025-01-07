@@ -1,13 +1,12 @@
-// RiderPage.tsx
 import { useState } from "react";
-import { Box, VStack, Flex, useColorModeValue, Text } from "@chakra-ui/react";
+import { Box, VStack, Flex, useColorModeValue } from "@chakra-ui/react";
 import MapComponent from "../maps/LoadingMap";
 import NavBar from "../components/NavBar";
 import RideRequestForm from "../components/RequestForm";
 import SuccessMessage from "../components/RequestSuccess";
 import OptMapRenderer from "../maps/OptRouteRender";
 
-const RiderPage: React.FC = () => {
+const DriverPage: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [optRoute, setOptRoute] = useState(false); // Added this state
   const mainBg = useColorModeValue("gray.50", "gray.900");
@@ -55,4 +54,4 @@ const RiderPage: React.FC = () => {
   );
 };
 
-export default RiderPage;
+export default DriverPage;
