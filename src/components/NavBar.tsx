@@ -10,7 +10,7 @@ import {
   useColorMode,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaMoon, FaSun, FaReceipt, FaUser } from "react-icons/fa";
+import { FaMoon, FaSun, FaReceipt, FaUser, FaHome } from "react-icons/fa";
 import logOut from "../API/Logout";
 import { useNavigate } from "react-router-dom";
 
@@ -39,16 +39,27 @@ const NavBar: React.FC = () => {
       justifyContent="space-between"
       bg={bg}
     >
-      {/* 로고 - sm(480px) 이상에서만 보임 */}
-      <Text
-        fontSize="2xl"
-        fontWeight="bold"
+      {/* Logo container with both text and icon */}
+      <HStack
+        spacing={2}
         onClick={handleLogoClick}
         _hover={{ cursor: "pointer" }}
-        display={{ base: "none", sm: "block" }}
       >
-        DriverMatch
-      </Text>
+        <IconButton
+          icon={<FaHome />}
+          variant="ghost"
+          aria-label="Home"
+          display={{ base: "flex", sm: "none" }}
+          size="md"
+        />
+        <Text
+          fontSize="2xl"
+          fontWeight="bold"
+          display={{ base: "none", sm: "block" }}
+        >
+          DriverMatch
+        </Text>
+      </HStack>
 
       <HStack spacing={{ base: 1, md: 2 }}>
         <Button
@@ -79,7 +90,7 @@ const NavBar: React.FC = () => {
           />
           <MenuList>
             <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
-            <MenuItem onClick={() => logOut(navigate)}>Log out</MenuItem>{" "}
+            <MenuItem onClick={() => logOut(navigate)}>Log out</MenuItem>
           </MenuList>
         </Menu>
       </HStack>

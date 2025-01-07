@@ -114,7 +114,7 @@ export const WelcomePage: React.FC = () => {
       <Box bg={useColorModeValue("white", "gray.800")} boxShadow="sm" py={6}>
         <Container maxW="container.xl">
           <Flex justify="space-between" align="center">
-            <Box></Box>
+            <Box>ㅇㅇ</Box>
             <HStack spacing={4}>
               {user ? (
                 <>
