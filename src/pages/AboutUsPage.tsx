@@ -8,8 +8,6 @@ import {
   VStack,
   HStack,
   Icon,
-  Button,
-  Link,
   useColorModeValue,
   Flex,
   Accordion,
