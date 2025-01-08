@@ -111,28 +111,44 @@ export const WelcomePage: React.FC = () => {
   return (
     <Box minH="100vh" bgGradient={bgGradient}>
       {/* Header */}
-      <Box bg={useColorModeValue("white", "gray.800")} boxShadow="sm" py={6}>
+      <Box
+        bg={useColorModeValue("white", "gray.800")}
+        boxShadow="sm"
+        py={{ base: 4, md: 6 }}
+      >
         <Container maxW="container.xl">
           <Flex justify="space-between" align="center">
-            <Box>ㅇㅇ</Box>
-            <HStack spacing={4}>
+            <Button
+              size={{ base: "sm", md: "md" }}
+              colorScheme="blue"
+              variant="ghost"
+              onClick={() => navigate("/aboutus")}
+            >
+              About Us
+            </Button>
+            <HStack spacing={{ base: 2, md: 4 }}>
               {user ? (
                 <>
                   <Button
                     variant="outline"
                     colorScheme="blue"
                     onClick={handleLogout}
+                    size={{ base: "sm", md: "md" }}
                     {...buttonStyle}
                   >
                     Log out
                   </Button>
                   {user.username.length <= 10 ? (
-                    <Button colorScheme="blue" {...buttonStyle}>
+                    <Button
+                      colorScheme="blue"
+                      size={{ base: "sm", md: "md" }}
+                      {...buttonStyle}
+                    >
                       {user.username}
                     </Button>
                   ) : (
                     <Avatar
-                      size="md"
+                      size={{ base: "sm", md: "md" }}
                       name={user.username}
                       bg="blue.500"
                       color="white"
@@ -145,6 +161,7 @@ export const WelcomePage: React.FC = () => {
                     variant="outline"
                     colorScheme="blue"
                     onClick={() => navigate("/log-in")}
+                    size={{ base: "sm", md: "md" }}
                     {...buttonStyle}
                   >
                     Log in
@@ -152,6 +169,7 @@ export const WelcomePage: React.FC = () => {
                   <Button
                     colorScheme="blue"
                     onClick={() => navigate("/signup")}
+                    size={{ base: "sm", md: "md" }}
                     {...buttonStyle}
                   >
                     Sign up

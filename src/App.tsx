@@ -17,6 +17,7 @@ import TripHistory from "./pages/TripHistory";
 import KakaoConfirm from "./API/KakaoConfirm";
 import GoogleConfirm from "./API/GoogleConfirm";
 import WelcomePage from "./pages/WelcomePage";
+import AboutPage from "./pages/AboutUsPage";
 
 function App() {
   const isDevelopment = process.env.NODE_ENV === "development";
@@ -55,6 +56,7 @@ function App() {
               </LoginCheck>
             }
           />
+          <Route path="/aboutus" element={<AboutPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/trip-history" element={<TripHistory />} />
           <Route path="/oauth/kakao" element={<KakaoConfirm />} />
