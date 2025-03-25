@@ -1,46 +1,98 @@
-# Getting Started with Create React App
+<div class="section">
+    <h2>🌟 Project Overview</h2>
+    <p>Rider Match is an innovative web application designed to simplify ride-sharing and transportation coordination, particularly in areas with limited public transit options.</p>
+    <div class="hero-section" style="text-align: center; margin-bottom: 20px;">
+        <img src="https://github.com/user-attachments/assets/fad3d728-341d-41dd-a8d1-ed9b93f3ba1e" alt="Rider Match Hero Image" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+      <img src="https://github.com/user-attachments/assets/00e4ef04-deaa-4fd7-bd7b-98aa1c206880" alt="Rider Match Hero Image" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+      <img src="https://github.com/user-attachments/assets/41bc2b98-8ca3-4951-be9b-5a69f79ffc6a" alt="Rider Match Hero Image" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+      <img src="https://github.com/user-attachments/assets/42534aff-9591-4fd3-b364-ca07a3c78b21" alt="Rider Match Hero Image" style="max-width: 100%; height: auto; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+</div>
+    
+</div>
+</div>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div class="section">
+    <h2>🎯 Key Problem Solved</h2>
+    <p>In locations like the United States, where personal transportation can be challenging, Rider Match addresses the common pain points of:</p>
+    <ul>
+        <li>Coordinating group transportation</li>
+        <li>Optimizing pickup routes</li>
+        <li>Simplifying ride-sharing logistics</li>
+    </ul>
+</div>
 
-## Available Scripts
+<div class="section">
+    <h2>✨ Features</h2>
+    <h3>User Roles</h3>
+    <h4>Riders</h4>
+    <p>Can specify:</p>
+    <ul>
+        <li>Pickup location</li>
+        <li>Destination</li>
+        <li>Desired arrival time</li>
+    </ul>
+<h4>Drivers</h4>
+    <p>Can:</p>
+    <ul>
+        <li>Set their location and availability</li>
+        <li>View potential rider routes</li>
+        <li>Select preferred ride bookings</li>
+        <li>Get an optimized route based on their preferred arrival time</li>
+    </ul>
 
-In the project directory, you can run:
+    
+</div>
 
-### `npm start`
+<div class="section">
+    <h2>🚀 Unique Selling Point</h2>
+    <p>When a driver confirms their selected rides, the application generates an <strong>optimized route</strong> based on the driver's preferred arrival time, making group transportation seamless and efficient.</p>
+</div>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+<div class="section">
+    <h2>🛠 Tech Stack</h2>
+    <div class="tech-stack">
+        <div class="tech-item">
+            <h3>Frontend</h3>
+            <p>TypeScript</p>
+        </div>
+        <div class="tech-item">
+            <h3>Backend</h3>
+            <p>Python (Django)</p>
+        </div>
+    </div>
+</div>
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+<div class="section">
+    <h2>💡 Motivation</h2>
+    <p class="motivation">The project was born from personal experiences navigating transportation challenges in the United States. The founder encountered recurring issues such as:</p>
+    <ul>
+        <li>Coordinating rides among friends</li>
+        <li>Determining optimal pickup sequences</li>
+        <li>Managing group transportation logistics</li>
+    </ul>
+</div>
 
-### `npm test`
+<div class="section">
+    <h2>🔜 Planned Improvements</h2>
+    <ul>
+        <li>Enhanced route optimization</li>
+        <li>Real-time tracking</li>
+        <li>User reputation system</li>
+        <li>Integration with mapping services</li>
+    </ul>
+</div>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<div class="section">
+    <h2>🤝 Contributing</h2>
+    <p>We welcome contributions! Please check our contribution guidelines.</p>
+</div>
 
-### `npm run build`
+<div class="section">
+    <h2>📄 License</h2>
+    <p>Add License Information</p>
+</div>
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+<div class="section">
+    <h2>📞 Contact</h2>
+    <p>Add Contact Information</p>
+</div>
