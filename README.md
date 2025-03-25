@@ -81,18 +81,3 @@
         <li>Integration with mapping services</li>
     </ul>
 </div>
-
-<div class="section">
-    <h2>🤝 Contributing</h2>
-    <p>We welcome contributions! Please check our contribution guidelines.</p>
-</div>
-
-<div class="section">
-    <h2>📄 License</h2>
-    <p>Add License Information</p>
-</div>
-
-<div class="section">
-    <h2>📞 Contact</h2>
-    <p>Add Contact Information</p>
-</div>
