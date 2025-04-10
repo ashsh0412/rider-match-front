@@ -71,13 +71,3 @@
         <li>Managing group transportation logistics</li>
     </ul>
 </div>
-
-<div class="section">
-    <h2>🔜 Planned Improvements</h2>
-    <ul>
-        <li>Enhanced route optimization</li>
-        <li>Real-time tracking</li>
-        <li>User reputation system</li>
-        <li>Integration with mapping services</li>
-    </ul>
-</div>
