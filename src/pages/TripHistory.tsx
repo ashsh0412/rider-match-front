@@ -126,7 +126,8 @@ const TripHistory: React.FC = () => {
     const fetchTrips = async () => {
       try {
         const response = await getBooking();
-        const transformedTrips: Trip[] = response.map((booking: any) => {
+        const bookings: any[] = Array.isArray(response) ? response : [];
+        const transformedTrips: Trip[] = bookings.map((booking: any) => {
           const locations: Location[] = [];
 
           // 경유지 (pickups) 처리
@@ -166,7 +167,7 @@ const TripHistory: React.FC = () => {
             shortStartingPoint += ", " + startingPointArr[1].trim();
           }
 
-          const guests = booking.passengers.map((passenger: any) => ({
+          const guests = (booking.passengers ?? []).map((passenger: any) => ({
             id: passenger.id,
             name: passenger.name,
           }));
