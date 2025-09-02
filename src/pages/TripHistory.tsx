@@ -161,10 +161,17 @@ const TripHistory: React.FC = () => {
           }
 
           // starting point는 별도 필드로만 사용
-          const startingPointArr = booking.starting_point.split(",");
-          let shortStartingPoint = startingPointArr[0].trim();
-          if (shortStartingPoint.length <= 10 && startingPointArr.length > 1) {
-            shortStartingPoint += ", " + startingPointArr[1].trim();
+          let shortStartingPoint = "";
+          const sp = booking?.starting_point;
+          if (typeof sp === "string" && sp.trim() !== "") {
+            const startingPointArr = sp.split(",").map((s) => s.trim());
+            shortStartingPoint = startingPointArr[0] ?? "";
+            if (
+              shortStartingPoint.length <= 10 &&
+              startingPointArr.length > 1
+            ) {
+              shortStartingPoint += ", " + (startingPointArr[1] ?? "");
+            }
           }
 
           const guests = (booking.passengers ?? []).map((passenger: any) => ({
