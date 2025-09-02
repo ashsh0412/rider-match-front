@@ -51,37 +51,37 @@ const AboutPage: React.FC = () => {
       icon: FaClock,
       title: "Arrival Time Based Matching",
       description:
-        "Our intelligent system calculates optimal pickup times based on your desired arrival time. Only drivers available on your selected date will be matched.",
+        "Developed independently, this feature calculates optimal pickup times based on arrival preferences and matches only available drivers.",
     },
     {
       icon: FaRoute,
       title: "Optimized Route System",
       description:
-        "We provide the most efficient routes based on all passengers' locations traveling on the same date. The system automatically calculates pickup sequences to minimize travel time.",
+        "I implemented an algorithm that automatically sequences pickups for passengers traveling on the same date, minimizing total travel time.",
     },
     {
       icon: FaUserFriends,
       title: "Smart Passenger Matching",
       description:
-        "Accommodating up to 5 passengers, our system efficiently matches riders traveling similar routes to maximize convenience and cost-effectiveness.",
+        "Built to handle up to 5 passengers, my system efficiently matches riders along similar routes for convenience and cost savings.",
     },
     {
       icon: FaCar,
       title: "Real-time Location Based",
       description:
-        "Using precise latitude and longitude coordinates, we offer accurate location services with real-time driver tracking capabilities.",
+        "Using coordinates integration, I added accurate location services and real-time driver tracking.",
     },
     {
       icon: FaShieldAlt,
       title: "Secure Service",
       description:
-        "We ensure your safety with verified drivers and a secure payment system, providing a reliable carpooling experience.",
+        "I designed a reliable experience with verified drivers and a secure payment workflow.",
     },
     {
       icon: FaLeaf,
       title: "Eco-Friendly Transportation",
       description:
-        "Join us in reducing carbon emissions through carpooling, contributing to a more sustainable environment.",
+        "This solo project also emphasizes sustainability by promoting carpooling to lower carbon emissions.",
     },
   ];
 
@@ -119,20 +119,20 @@ const AboutPage: React.FC = () => {
               About DriverMatch
             </Heading>
             <Text fontSize="xl" color={textColor} lineHeight="tall">
-              DriverMatch is an innovative carpooling platform revolutionizing
-              urban mobility. Founded in 2024 by a team of transportation and
-              technology experts, we combine arrival time-based matching with
-              optimized routing to provide efficient and environmentally
-              conscious transportation services. Our mission is to create
-              seamless, safe, and sustainable mobility solutions for communities
-              worldwide.
+              DriverMatch is an innovative carpooling platform I founded in
+              2024. As a solo creator passionate about transportation and
+              technology, I built the system to combine arrival time-based
+              matching with optimized routing, offering efficient and
+              environmentally conscious transportation services. My mission is
+              to create seamless, safe, and sustainable mobility solutions for
+              communities worldwide.
             </Text>
           </VStack>
 
           {/* Services Section */}
           <Box mb={20}>
             <Heading as="h2" size="xl" mb={8} color={headingColor}>
-              Our Services
+              Services
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8}>
               {features.map((feature, index) => (
@@ -171,7 +171,7 @@ const AboutPage: React.FC = () => {
           {/* Company Values Section */}
           <Box mb={20}>
             <Heading as="h2" size="xl" mb={8} color={headingColor}>
-              Our Values
+              Values
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
               <Box bg={cardBg} p={8} borderRadius="lg" boxShadow="md">
@@ -179,10 +179,10 @@ const AboutPage: React.FC = () => {
                   Reliability
                 </Heading>
                 <Text color={textColor} fontSize="lg">
-                  We deliver trustworthy carpooling experiences through precise
-                  location-based services and optimized routing systems. Every
-                  driver undergoes thorough verification to ensure service
-                  safety and quality.
+                  I deliver trustworthy carpooling experiences through precise
+                  location-based services and optimized routing systems. I also
+                  implemented thorough driver verification to ensure safety and
+                  quality.
                 </Text>
               </Box>
               <Box bg={cardBg} p={8} borderRadius="lg" boxShadow="md">
@@ -190,10 +190,10 @@ const AboutPage: React.FC = () => {
                   Sustainability
                 </Heading>
                 <Text color={textColor} fontSize="lg">
-                  By reducing individual car trips and promoting shared rides,
-                  we actively contribute to reducing carbon emissions. Join us
-                  in creating a more sustainable future through collaborative
-                  transportation.
+                  This project reduces individual car trips and promotes shared
+                  rides to help lower carbon emissions. I developed it with the
+                  vision of contributing to a more sustainable future through
+                  collaborative transportation.
                 </Text>
               </Box>
             </SimpleGrid>
@@ -202,32 +202,33 @@ const AboutPage: React.FC = () => {
           {/* Contact Information Section */}
           <Box mb={20}>
             <Heading as="h2" size="xl" mb={8} color={headingColor}>
-              Contact Us
+              Contact Information
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
               <VStack align="start" spacing={6}>
                 <Text fontSize="lg" color={textColor}>
-                  Have questions or suggestions? We'd love to hear from you.
-                  Contact our team for prompt assistance.
+                  Have questions or suggestions? I’d be happy to hear from you.
+                  Since this is a solo project, feel free to reach out to me
+                  directly for assistance.
                 </Text>
                 <List spacing={4}>
                   <ListItem>
                     <HStack>
                       <ListIcon as={FaPhone} color={iconColor} />
-                      <Text color={textColor}>+1 (555) 123-4567</Text>
+                      <Text color={textColor}>+82 (010) 2540-6069</Text>
                     </HStack>
                   </ListItem>
                   <ListItem>
                     <HStack>
                       <ListIcon as={FaEnvelope} color={iconColor} />
-                      <Text color={textColor}>support@drivermatch.com</Text>
+                      <Text color={textColor}>ashsh0412@gmail.com</Text>
                     </HStack>
                   </ListItem>
                   <ListItem>
                     <HStack>
                       <ListIcon as={FaMapMarkerAlt} color={iconColor} />
                       <Text color={textColor}>
-                        123 Innovation Drive, San Francisco, CA 94105
+                        South Korea, Busan, Sasang-gu
                       </Text>
                     </HStack>
                   </ListItem>
@@ -243,9 +244,6 @@ const AboutPage: React.FC = () => {
                   </Text>
                   <Text color={textColor}>Saturday: 10:00 AM - 4:00 PM</Text>
                   <Text color={textColor}>Sunday: Closed</Text>
-                  <Text color={textColor} mt={4}>
-                    24/7 Emergency Support Available
-                  </Text>
                 </VStack>
               </Box>
             </SimpleGrid>
@@ -269,8 +267,8 @@ const AboutPage: React.FC = () => {
                 <AccordionPanel pb={4} color={textColor}>
                   <VStack align="start" spacing={4}>
                     <Text>
-                      At DriverMatch, we take your privacy seriously. Learn
-                      about how we collect, use, and protect your personal
+                      At DriverMatch, it takes your privacy seriously. Learn
+                      about how it collects, uses, and protects your personal
                       information.
                     </Text>
                     <List spacing={3}>
@@ -303,8 +301,8 @@ const AboutPage: React.FC = () => {
                 <AccordionPanel pb={4} color={textColor}>
                   <VStack align="start" spacing={4}>
                     <Text>
-                      Our terms of service ensure a safe and reliable experience
-                      for all users. Key points include:
+                      This service ensures a safe and reliable experience for
+                      all users. Key points include:
                     </Text>
                     <List spacing={3}>
                       <ListItem>
@@ -355,51 +353,6 @@ const AboutPage: React.FC = () => {
                         <ListIcon as={FaCheckCircle} color={iconColor} />
                         Real-time location tracking
                       </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        24/7 customer support
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Secure payment system
-                      </ListItem>
-                    </List>
-                  </VStack>
-                </AccordionPanel>
-              </AccordionItem>
-
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left" fontWeight="bold">
-                      How is the fare calculated?
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4} color={textColor}>
-                  <VStack align="start" spacing={4}>
-                    <Text>
-                      Our fare calculation is transparent and based on several
-                      factors:
-                    </Text>
-                    <List spacing={3}>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Distance of the journey
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Time of day and expected traffic
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Number of passengers sharing the ride
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Additional stops along the route
-                      </ListItem>
                     </List>
                   </VStack>
                 </AccordionPanel>
@@ -429,41 +382,6 @@ const AboutPage: React.FC = () => {
                 <h2>
                   <AccordionButton>
                     <Box flex="1" textAlign="left" fontWeight="bold">
-                      Can I schedule regular rides?
-                    </Box>
-                    <AccordionIcon />
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4} color={textColor}>
-                  <VStack align="start" spacing={4}>
-                    <Text>
-                      Yes! We offer several options for regular commuters:
-                    </Text>
-                    <List spacing={3}>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Weekly schedule setting
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Monthly pass options
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Priority matching with preferred drivers
-                      </ListItem>
-                      <ListItem>
-                        <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Flexible scheduling for different days
-                      </ListItem>
-                    </List>
-                  </VStack>
-                </AccordionPanel>
-              </AccordionItem>
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" textAlign="left" fontWeight="bold">
                       How do you match drivers and passengers?
                     </Box>
                     <AccordionIcon />
@@ -472,7 +390,7 @@ const AboutPage: React.FC = () => {
                 <AccordionPanel pb={4} color={textColor}>
                   <VStack align="start" spacing={4}>
                     <Text>
-                      Our matching system considers multiple factors to ensure
+                      Matching system considers multiple factors to ensure
                       optimal pairing:
                     </Text>
                     <List spacing={3}>
@@ -486,7 +404,7 @@ const AboutPage: React.FC = () => {
                       </ListItem>
                       <ListItem>
                         <ListIcon as={FaCheckCircle} color={iconColor} />
-                        Driver availability and ratings
+                        Driver availability
                       </ListItem>
                       <ListItem>
                         <ListIcon as={FaCheckCircle} color={iconColor} />
